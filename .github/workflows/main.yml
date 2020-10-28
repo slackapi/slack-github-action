@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: actions/hello-world-javascript-action@v1.1
+      uses: actions/hello-world-javascript-action@v1.1.0
       with:
         who-to-greet: 'Steve'
         channel-id: 'CTAAHRA79'
