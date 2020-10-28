@@ -10,6 +10,12 @@ jobs:
       uses: actions/hello-world-javascript-action@v1.1
       with:
         who-to-greet: 'Steve'
+        channel-id: 'CTAAHRA79'
+        message: 'posting from a github action!'
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
     # Use the output from the `hello` step
     - name: Get the output time
       run: echo "The time was ${{ steps.hello.outputs.time }}"
