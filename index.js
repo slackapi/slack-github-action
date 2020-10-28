@@ -21,7 +21,7 @@ try {
     console.log(`The event payload: ${JSON.stringify(payload, undefined, 2)}`);
 
     if (botToken) {
-        const message = core.getInput('slack-message');
+        const message = core.getInput('message');
         const channelId = core.getInput('channel-id');
         console.log('message', message)
         console.log('channelId', channelId)
