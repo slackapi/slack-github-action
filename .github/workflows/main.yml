@@ -11,7 +11,7 @@ jobs:
       with:
         who-to-greet: 'Steve'
         channel-id: 'CTAAHRA79'
-        message: 'posting from a github action!'
+        slack-message: 'posting from a github action!'
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -18,10 +18,10 @@ try {
 
     // Get the JSON webhook payload for the event that triggered the workflow
     const payload = github.context.payload;
-    console.log(`The event payload: ${JSON.stringify(payload, undefined, 2)}`);
+    // console.log(`The event payload: ${JSON.stringify(payload, undefined, 2)}`);
 
     if (botToken) {
-        const message = core.getInput('message');
+        const message = core.getInput('slack-message');
         const channelId = core.getInput('channel-id');
         console.log('message', message)
         console.log('channelId', channelId)

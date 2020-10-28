@@ -8,7 +8,7 @@ inputs:
   channel-id: # channel id to post message when using bot token
     description: 'Slack channel ID where message will be posted. Needed if using bot token'
     required: false
-  message: # message to post when using bot token
+  slack-message: # message to post when using bot token
     description: 'Message to post into Slack. Needed if using bot token'
     required: false
 outputs:
