@@ -10,7 +10,7 @@ jobs:
       uses: stevengill/slack-github-action@v1.3.3
       with:
         channel-id: 'CTAAHRA79'
-#         slack-message: 'posting from a github action!'
+        slack-message: 'posting from a github action!'
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
