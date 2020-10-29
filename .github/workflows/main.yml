@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: Publish to slack
       id: slack
-      uses: stevengill/slack-github-action@v1.3.0
+      uses: stevengill/slack-github-action@v1.3.1
       with:
         channel-id: 'CTAAHRA79'
 #         slack-message: 'posting from a github action!'
