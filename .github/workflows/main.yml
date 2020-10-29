@@ -9,7 +9,6 @@ jobs:
       id: hello
       uses: stevengill/slack-github-action@v1.1.0
       with:
-        who-to-greet: 'Steve'
         channel-id: 'CTAAHRA79'
         slack-message: 'posting from a github action!'
       env:
