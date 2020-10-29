@@ -28,7 +28,7 @@ try {
 
         const web = new WebClient(botToken);
 
-        if(channelId !== undefined && message !== undefined) {
+        if(channelId.length > 0 && message.length > 0) {
             // post message
             web.chat.postMessage({text: message, channel: channelId});
         } else {
