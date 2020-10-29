@@ -1,5 +1,5 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Slack Push'
+description: 'Publish a message in a channel or send the github payload to workflow builder'
 inputs:
   channel-id: # channel id to post message when using bot token
     description: 'Slack channel ID where message will be posted. Needed if using bot token'
@@ -9,7 +9,7 @@ inputs:
     required: false
 outputs:
   time: # id of output
-    description: 'The time we greeted you'
+    description: 'The time'
 runs:
   using: 'node12'
   main: 'index.js'
