@@ -20,7 +20,7 @@ try {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    if (botToken) {
+    if (botToken.length > 0) {
         const message = core.getInput('slack-message');
         const channelId = core.getInput('channel-id');
         console.log('message', message, typeof message)
@@ -36,7 +36,7 @@ try {
         }
     } 
     
-    if (webhookUrl) {
+    if (webhookUrl.length > 0) {
         // send flat payload to webhookUrl
         const flatPayload = flatten(payload);
 
