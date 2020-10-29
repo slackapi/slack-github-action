@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: stevengill/slack-github-action@v1.1.0
+      uses: stevengill/slack-github-action@v1.2.0
       with:
         channel-id: 'CTAAHRA79'
         slack-message: 'posting from a github action!'
