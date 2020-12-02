@@ -11,7 +11,12 @@
     "type": "git",
     "url": "git+https://github.com/slackapi/slack-github-action.git"
   },
-  "keywords": ["slack", "github",  "action", "workflow"],
+  "keywords": [
+    "slack",
+    "github",
+    "action",
+    "workflow"
+  ],
   "author": "Slack Technologies, Inc.",
   "license": "MIT",
   "bugs": {
