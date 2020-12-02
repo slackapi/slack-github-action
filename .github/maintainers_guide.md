@@ -21,8 +21,11 @@ TODO
 
 ### Releasing
 
-TODO
-
+* Bundle the dependencies by running `npm run build`
+* Update the version in `package.json`
+* Commit the changes
+* Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`
+* Push changes up to GitHub `git push origin main --tags`
 
 
 ## Workflow

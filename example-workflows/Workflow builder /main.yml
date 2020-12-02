@@ -1,0 +1,12 @@
+on: [push]
+
+jobs:
+  new_push_job:
+    runs-on: ubuntu-latest
+    name: New push to repo
+    steps:
+    - name: Send data to Slack Workflow Builder
+      id: slack
+      uses: slackapi/slack-github-action@v1.4.0
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
