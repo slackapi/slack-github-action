@@ -1,22 +1,27 @@
 {
   "name": "slack-github-action",
   "version": "1.3.3",
-  "description": "",
-  "main": "index.js",
+  "description": "The official slack github action. Use this to send data into your Slack workspace",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx @vercel/ncc build index.js --license licenses.txt "
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stevengill/slack-github-action.git"
+    "url": "git+https://github.com/slackapi/slack-github-action.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["slack", "github",  "action", "workflow"],
+  "author": "Slack Technologies, Inc.",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stevengill/slack-github-action/issues"
+    "url": "https://github.com/slackapi/slack-github-action/issues"
   },
-  "homepage": "https://github.com/stevengill/slack-github-action#readme",
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.4.1"
+  },
+  "homepage": "https://github.com/slackapi/slack-github-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
