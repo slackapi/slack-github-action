@@ -13,6 +13,7 @@ try {
 
 
     let payload = core.getInput('payload');
+    console.log('payload')
     console.log(payload)
 
     if (payload === undefined) {
@@ -37,11 +38,11 @@ try {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    const channelId = core.getInput('channel-id');
-    console.log('channelId', channelId, typeof channelId)
-    if (botToken.length > 0 && channelId !== undefined) {
+    if (botToken.length > 0) {
         const message = core.getInput('slack-message');
+        const channelId = core.getInput('channel-id');
         console.log('message', message, typeof message)
+        console.log('channelId', channelId, typeof channelId)
 
         const web = new WebClient(botToken);
 
