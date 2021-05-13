@@ -7,6 +7,9 @@ inputs:
   slack-message: # message to post when using bot token
     description: 'Message to post into Slack. Needed if using bot token'
     required: false
+  payload: # JSON payload to send to Slack via webhook
+    description: 'JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead'
+    required: false
 outputs:
   time: # id of output
     description: 'The time'
