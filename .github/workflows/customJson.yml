@@ -1,0 +1,19 @@
+on: [push]
+
+jobs:
+  new_push_job:
+    runs-on: ubuntu-latest
+    name: New push to repo
+    steps:
+    - name: Publish to slack
+      id: slack
+      uses: slackapi/slack-github-action@v1.4.0
+      with:
+        payload: '{key: "value", foo: "bar"}'
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"

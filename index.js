@@ -12,19 +12,36 @@ try {
     console.log('webhookUrl', webhookUrl, typeof webhookUrl)
 
 
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = github.context.payload;
+    let payload = core.getInput('payload');
+    console.log(payload)
+
+    if (payload === undefined) {
+        console.log('undefined payload');
+        console.log('no payload passed in, using payload that triggered the GitHub Action')
+        // Get the JSON webhook payload for the event that triggered the workflow
+        payload = github.context.payload;
+    } else {
+        try {
+            // confirm it is valid json
+            payload = JSON.parse(payload);
+        } catch (e) {
+            // passed in payload wasn't valid json
+            console.error("passed in payload was invalid")
+            throw 'Need to provide valid json payload'
+        }
+    }
+
     // console.log(`The event payload: ${JSON.stringify(payload, undefined, 2)}`);
 
     if (botToken === undefined && webhookUrl === undefined) {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    if (botToken.length > 0) {
+    const channelId = core.getInput('channel-id');
+    console.log('channelId', channelId, typeof channelId)
+    if (botToken.length > 0 && channelId !== undefined) {
         const message = core.getInput('slack-message');
-        const channelId = core.getInput('channel-id');
         console.log('message', message, typeof message)
-        console.log('channelId', channelId, typeof channelId)
 
         const web = new WebClient(botToken);
 
