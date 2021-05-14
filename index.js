@@ -13,10 +13,11 @@ try {
 
 
     let payload = core.getInput('payload');
-    console.log('payload')
+    console.log('payload:')
     console.log(payload)
+    console.log(typeof payload)
 
-    if (payload === undefined) {
+    if (payload.length > 0) {
         console.log('undefined payload');
         console.log('no payload passed in, using payload that triggered the GitHub Action')
         // Get the JSON webhook payload for the event that triggered the workflow

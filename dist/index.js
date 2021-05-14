@@ -16057,9 +16057,11 @@ try {
 
 
     let payload = core.getInput('payload');
+    console.log('payload:')
     console.log(payload)
+    console.log(typeof payload)
 
-    if (payload === undefined) {
+    if (payload.length > 0) {
         console.log('undefined payload');
         console.log('no payload passed in, using payload that triggered the GitHub Action')
         // Get the JSON webhook payload for the event that triggered the workflow
@@ -16081,11 +16083,11 @@ try {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    const channelId = core.getInput('channel-id');
-    console.log('channelId', channelId, typeof channelId)
-    if (botToken.length > 0 && channelId !== undefined) {
+    if (botToken.length > 0) {
         const message = core.getInput('slack-message');
+        const channelId = core.getInput('channel-id');
         console.log('message', message, typeof message)
+        console.log('channelId', channelId, typeof channelId)
 
         const web = new WebClient(botToken);
 
