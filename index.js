@@ -15,14 +15,15 @@ try {
     let payload = core.getInput('payload');
     console.log('payload:')
     console.log(payload)
-    console.log(typeof payload)
+    console.log(typeof payload, payload.length)
 
-    if (payload.length > 0) {
+    if (payload.length < 1) {
         console.log('undefined payload');
         console.log('no payload passed in, using payload that triggered the GitHub Action')
         // Get the JSON webhook payload for the event that triggered the workflow
         payload = github.context.payload;
     } else {
+        console.log('in else')
         try {
             // confirm it is valid json
             payload = JSON.parse(payload);
