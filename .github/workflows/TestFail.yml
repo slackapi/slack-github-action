@@ -8,6 +8,9 @@ jobs:
     - name: Should Fail
       id: slack
       uses: slackapi/slack-github-action@v1.13.0
+      with:
+        channel-id: 'CTAAHRA79'
+        slack-message: 'posting from a github action!'
 
     # Use the output from the `hello` step
     - name: Get the output time
