@@ -16051,35 +16051,7 @@ const axios = __nccwpck_require__(8020);
 try {
     const botToken = process.env.SLACK_BOT_TOKEN;
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
-
-    console.log('botToken', botToken, typeof botToken)
-    console.log('webhookUrl', webhookUrl, typeof webhookUrl)
-
-
     let payload = core.getInput('payload');
-    console.log('payload:')
-    console.log(payload)
-    console.log(typeof payload, payload.length)
-
-    if (payload.length < 1) {
-        console.log('undefined payload');
-        console.log('no payload passed in, using payload that triggered the GitHub Action')
-        // Get the JSON webhook payload for the event that triggered the workflow
-        payload = github.context.payload;
-    } else {
-        console.log('in else')
-        try {
-            // confirm it is valid json
-            payload = JSON.parse(payload);
-            console.log('vaid json')
-        } catch (e) {
-            // passed in payload wasn't valid json
-            console.error("passed in payload was invalid")
-            throw 'Need to provide valid json payload'
-        }
-    }
-
-    // console.log(`The event payload: ${JSON.stringify(payload, undefined, 2)}`);
 
     if (botToken === undefined && webhookUrl === undefined) {
         throw 'Need to provide at least one botToken or webhookUrl'
@@ -16088,9 +16060,6 @@ try {
     if (botToken.length > 0) {
         const message = core.getInput('slack-message');
         const channelId = core.getInput('channel-id');
-        console.log('message', message, typeof message)
-        console.log('channelId', channelId, typeof channelId)
-
         const web = new WebClient(botToken);
 
         if(channelId.length > 0 && message.length > 0) {
@@ -16101,10 +16070,25 @@ try {
         }
     } 
     
-    console.log('webhookURL type', typeof webhookUrl)
     if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
-        console.log('flattening');
-        // send flat payload to webhookUrl
+
+        if (payload.length < 1) {
+            // No Payload was passed in
+            console.log('no custom payload was passed in, using default payload that triggered the GitHub Action')
+            // Get the JSON webhook payload for the event that triggered the workflow
+            payload = github.context.payload;
+        } else {
+            try {
+                // confirm it is valid json
+                payload = JSON.parse(payload);
+            } catch (e) {
+                // passed in payload wasn't valid json
+                console.error("passed in payload was invalid JSON")
+                throw 'Need to provide valid JSON payload'
+            }
+        }
+
+        // flatten JSON payload (no nested attributes)
         const flatPayload = flatten(payload);
 
         // workflow builder requires values to be strings
@@ -16113,18 +16097,20 @@ try {
             flatPayload[key] = '' + flatPayload[key];
         })
 
-        console.log('flattened Payload');
-        console.log(flatPayload);
-
-        console.log('sending webhook')
-        axios.post(webhookUrl, flatPayload)
+        axios.post(webhookUrl, flatPayload).then(response => {
+            // Successful post!
+        }).catch(err => {
+            console.log("axios post failed, double check the payload being sent includes the keys Slack expects")
+            console.log(payload)
+            console.log(err)
+            throw err
+        })
     }
 
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
 
 } catch (error) {
-    console.log('error in big try')
     core.setFailed(error.message);
 }
 

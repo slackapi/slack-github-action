@@ -1,0 +1,14 @@
+on: [push]
+
+jobs:
+  new_push_job:
+    runs-on: ubuntu-latest
+    name: New push to repo
+    steps:
+    - name: Should Fail
+      id: slack
+      uses: slackapi/slack-github-action@v1.13.0
+
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"

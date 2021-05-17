@@ -7,13 +7,11 @@ jobs:
     steps:
     - name: Publish to slack
       id: slack
-      uses: slackapi/slack-github-action@v1.12.0
+      uses: slackapi/slack-github-action@v1.13.0
       with:
-        channel-id: 'CTAAHRA79'
-        slack-message: 'posting from a github action!'
+        payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        # SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     # Use the output from the `hello` step
     - name: Get the output time
