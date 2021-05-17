@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: Publish to slack
       id: slack
-      uses: slackapi/slack-github-action@v1.13.0
+      uses: slackapi/slack-github-action@v1.14.0
       with:
         payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
