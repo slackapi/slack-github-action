@@ -16102,8 +16102,7 @@ try {
     } 
     
     console.log('webhookURL type', typeof webhookUrl)
-    if (typeof webhookUrl !== undefined) {
-    // && webhookUrl.length > 0
+    if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
         console.log('flattening');
         // send flat payload to webhookUrl
         const flatPayload = flatten(payload);
