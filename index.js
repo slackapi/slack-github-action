@@ -80,6 +80,7 @@ try {
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
 
-    } catch (error) {
+} catch (error) {
+    console.log('error in big try')
     core.setFailed(error.message);
 }

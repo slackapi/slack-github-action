@@ -16071,6 +16071,7 @@ try {
         try {
             // confirm it is valid json
             payload = JSON.parse(payload);
+            console.log('vaid json')
         } catch (e) {
             // passed in payload wasn't valid json
             console.error("passed in payload was invalid")
@@ -16100,7 +16101,10 @@ try {
         }
     } 
     
-    if (webhookUrl.length > 0) {
+    console.log('webhookURL type', typeof webhookUrl)
+    if (typeof webhookUrl !== undefined) {
+    // && webhookUrl.length > 0
+        console.log('flattening');
         // send flat payload to webhookUrl
         const flatPayload = flatten(payload);
 
@@ -16110,15 +16114,18 @@ try {
             flatPayload[key] = '' + flatPayload[key];
         })
 
+        console.log('flattened Payload');
         console.log(flatPayload);
 
+        console.log('sending webhook')
         axios.post(webhookUrl, flatPayload)
     }
 
     const time = (new Date()).toTimeString();
     core.setOutput("time", time);
 
-    } catch (error) {
+} catch (error) {
+    console.log('error in big try')
     core.setFailed(error.message);
 }
 
