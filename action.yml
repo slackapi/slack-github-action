@@ -1,5 +1,5 @@
-name: 'Slack Push'
-description: 'Publish a message in a channel or send the github payload to workflow builder'
+name: 'slack-send'
+description: 'Publish a message in a channel or send a JSON payload to the Slack Workflow Builder'
 inputs:
   channel-id: # channel id to post message when using bot token
     description: 'Slack channel ID where message will be posted. Needed if using bot token'

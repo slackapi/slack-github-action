@@ -1,4 +1,4 @@
-# Slack GitHub Action
+# Slack Send GitHub Action
 
 Send data into Slack using this GitHub Action! This package has two different techniques to send data to Slack:
 
