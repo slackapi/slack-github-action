@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { WebClient } = require('@slack/web-api');
-const flatten = require('flat');
 const axios = require('axios');
 
 try {
@@ -13,7 +12,7 @@ try {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    if(payload) {
+    if (payload) {
         try {
             // confirm it is valid json
             payload = JSON.parse(payload);
@@ -29,9 +28,9 @@ try {
         const channelId = core.getInput('channel-id');
         const web = new WebClient(botToken);
 
-        if(channelId.length > 0 && (message.length > 0 || payload)) {
+        if (channelId.length > 0 && message.length > 0) {
             // post message
-            web.chat.postMessage({channel: channelId, text: message, ...(payload || {})});
+            web.chat.postMessage({ text: message, channel: channelId });
         } else {
             console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
         }
@@ -46,16 +45,7 @@ try {
             payload = github.context.payload;
         }
 
-        // flatten JSON payload (no nested attributes)
-        const flatPayload = flatten(payload);
-
-        // workflow builder requires values to be strings
-        // iterate over every value and convert it to string
-        Object.keys(flatPayload).forEach((key) => {
-            flatPayload[key] = '' + flatPayload[key];
-        })
-
-        axios.post(webhookUrl, flatPayload).then(response => {
+        axios.post(webhookUrl, payload).then(response => {
             // Successful post!
         }).catch(err => {
             console.log("axios post failed, double check the payload being sent includes the keys Slack expects")
