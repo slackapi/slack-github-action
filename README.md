@@ -48,7 +48,7 @@ This route allows
 
 ## Setup
 
-* [Create a slack app]() for your workspace (alternatively use an existing app you have already created and installed)
+* [Create a slack app](https://api.slack.com/apps) for your workspace (alternatively use an existing app you have already created and installed)
   * Add the `chat.write` scope under **OAuth & Permissions**
 * Install the app to your workspace
 
