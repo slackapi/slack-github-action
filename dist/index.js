@@ -18605,13 +18605,14 @@ try {
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
         const message = core.getInput('slack-message');
         const channelId = core.getInput('channel-id');
-        const proxy = process.env.https_proxy;
 
+        let web;
+        const proxy = process.env.https_proxy;
         if (proxy !== 'undefined' && proxy.length > 0) {
             const proxyAgent = new HttpsProxyAgent(proxy);
-            const web = new WebClient(botToken, {agent: proxyAgent});
+            web = new WebClient(botToken, {agent: proxyAgent});
         } else {
-            const web = new WebClient(botToken);
+            web = new WebClient(botToken);
         }
 
         if(channelId.length > 0 && message.length > 0) {
