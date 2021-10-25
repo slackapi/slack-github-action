@@ -32,6 +32,7 @@
     "@actions/github": "^4.0.0",
     "@slack/web-api": "^5.13.0",
     "axios": "^0.21.0",
-    "flat": "^5.0.2"
+    "flat": "^5.0.2",
+    "https-proxy-agent": "^5.0.0"
   }
 }
