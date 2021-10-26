@@ -71,4 +71,4 @@ See [CONTRIBUTING](.github/contributing.md).
 
 ## License
 
-See [LICENSNE](LICENSE).
+See [LICENSE](LICENSE).
