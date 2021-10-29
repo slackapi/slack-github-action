@@ -13,35 +13,37 @@ try {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
+    if(payload) {
+        try {
+            // confirm it is valid json
+            payload = JSON.parse(payload);
+        } catch (e) {
+            // passed in payload wasn't valid json
+            console.error("passed in payload was invalid JSON")
+            throw 'Need to provide valid JSON payload'
+        }
+    }
+
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
         const message = core.getInput('slack-message');
         const channelId = core.getInput('channel-id');
         const web = new WebClient(botToken);
 
-        if(channelId.length > 0 && message.length > 0) {
+        if(channelId.length > 0 && (message.length > 0 || payload)) {
             // post message
-            web.chat.postMessage({text: message, channel: channelId});
+            web.chat.postMessage({channel: channelId, text: message, ...(payload ?? {})});
         } else {
-            console.log('missing either channel-id or slack-message! Did not send a message via chat.postMessage with botToken');
+            console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
         }
-    } 
-    
+    }
+
     if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
 
-        if (payload.length < 1) {
+        if (!payload) {
             // No Payload was passed in
             console.log('no custom payload was passed in, using default payload that triggered the GitHub Action')
             // Get the JSON webhook payload for the event that triggered the workflow
             payload = github.context.payload;
-        } else {
-            try {
-                // confirm it is valid json
-                payload = JSON.parse(payload);
-            } catch (e) {
-                // passed in payload wasn't valid json
-                console.error("passed in payload was invalid JSON")
-                throw 'Need to provide valid JSON payload'
-            }
         }
 
         // flatten JSON payload (no nested attributes)
