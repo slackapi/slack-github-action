@@ -30,7 +30,11 @@ try {
 
         if (channelId.length > 0 && (message.length > 0 || payload)) {
             // post message
+<<<<<<< HEAD
             web.chat.postMessage({ channel: channelId, text: message, ...(payload ?? {}) });
+=======
+            web.chat.postMessage({channel: channelId, text: message, ...(payload || {})});
+>>>>>>> 3cdd60e (nullish -> or)
         } else {
             console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
         }
