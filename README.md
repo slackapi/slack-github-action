@@ -60,7 +60,7 @@ This route allows
   id: slack
   uses: slackapi/slack-github-action@v1.15.0
   with:
-    channel-id: 'CHANNEL_ID'  # Slack channel id to post message
+    channel-id: 'CHANNEL_ID'  # Slack channel id or name to post message. https://api.slack.com/methods/chat.postMessage#channels
     slack-message: 'posting from a github action!'
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
