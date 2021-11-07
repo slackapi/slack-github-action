@@ -25,7 +25,7 @@ You need to define expected variables in the payload the webhook will receive. I
 ```
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.14.0
+  uses: slackapi/slack-github-action@v1.15.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -35,7 +35,7 @@ or
 ```
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.14.0
+  uses: slackapi/slack-github-action@v1.15.0
   with:
     payload: "{\"key\":\"value\",\"foo\":\"bar\"}" # This data can be any valid JSON from a previous step in the GitHub Action
   env:
@@ -57,7 +57,7 @@ This route allows
 ```
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.14.0
+  uses: slackapi/slack-github-action@v1.15.0
   with:
     channel-id: 'CHANNEL_ID'  # Slack channel id to post message
     slack-message: 'posting from a github action!'
@@ -71,4 +71,4 @@ See [CONTRIBUTING](.github/contributing.md).
 
 ## License
 
-See [LICENSNE](LICENSE).
+See [LICENSE](LICENSE).
