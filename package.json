@@ -28,9 +28,10 @@
   },
   "homepage": "https://github.com/slackapi/slack-github-action#readme",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^4.0.0",
-    "@slack/web-api": "^5.13.0",
-    "axios": "^0.21.0"
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@slack/web-api": "^6.4.0",
+    "axios": "^0.24.0",
+    "flat": "^5.0.2"
   }
 }
