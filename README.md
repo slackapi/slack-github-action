@@ -44,12 +44,12 @@ or
 
 ## Slack App Route
 
-This route allows
+This route allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API method. With this route, you can instantly post a message without setting up workflows.
 
 ## Setup
 
-* [Create a slack app](https://api.slack.com/apps) for your workspace (alternatively use an existing app you have already created and installed)
-* Add the `chat.write` scope under **OAuth & Permissions**
+* [Create a Slack App](https://api.slack.com/apps) for your workspace (alternatively use an existing app you have already created and installed)
+* Add the [`chat.write`](https://api.slack.com/scopes/chat:write) bot scope under **OAuth & Permissions**
 * Install the app to your workspace
 * Invite the bot user into the channel (`/invite @bot_user_name`)
 
