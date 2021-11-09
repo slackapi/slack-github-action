@@ -4,9 +4,16 @@ const { WebClient } = require('@slack/web-api');
 const flatten = require('flat');
 const axios = require('axios');
 
+const SLACK_WEBHOOK_TYPES = {
+    WORKFLOW_BUILDER: 'BUILDER',
+    WORKFLOW_INCOMING: 'INCOMING'
+}
+
 try {
     const botToken = process.env.SLACK_BOT_TOKEN;
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+    const webhookType = process.env.SLACK_WEBHOOK_TYPE?.toUpperCase() || SLACK_WEBHOOK_TYPES.WORKFLOW_BUILDER;
+
     let payload = core.getInput('payload');
 
     if (botToken === undefined && webhookUrl === undefined) {
@@ -47,22 +54,31 @@ try {
             payload = github.context.payload;
         }
 
-        // flatten JSON payload (no nested attributes)
-        const flatPayload = flatten(payload);
+        if (webhookType === SLACK_WEBHOOK_TYPES.WORKFLOW_BUILDER) {
+            // flatten JSON payload (no nested attributes)
+            const flatPayload = flatten(payload);
 
-        // workflow builder requires values to be strings
-        // iterate over every value and convert it to string
-        Object.keys(flatPayload).forEach((key) => {
-            flatPayload[key] = '' + flatPayload[key];
-        })
+            // workflow builder requires values to be strings
+            // iterate over every value and convert it to string
+            Object.keys(flatPayload).forEach((key) => {
+                flatPayload[key] = '' + flatPayload[key];
+            })
 
-        axios.post(webhookUrl, flatPayload).then(response => {
+            payload = flatPayload;
+        }
+
+        axios.post(webhookUrl, payload).then(response => {
             // Successful post!
         }).catch(err => {
             console.log("axios post failed, double check the payload being sent includes the keys Slack expects")
-            console.log(payload)
-            console.log(err)
-            throw err
+            console.log(payload);
+            // console.log(err);
+
+            if (err.response) {
+                core.setFailed(err.response.data);
+            }
+
+            core.setFailed(err.message);
         })
     }
 
@@ -70,5 +86,5 @@ try {
     core.setOutput("time", time);
 
 } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error);
 }
