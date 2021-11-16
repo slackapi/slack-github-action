@@ -12,8 +12,12 @@ const SLACK_WEBHOOK_TYPES = {
 try {
     const botToken = process.env.SLACK_BOT_TOKEN;
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
-    // The default type is for Workflow Builder triggers. If you want to use this action for Incoming Webhooks, use the corresponding type instead.
-    const webhookType = process.env.SLACK_WEBHOOK_TYPE?.toUpperCase() || SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER;
+    let webhookType = SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER;
+
+    if(process.env.SLACK_WEBHOOK_TYPE) {
+        // The default type is for Workflow Builder triggers. If you want to use this action for Incoming Webhooks, use the corresponding type instead.
+        webhookType = process.env.SLACK_WEBHOOK_TYPE.toUpperCase()
+    }
 
     let payload = core.getInput('payload');
 
