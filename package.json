@@ -17,7 +17,7 @@
     "action",
     "workflow"
   ],
-  "author": "Slack Technologies, Inc.",
+  "author": "Slack Technologies, LLC",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/slackapi/slack-github-action/issues"
