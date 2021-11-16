@@ -1,9 +1,10 @@
 # Slack Send GitHub Action
 
-Send data into Slack using this GitHub Action! This package has two different techniques to send data to Slack:
+Send data into Slack using this GitHub Action! This package has three different techniques to send data to Slack:
 
 1) Send data to Slack's Workflow Builder (requires a paid Slack instance).
 2) Send data via a Slack app to post to a specific channel (use an existing custom app or create a new one).
+3) Send data via an Slack's Incoming Webhook URL (use an existing custom app or create a new one)
 
 The recommended way to use this action is with Slack's Workflow Builder (if you're on a paid Slack plan).
 
