@@ -5,14 +5,15 @@ const flatten = require('flat');
 const axios = require('axios');
 
 const SLACK_WEBHOOK_TYPES = {
-    WORKFLOW_BUILDER: 'BUILDER',
-    WORKFLOW_INCOMING: 'INCOMING'
+    WORKFLOW_TRIGGER: 'WORKFLOW_TRIGGER',
+    INCOMING_WEBHOOK: 'INCOMING_WEBHOOK'
 }
 
 try {
     const botToken = process.env.SLACK_BOT_TOKEN;
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
-    const webhookType = process.env.SLACK_WEBHOOK_TYPE?.toUpperCase() || SLACK_WEBHOOK_TYPES.WORKFLOW_BUILDER;
+    // The default type is for Workflow Builder triggers. If you want to use this action for Incoming Webhooks, use the corresponding type instead.
+    const webhookType = process.env.SLACK_WEBHOOK_TYPE?.toUpperCase() || SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER;
 
     let payload = core.getInput('payload');
 
@@ -54,7 +55,7 @@ try {
             payload = github.context.payload;
         }
 
-        if (webhookType === SLACK_WEBHOOK_TYPES.WORKFLOW_BUILDER) {
+        if (webhookType === SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER) {
             // flatten JSON payload (no nested attributes)
             const flatPayload = flatten(payload);
 

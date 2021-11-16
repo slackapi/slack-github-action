@@ -66,17 +66,17 @@ This route allows your GitHub Actions job to post a message in a Slack channel o
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
-## Slack Incoming Webhook
+## Slack Incoming Webhook Route
 
-This route allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing [messaging.webhooks](https://api.slack.com/messaging/webhooks) API method. With this route, you can instantly post a message.
+This route allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing [Incoming Webhooks](https://api.slack.com/messaging/webhooks). With this route, you can instantly post a message.
 
 Incoming Webhooks conform to the same rules and functionality as any of our other messaging APIs. You can make your posted messages as simple as a single line of text, or make them really useful with [interactive components](https://api.slack.com/messaging/interactivity). To make the message more expressive and useful use [Block Kit](https://api.slack.com/block-kit) to build and test visual components.
 
 ## Setup
 
 * [Create a Slack App](https://api.slack.com/apps) for your workspace (alternatively use an existing app you have already created and installed)
-* Install the app to your workspace
-* Invite the bot user into the channel (`/invite @bot_user_name`)
+* Add the [incoming-webhook](https://api.slack.com/scopes/incoming-webhook) bot scope under **OAuth & Permissions**
+* Install the app to your workspace (you will select a channel to notify)
 
 ### Usage
 
@@ -87,8 +87,8 @@ Incoming Webhooks conform to the same rules and functionality as any of our othe
   with:
     payload: "{\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"You have a new request: \"}},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Type:* Computer (laptop)\"},{\"type\":\"mrkdwn\",\"text\":\"*When:* Submitted Aut 10\"}]}]}"
   env:
-    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BOT_TOKEN }}
-    SLACK_WEBHOOK_TYPE: INCOMING
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 ```
 
 ## Contributing
