@@ -4,16 +4,24 @@ const { WebClient } = require('@slack/web-api');
 const flatten = require('flat');
 const axios = require('axios');
 
+const SLACK_WEBHOOK_TYPES = {
+    WORKFLOW_TRIGGER: 'WORKFLOW_TRIGGER',
+    INCOMING_WEBHOOK: 'INCOMING_WEBHOOK'
+}
+
 try {
     const botToken = process.env.SLACK_BOT_TOKEN;
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+    // The default type is for Workflow Builder triggers. If you want to use this action for Incoming Webhooks, use the corresponding type instead.
+    const webhookType = process.env.SLACK_WEBHOOK_TYPE?.toUpperCase() || SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER;
+
     let payload = core.getInput('payload');
 
     if (botToken === undefined && webhookUrl === undefined) {
         throw 'Need to provide at least one botToken or webhookUrl'
     }
 
-    if(payload) {
+    if (payload) {
         try {
             // confirm it is valid json
             payload = JSON.parse(payload);
@@ -29,9 +37,10 @@ try {
         const channelId = core.getInput('channel-id');
         const web = new WebClient(botToken);
 
-        if(channelId.length > 0 && (message.length > 0 || payload)) {
+
+        if (channelId.length > 0 && (message.length > 0 || payload)) {
             // post message
-            web.chat.postMessage({channel: channelId, text: message, ...(payload || {})});
+            web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
         } else {
             console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
         }
@@ -46,22 +55,31 @@ try {
             payload = github.context.payload;
         }
 
-        // flatten JSON payload (no nested attributes)
-        const flatPayload = flatten(payload);
+        if (webhookType === SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER) {
+            // flatten JSON payload (no nested attributes)
+            const flatPayload = flatten(payload);
 
-        // workflow builder requires values to be strings
-        // iterate over every value and convert it to string
-        Object.keys(flatPayload).forEach((key) => {
-            flatPayload[key] = '' + flatPayload[key];
-        })
+            // workflow builder requires values to be strings
+            // iterate over every value and convert it to string
+            Object.keys(flatPayload).forEach((key) => {
+                flatPayload[key] = '' + flatPayload[key];
+            })
 
-        axios.post(webhookUrl, flatPayload).then(response => {
+            payload = flatPayload;
+        }
+
+        axios.post(webhookUrl, payload).then(response => {
             // Successful post!
         }).catch(err => {
             console.log("axios post failed, double check the payload being sent includes the keys Slack expects")
-            console.log(payload)
-            console.log(err)
-            throw err
+            console.log(payload);
+            // console.log(err);
+
+            if (err.response) {
+                core.setFailed(err.response.data);
+            }
+
+            core.setFailed(err.message);
         })
     }
 
@@ -69,5 +87,5 @@ try {
     core.setOutput("time", time);
 
 } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error);
 }
