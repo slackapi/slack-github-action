@@ -38,7 +38,7 @@ jobs:
                 ]
               }
             ],
-            channel-id": "NEW_TARGET_CHANNEL_ID"
+            "channel-id": "NEW_TARGET_CHANNEL_ID"
           }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
