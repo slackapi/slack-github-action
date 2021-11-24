@@ -38,13 +38,14 @@ try {
 
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
         const message = core.getInput('slack-message');
-        const channelId = core.getInput('channel-id');
+        const channelIds = core.getInput('channel-id');
         const web = new WebClient(botToken);
 
 
-        if (channelId.length > 0 && (message.length > 0 || payload)) {
+        if (channelIds.length > 0 && (message.length > 0 || payload)) {
             // post message
-            web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
+            channelIds.split(",").map(channelId => web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) }));
+
         } else {
             console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
         }

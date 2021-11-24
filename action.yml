@@ -1,7 +1,7 @@
 name: 'slack-send'
 description: 'Publish a message in a channel or send a JSON payload to the Slack Workflow Builder'
 inputs:
-  channel-id: # channel id to post message when using bot token
+  channel-id: # channel id to post message when using bot token. This can be multiple
     description: 'Slack channel ID where message will be posted. Needed if using bot token'
     required: false
   slack-message: # message to post when using bot token
