@@ -1,21 +1,23 @@
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  new_push_job:
+  integration_test:
     runs-on: ubuntu-latest
-    name: New push to repo
+    name: Integration Tests
     steps:
-    - name: Publish to slack
+    - uses: actions/checkout@v2
+    - run: npm ci && npm run build
+    - name: Post message to Slack via webhook & botToken
       id: slack
-      uses: slackapi/slack-github-action@v1.15.0
+      uses: ./
       with:
         channel-id: 'CTAAHRA79'
-        slack-message: 'posting from a github action!'
-        payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
+        slack-message: 'CI Post from slack-send GitHub Action! Succeeded!!'
+        # payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     # Use the output from the `hello` step
     - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
+      run: echo "The time was ${{ steps.slack.outputs.time }}"
