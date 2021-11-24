@@ -32,7 +32,7 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
-    "@slack/web-api": "^6.4.0",
+    "@slack/web-api": "^6.5.1",
     "axios": "^0.24.0",
     "flat": "^5.0.2"
   },
