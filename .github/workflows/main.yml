@@ -22,7 +22,7 @@ jobs:
       id: slack
       uses: ./
       with:
-        channel-id: 'CTAAHRA79'
+        channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
         slack-message: 'CI Post from slack-send GitHub Action! Succeeded!!'
         # payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
@@ -58,6 +58,27 @@ jobs:
         payload: "{\"author\":\"${{ github.event.sender.login }}\",\"url\":\"${{ env.URL}}\", \"repoName\":\"${{ github.event.repository.full_name }}\", \"status\":\"${{ job.status }}\"}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.slack.outputs.time }}"
+
+  integration_test_incoming_webhook:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: npm ci && npm run build
+    - run: echo "${{ github.event_name }}"
+    - name: Post message to Slack via incoming webhook
+      id: slackIncoming
+      uses: ./
+      with:
+        # block kit payload
+        payload: "{\"text\":\"Incoming Webhook test for slack send\", \"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"plain_text\",\"text\":\"A post by Slack Send GitHub Action. Testing Incoming webhooks\",\"emoji\":true}}]}"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       
 
     # Use the output from the `hello` step
