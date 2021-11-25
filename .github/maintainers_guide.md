@@ -20,7 +20,7 @@ Actions jobs that execute what are effectively integration tests for this GitHub
 ### Releasing
 
 * Update the version in `package.json`
-* Update all references to versions in the README to refer to the latest release
+* Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release
 * Commit the changes
 * Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`
 * Push changes up to GitHub `git push origin main --tags`
