@@ -28,9 +28,9 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.slack.outputs.time }}"
+    # Use the output from the `slack` step
+    - name: Check Action output is not empty
+      run: test -n "${{ steps.slack.outputs.time }}"
 
   integration_test_webhook:
     runs-on: ubuntu-latest
