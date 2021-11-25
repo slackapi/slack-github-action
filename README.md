@@ -86,6 +86,8 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 * [Create a Slack App][apps] for your workspace (alternatively use an existing app you have already created and installed).
 * Add the [`incoming-webhook`](https://api.slack.com/scopes/incoming-webhook) bot scope under **OAuth & Permissions**.
 * Install the app to your workspace (you will select a channel to notify).
+* Activate and create a new webhook under **Incoming Webhooks**.
+* Copy the Webhook URL from the Webhook you just generated [add it as a secret in your repo settings][repo-secret] named `SLACK_WEBHOOK_URL`.
 
 ### Usage
 
