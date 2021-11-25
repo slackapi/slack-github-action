@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v2
     - run: npm ci && npm run build
     - name: Post message to Slack via botToken
-      id: slack
+      id: slackToken
       uses: ./
       with:
         channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
@@ -28,9 +28,9 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    # Use the output from the `slack` step
+    # Use the output from the `slackToken` step
     - name: Check Action output is not empty
-      run: test -n "${{ steps.slack.outputs.time }}"
+      run: test -n "${{ steps.slackToken.outputs.time }}"
 
   integration_test_webhook:
     runs-on: ubuntu-latest
@@ -51,18 +51,19 @@ jobs:
         url=${{ github.event.pull_request.url }}
         echo "URL=$url" >> "$GITHUB_ENV"
     - name: Post message to Slack via webhook
-      id: slack
+      id: slackWorkflow
       uses: ./
       with:
+        # Workflow builder webhooks need to know the name of the keys in the payload in advance. Without normalizing, the github context payload keys can differ based on the GitHub trigger event type
         # Normalized payload with info pulled out from GitHub trigger event
         payload: "{\"author\":\"${{ github.event.sender.login }}\",\"url\":\"${{ env.URL}}\", \"repoName\":\"${{ github.event.repository.full_name }}\", \"status\":\"${{ job.status }}\"}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       
 
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.slack.outputs.time }}"
+    # Use the output from the `slackWorkflow` step
+    - name: Check Action output is not empty
+      run: test -n "${{ steps.slackWorkflow.outputs.time }}"
 
   integration_test_incoming_webhook:
     runs-on: ubuntu-latest
@@ -81,6 +82,6 @@ jobs:
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       
 
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.slack.outputs.time }}"
+    # Use the output from the `slackIncoming` step
+    - name: Check Action output is not empty
+      run: test -n "${{ steps.slackIncoming.outputs.time }}"
