@@ -69,7 +69,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
   id: slack
   uses: slackapi/slack-github-action@v1.16.0
   with:
-    channel-id: 'CHANNEL_ID'  # Slack channel id or name to post message. https://api.slack.com/methods/chat.postMessage#channels
+    channel-id: 'CHANNEL_ID'  # Slack channel id or user id to post message. https://api.slack.com/methods/chat.postMessage#channels
     slack-message: 'posting from a github action!'
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
