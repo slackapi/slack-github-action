@@ -61,12 +61,62 @@ describe('slack-send', () => {
         assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
         assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
       });
+
+      it('should accept a payloadFilePath and use it\'s content in the message', async () => {
+        // Prepare
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('payloadFilePath').returns('./test/resources/valid-payload.json');
+
+        // Run
+        await slackSend(fakeCore);
+
+        // Assert
+        assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
+        assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        const chatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
+        assert.equal(chatArgs.text, '', 'Correct message provided to postMessage');
+        assert.equal(chatArgs.bonny, 'clyde', 'Correct message provided to postMessage');
+        assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
+      });
     });
     describe('sad path', () => {
       it('should set an error if payload cannot be JSON parsed', async () => {
         fakeCore.getInput.withArgs('payload').returns('{not-valid-json');
         await slackSend(fakeCore);
         assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'Need to provide valid JSON', 'Error set specifying JSON was invalid.');
+      });
+
+      it('should fail if an invalid payloadFilePath is provided', async () => {
+        // Prepare
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('payloadFilePath').returns('non-existing-path.json');
+
+        // Run
+        await slackSend(fakeCore);
+
+        // Assert
+        assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'Need to provide valid payload file path', 'Error set specifying JSON was invalid.');
+      });
+
+      it('should fail if a valid payloadFilePath with an invalid JSON is provided', async () => {
+        // Prepare
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('payloadFilePath').returns('./test/resources/invalid-payload.json');
+
+        // Run
+        await slackSend(fakeCore);
+
+        // Assert
+        assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'Need to provide valid JSON payload', 'Error set specifying JSON was invalid.');
+      });
+
+      it('should fail if inputs are missing', async () => {
+        // Run
+        await slackSend(fakeCore);
+
+        // Assert
+        assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'Missing input! Message not sent', 'Error set specifying JSON was invalid.');
       });
     });
   });
