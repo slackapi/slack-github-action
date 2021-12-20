@@ -1,0 +1,13 @@
+{
+  "text": "Incoming Webhook test for slack send",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "plain_text",
+        "text": "A post by Slack Send GitHub Action. Testing Incoming webhooks",
+        "emoji": true
+      }
+    }
+  ]
+}
