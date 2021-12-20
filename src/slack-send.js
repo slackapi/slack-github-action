@@ -20,8 +20,8 @@ module.exports = async function slackSend(core) {
       webhookType = process.env.SLACK_WEBHOOK_TYPE.toUpperCase();
     }
 
-    if (botToken === undefined && webhookUrl === undefined) {
-      throw new Error('Need to provide at least one botToken or webhookUrl');
+    if ((botToken === undefined || botToken.length === 0) && (webhookUrl === undefined || webhookUrl.length === 0)) {
+      throw new Error('You must provide a valid, non-empty `SLACK_BOT_TOKEN` or `SLACK_WEBHOOK_URL`');
     }
 
     let payload = core.getInput('payload');

@@ -42,7 +42,14 @@ describe('slack-send', () => {
     delete process.env.SLACK_BOT_TOKEN;
     delete process.env.SLACK_WEBHOOK_URL;
     await slackSend(fakeCore);
-    assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'Need to provide at least one botToken or webhook', 'Error set specifying what env vars need to be set.');
+    assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'You must provide a valid, non-empty `SLACK_BOT_TOKEN` or `SLACK_WEBHOOK_URL`', 'Error set specifying what env vars need to be set.');
+  });
+
+  it('should set an error if webhook URL and token are empty strings', async () => {
+    process.env.SLACK_BOT_TOKEN = '';
+    process.env.SLACK_WEBHOOK_URL = '';
+    await slackSend(fakeCore);
+    assert.include(fakeCore.setFailed.lastCall.firstArg.message, 'You must provide a valid, non-empty `SLACK_BOT_TOKEN` or `SLACK_WEBHOOK_URL`', 'Error set specifying what env vars need to be set.');
   });
 
   describe('using a bot token', () => {
