@@ -5,7 +5,7 @@
       "type": "section",
       "text": {
         "type": "plain_text",
-        "text": "A post by Slack Send GitHub Action. Testing Incoming webhooks",
+        "text": "Content of the event name: {{ github.event_name }}",
         "emoji": true
       }
     }
