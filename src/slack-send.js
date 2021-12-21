@@ -28,7 +28,7 @@ module.exports = async function slackSend(core) {
 
     let payload = core.getInput('payload');
 
-    const payloadFilePath = core.getInput('payloadFilePath');
+    const payloadFilePath = core.getInput('payload-file-path');
 
     if (payloadFilePath && !payload) {
       try {
@@ -36,7 +36,7 @@ module.exports = async function slackSend(core) {
       } catch (error) {
         // passed in payload file path was invalid
         console.error(error);
-        throw new Error('Need to provide valid payload file path');
+        throw new Error(`The payload-file-path may be incorrect. Failed to load the file: ${payloadFilePath}`);
       }
     }
 
@@ -56,12 +56,17 @@ module.exports = async function slackSend(core) {
       const channelId = core.getInput('channel-id') || '';
       const web = new WebClient(botToken);
 
-      if (channelId.length > 0 && (message.length > 0 || payload)) {
+      if (channelId.length <= 0) {
+        console.log('Channel ID is required to run this action. An empty one has been provided');
+        throw new Error('Channel ID is required to run this action. An empty one has been provided');
+      }
+
+      if (message.length > 0 || payload) {
         // post message
         await web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
       } else {
-        console.log('missing either channel-id, slack-message or payload! Did not send a message via chat.postMessage with botToken');
-        throw new Error('Missing input! Message not sent');
+        console.log('Missing slack-message or payload! Did not send a message via chat.postMessage with botToken', { channel: channelId, text: message, ...(payload) });
+        throw new Error('Missing message content, please input a valid payload or message to send. No Message has been send.');
       }
     }
 

@@ -95,7 +95,7 @@ jobs:
       id: slackPayloadFile
       uses: ./
       with:
-        payloadFilePath: ./.github/resources/payload-notification.json
+        payload-file-path: ./.github/resources/payload-notification.json
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
