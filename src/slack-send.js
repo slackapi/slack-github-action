@@ -20,13 +20,13 @@ module.exports = async function slackSend(core) {
       webhookType = process.env.SLACK_WEBHOOK_TYPE.toUpperCase();
     }
 
-    if ((botToken === undefined || botToken.length === 0) && (webhookUrl === undefined || webhookUrl.length === 0)) {
+    if ((typeof botToken === 'undefined' || botToken.length === 0) && (typeof webhookUrl === 'undefined' || webhookUrl.length === 0)) {
       throw new Error('You must provide a valid, non-empty `SLACK_BOT_TOKEN` or `SLACK_WEBHOOK_URL`');
     }
 
     let payload = core.getInput('payload');
 
-    if (payload) {
+    if (typeof payload !== 'undefined') {
       try {
         // confirm it is valid json
         payload = JSON.parse(payload);
@@ -38,8 +38,8 @@ module.exports = async function slackSend(core) {
     }
 
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
-      const message = core.getInput('slack-message');
-      const channelId = core.getInput('channel-id');
+      const message = core.getInput('slack-message') || '';
+      const channelId = core.getInput('channel-id') || '';
       const web = new WebClient(botToken);
 
       if (channelId.length > 0 && (message.length > 0 || payload)) {
@@ -76,7 +76,6 @@ module.exports = async function slackSend(core) {
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
         console.log(payload);
-        // console.log(err);
 
         if (err.response) {
           core.setFailed(err.response.data);
