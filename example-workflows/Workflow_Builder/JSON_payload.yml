@@ -7,6 +7,8 @@ jobs:
     steps:
     - name: Send GitHub trigger payload to Slack Workflow Builder
       id: slack
-      uses: slackapi/slack-github-action@v1.15.0
+      uses: slackapi/slack-github-action@v1.16.0
+      with:
+        payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

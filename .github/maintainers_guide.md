@@ -13,20 +13,19 @@ All you need to work with this project is a supported version of [Node.js](https
 
 ### Testing
 
-TODO
-
-### Generating Documentation
-
-TODO
+When testing locally, ensure at least linting and unit tests pass by running `npm test`.
+Additionally, sending a PR is highly recommended with every change as there are several GitHub
+Actions jobs that execute what are effectively integration tests for this GitHub Action.
 
 ### Releasing
 
-* Bundle the dependencies by running `npm run build`
 * Update the version in `package.json`
+* Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release
 * Commit the changes
 * Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`
 * Push changes up to GitHub `git push origin main --tags`
-
+* Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
+  GitHub workflow
 
 ## Workflow
 
@@ -42,7 +41,7 @@ As a maintainer, the development you do will be almost entirely off of your fork
 
 ### Branches
 
-`main` is where active development occurs. 
+`main` is where active development occurs.
 
 When developing, branches should be created off of your fork and not directly off of this repository. If working on a long-running feature and in collaboration with others, a corresponding branch of the same name is permitted. This makes collaboration on a single branch possible, as contributors working on the same feature cannot push commits to others' open Pull Requests.
 
