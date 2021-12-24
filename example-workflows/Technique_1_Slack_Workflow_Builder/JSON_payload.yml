@@ -9,6 +9,10 @@ jobs:
       id: slack
       uses: slackapi/slack-github-action@v1.17.0
       with:
-        payload-file-path: "./example-workflows/payloads/example.json"
+        payload: |
+          {
+            "key": "value",
+            "foo": "bar"
+          }
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
