@@ -28,7 +28,7 @@ you will need to define expected variables in the payload the webhook will recei
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
-```
+```yaml
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
@@ -38,7 +38,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 
 or
 
-```
+```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
@@ -82,7 +82,7 @@ By creating a new Slack app or using an existing one, this approach allows your 
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
-```
+```yaml
 - name: Post to a Slack channel
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
@@ -98,7 +98,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 
 Using JSON payload for constructing a message is also available:
 
-```
+```yaml
 - name: Post to a Slack channel
   id: slack
   uses: slackapi/slack-github-action@v1.16.0
@@ -140,7 +140,7 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 
 ### Usage
 
-```
+```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
