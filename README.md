@@ -31,7 +31,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.16.0
+  uses: slackapi/slack-github-action@v1.17.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -41,7 +41,7 @@ or
 ```
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.16.0
+  uses: slackapi/slack-github-action@v1.17.0
   with:
     payload: "{\"key\":\"value\",\"foo\":\"bar\"}" # This data can be any valid JSON from a previous step in the GitHub Action
   env:
@@ -54,7 +54,7 @@ or
 ```
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.16.0
+  uses: slackapi/slack-github-action@v1.17.0
   with:
     payload-file-path: "./payload-slack-content.json"
   env:
@@ -80,7 +80,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.16.0
+  uses: slackapi/slack-github-action@v1.17.0
   with:
     channel-id: 'CHANNEL_ID'  # Slack channel id or user id to post message. https://api.slack.com/methods/chat.postMessage#channels
     slack-message: 'posting from a github action!'
@@ -107,7 +107,7 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 ```
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.16.0
+  uses: slackapi/slack-github-action@v1.17.0
   with:
     payload: "{\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"You have a new request: \"}},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Type:* Computer (laptop)\"},{\"type\":\"mrkdwn\",\"text\":\"*When:* Submitted Aut 10\"}]}]}"
   env:
