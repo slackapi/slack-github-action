@@ -47,6 +47,19 @@ or
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
+or
+
+> If the `payload` is provided it will take preference over `payload-file-path`
+
+```
+- name: Send custom JSON data to Slack workflow
+  id: slack
+  uses: slackapi/slack-github-action@v1.16.0
+  with:
+    payload-file-path: "./payload-slack-content.json"
+  env:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
 
 ## Technique 2: Slack App
 

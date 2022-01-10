@@ -80,8 +80,26 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      
 
     # Use the output from the `slackIncoming` step
     - name: Check Action output is not empty
       run: test -n "${{ steps.slackIncoming.outputs.time }}"
+
+  integration_test_file_payload:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: npm ci && npm run build
+    - run: echo "${{ github.event_name }}"
+    - name: Post message to Slack with Payload path
+      id: slackPayloadFile
+      uses: ./
+      with:
+        payload-file-path: ./.github/resources/payload-notification.json
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+    # Use the output from the `slackIncoming` step
+    - name: Check Action output is not empty
+      run: test -n "${{ steps.slackPayloadFile.outputs.time }}"
