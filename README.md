@@ -28,7 +28,7 @@ you will need to define expected variables in the payload the webhook will recei
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
-```
+```yaml
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
@@ -38,12 +38,17 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 
 or
 
-```
+```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
   with:
-    payload: "{\"key\":\"value\",\"foo\":\"bar\"}" # This data can be any valid JSON from a previous step in the GitHub Action
+    # This data can be any valid JSON from a previous step in the GitHub Action
+    payload: |
+      {
+        "key": "value",
+        "foo": "bar"
+      }
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -77,13 +82,44 @@ By creating a new Slack app or using an existing one, this approach allows your 
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
-```
+```yaml
 - name: Post to a Slack channel
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
   with:
-    channel-id: 'CHANNEL_ID'  # Slack channel id or user id to post message. https://api.slack.com/methods/chat.postMessage#channels
-    slack-message: 'posting from a github action!'
+    # Slack channel id, channel name, or user id to post message.
+    # See also: https://api.slack.com/methods/chat.postMessage#channels
+    channel-id: 'CHANNEL_ID'
+    # For posting a simple plain text message
+    slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+```
+
+Using JSON payload for constructing a message is also available:
+
+```yaml
+- name: Post to a Slack channel
+  id: slack
+  uses: slackapi/slack-github-action@v1.16.0
+  with:
+    # Slack channel id, channel name, or user id to post message.
+    # See also: https://api.slack.com/methods/chat.postMessage#channels
+    channel-id: 'CHANNEL_ID'
+    # For posting a rich message using Block Kit
+    payload: |
+      {
+        "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            }
+          }
+        ]
+      }
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
@@ -104,12 +140,25 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 
 ### Usage
 
-```
+```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
   with:
-    payload: "{\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"You have a new request: \"}},{\"type\":\"section\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Type:* Computer (laptop)\"},{\"type\":\"mrkdwn\",\"text\":\"*When:* Submitted Aut 10\"}]}]}"
+    # For posting a rich message using Block Kit
+    payload: |
+      {
+        "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            }
+          }
+        ]
+      }
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
