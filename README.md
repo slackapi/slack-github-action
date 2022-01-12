@@ -56,7 +56,7 @@ or
 
 > If the `payload` is provided it will take preference over `payload-file-path`
 
-```
+```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.17.0
