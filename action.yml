@@ -10,6 +10,9 @@ inputs:
   payload: # JSON payload to send to Slack via webhook
     description: 'JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead'
     required: false
+  payload-file-path: # path to JSON payload to send to Slack via webhook
+    description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
+    required: false
 outputs:
   time: # id of output
     description: 'The time'
