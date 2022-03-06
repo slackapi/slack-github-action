@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 const core = require('@actions/core');
+const github = require('@actions/github');
 const rewiremock = require('rewiremock/node');
 
 const ChatStub = {
@@ -30,6 +31,7 @@ const ORIG_WEBHOOK_VAR = process.env.SLACK_WEBHOOK_URL;
 
 describe('slack-send', () => {
   const fakeCore = sinon.stub(core);
+  const fakeGithub = sinon.stub(github);
   beforeEach(() => {
     sinon.reset();
   });
@@ -66,6 +68,7 @@ describe('slack-send', () => {
         // Prepare
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         fakeCore.getInput.withArgs('payload-file-path').returns('./test/resources/valid-payload.json');
+        fakeGithub.context.actor = 'user123';
 
         // Run
         await slackSend(fakeCore);
@@ -78,6 +81,7 @@ describe('slack-send', () => {
         assert.equal(chatArgs.text, '', 'Correct message provided to postMessage');
         assert.equal(chatArgs.bonny, 'clyde', 'Correct message provided to postMessage');
         assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
+        assert.equal(chatArgs.actor, 'user123', 'Correct message provided to postMessage');
       });
     });
     describe('sad path', () => {
