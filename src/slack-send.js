@@ -4,6 +4,7 @@ const flatten = require('flat');
 const axios = require('axios');
 const { promises: fs } = require('fs');
 const path = require('path');
+const markup = require('markup-js');
 
 const SLACK_WEBHOOK_TYPES = {
   WORKFLOW_TRIGGER: 'WORKFLOW_TRIGGER',
@@ -33,6 +34,10 @@ module.exports = async function slackSend(core) {
     if (payloadFilePath && !payload) {
       try {
         payload = await fs.readFile(path.resolve(payloadFilePath), 'utf-8');
+        // parse github context variables
+        const context = { github: github.context };
+        const payloadString = payload.replace('$', '');
+        payload = markup.up(payloadString, context);
       } catch (error) {
         // passed in payload file path was invalid
         console.error(error);
