@@ -16,6 +16,8 @@ inputs:
 outputs:
   time: # id of output
     description: 'The time'
+  thread_ts: # timestamp on the message that was posted when using bot token
+    description: 'The timestamp on the message that was posted into Slack when using bot token'
 runs:
   using: 'node12'
   main: 'dist/index.js'

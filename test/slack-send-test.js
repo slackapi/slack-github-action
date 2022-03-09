@@ -5,7 +5,7 @@ const github = require('@actions/github');
 const rewiremock = require('rewiremock/node');
 
 const ChatStub = {
-  postMessage: sinon.spy(),
+  postMessage: sinon.fake.resolves({ ok: true, thread_ts: '1503435956.000247' }),
 };
 /* eslint-disable-next-line global-require */
 rewiremock(() => require('@slack/web-api')).with({
@@ -57,6 +57,8 @@ describe('slack-send', () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         await slackSend(fakeCore);
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.firstCall.lastArg.length > 0, 'Time output a non-zero-length string');
         assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
         assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
         const chatArgs = ChatStub.postMessage.lastCall.firstArg;
@@ -74,6 +76,8 @@ describe('slack-send', () => {
         await slackSend(fakeCore);
 
         // Assert
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.firstCall.lastArg.length > 0, 'Time output a non-zero-length string');
         assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
         assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
         const chatArgs = ChatStub.postMessage.lastCall.firstArg;

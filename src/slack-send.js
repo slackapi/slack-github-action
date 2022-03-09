@@ -31,6 +31,8 @@ module.exports = async function slackSend(core) {
 
     const payloadFilePath = core.getInput('payload-file-path');
 
+    let webResponse;
+
     if (payloadFilePath && !payload) {
       try {
         payload = await fs.readFile(path.resolve(payloadFilePath), 'utf-8');
@@ -68,7 +70,7 @@ module.exports = async function slackSend(core) {
 
       if (message.length > 0 || payload) {
         // post message
-        await web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
+        webResponse = await web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
       } else {
         console.log('Missing slack-message or payload! Did not send a message via chat.postMessage with botToken', { channel: channelId, text: message, ...(payload) });
         throw new Error('Missing message content, please input a valid payload or message to send. No Message has been send.');
@@ -110,6 +112,12 @@ module.exports = async function slackSend(core) {
         core.setFailed(err.message);
         return;
       }
+    }
+
+    if (webResponse && webResponse.ok) {
+      // return the thread_ts if it exists, if not return the ts
+      const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
+      core.setOutput('thread_ts', thread_ts);
     }
 
     const time = (new Date()).toTimeString();
