@@ -38,7 +38,7 @@
     "markup-js": "^1.5.21"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.33.3",
+    "@vercel/ncc": "^0.33.4",
     "chai": "^4.3.6",
     "eslint": "^8.10.0",
     "eslint-config-airbnb-base": "^15.0.0",
