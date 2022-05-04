@@ -32,6 +32,19 @@ jobs:
     - name: Check Action output is not empty
       run: test -n "${{ steps.slackToken.outputs.time }}"
 
+    - name: Post Threaded Response
+      id: slackThreadResponse
+      uses: ./
+      with:
+        channel-id: ${{ secrets.SLACK_CHANNEL_ID }} 
+        payload: |
+            {
+              "text": "This message should be posted as a response in thread",
+              "thread_ts": "${{ steps.slackToken.outputs.thread_ts }}"
+            }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
   integration_test_webhook:
     runs-on: ubuntu-latest
     steps:
