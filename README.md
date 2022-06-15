@@ -22,7 +22,7 @@ you will need to define expected variables in the payload the webhook will recei
 * [Create a Slack workflow webhook][create-webhook].
 * Copy the webhook URL (`https://hooks.slack.com/workflows/....`) and [add it as a secret in your repo settings][repo-secret] named `SLACK_WEBHOOK_URL`.
 * Add a step to your GitHub action to send data to your Webhook.
-* Configure your Slack workflow to use variables from the incoming payload from the GitHub Action. You can select where you want to post the data and how you want to format it in Slack's worflow builder interface.
+* Configure your Slack workflow to use variables from the incoming payload from the GitHub Action. You can select where you want to post the data and how you want to format it in Slack's workflow builder interface.
 
 ### Usage
 
