@@ -124,6 +124,57 @@ Using JSON payload for constructing a message is also available:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
+### Update the message
+
+Using `update-ts: ${{ steps.slack.outputs.ts }}` will update the message that was posted. 
+
+```yaml
+- id: slack
+  uses: slackapi/slack-github-action@v1.18.0
+  with:
+    channel-id: "#channel"
+    payload: |
+      {
+        "attachments": [
+          {
+            "pretext": "Deployment started",
+            "color": "dbab09",
+            "fields": [
+              {
+                "title": "Status",
+                "short": true,
+                "value": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+- uses: slackapi/slack-github-action@v1.18.0
+  with:
+    channel-id: "#channel"
+    update-ts: ${{ steps.slack.outputs.ts }}
+    payload: |
+      {
+        "attachments": [
+          {
+            "pretext": "Deployment finished",
+            "color": "28a745",
+            "fields": [
+              {
+                "title": "Status",
+                "short": true,
+                "value": "Completed"
+              }
+            ]
+          }
+        ]
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+```
+
 ## Technique 3: Slack Incoming Webhook
 
 This approach allows your GitHub Actions job to post a message to a Slack channel or direct message by utilizing [Incoming Webhooks](https://api.slack.com/messaging/webhooks).
