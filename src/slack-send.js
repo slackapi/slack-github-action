@@ -69,7 +69,7 @@ module.exports = async function slackSend(core) {
       }
 
       if (message.length > 0 || payload) {
-        const ts = core.getInput('update-ts')
+        const ts = core.getInput('update-ts');
         if (ts) {
           // update message
           webResponse = await web.chat.update({ ts, channel: channelId, text: message, ...(payload || {}) });
