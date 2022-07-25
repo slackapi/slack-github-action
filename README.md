@@ -124,17 +124,18 @@ Using JSON payload for constructing a message is also available:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
-### Update the message
+#### Update the message
 
-Using `update-ts: ${{ steps.slack.outputs.ts }}` will update the message that was posted. 
+If you would like to notify the real-time updates on a build status, you can modify the message your build job posted in the subsequent steps. In order to do this, the steps after the first message posting can have `update-ts: ${{ steps.slack.outputs.ts }}` in their settings. With this, the step updates the already posted channel message instead of posting a new one.
 
 ```yaml
 - id: slack
-  uses: slackapi/slack-github-action@v1.18.0
+  uses: slackapi/slack-github-action@v1.20.0
   with:
-    channel-id: "#channel"
+    channel-id: "CHANNEL_ID"
     payload: |
       {
+        "text": "Deployment started (In Progress)",
         "attachments": [
           {
             "pretext": "Deployment started",
@@ -151,12 +152,13 @@ Using `update-ts: ${{ steps.slack.outputs.ts }}` will update the message that wa
       }
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-- uses: slackapi/slack-github-action@v1.18.0
+- uses: slackapi/slack-github-action@v1.20.0
   with:
-    channel-id: "#channel"
+    channel-id: "CHANNEL_ID"
     update-ts: ${{ steps.slack.outputs.ts }}
     payload: |
       {
+        "text": "Deployment finished (Completed)",
         "attachments": [
           {
             "pretext": "Deployment finished",
