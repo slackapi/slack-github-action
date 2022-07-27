@@ -31,7 +31,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.19.0
+  uses: slackapi/slack-github-action@v1.20.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -41,7 +41,7 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.19.0
+  uses: slackapi/slack-github-action@v1.20.0
   with:
     # This data can be any valid JSON from a previous step in the GitHub Action
     payload: |
@@ -59,7 +59,7 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.19.0
+  uses: slackapi/slack-github-action@v1.20.0
   with:
     payload-file-path: "./payload-slack-content.json"
   env:
@@ -85,7 +85,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.19.0
+  uses: slackapi/slack-github-action@v1.20.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -101,7 +101,7 @@ Using JSON payload for constructing a message is also available:
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.19.0
+  uses: slackapi/slack-github-action@v1.20.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
