@@ -5,7 +5,8 @@ const github = require('@actions/github');
 const rewiremock = require('rewiremock/node');
 
 const ChatStub = {
-  postMessage: sinon.fake.resolves({ ok: true, thread_ts: '1503435956.000247' }),
+  postMessage: sinon.fake.resolves({ ok: true, ts: '1503435957.111111', thread_ts: '1503435956.000247' }),
+  update: sinon.fake.resolves({ ok: true, thread_ts: '1503435956.000247' }),
 };
 /* eslint-disable-next-line global-require */
 rewiremock(() => require('@slack/web-api')).with({
@@ -57,11 +58,27 @@ describe('slack-send', () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         await slackSend(fakeCore);
-        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
-        assert(fakeCore.setOutput.firstCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
         assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
         assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
         const chatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
+        assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
+      });
+
+      it('should send a message using the update API', async () => {
+        fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('update-ts').returns('123456');
+        await slackSend(fakeCore);
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
+        assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        const chatArgs = ChatStub.update.lastCall.firstArg;
         assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
         assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
       });
@@ -76,8 +93,9 @@ describe('slack-send', () => {
         await slackSend(fakeCore);
 
         // Assert
-        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
-        assert(fakeCore.setOutput.firstCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
         assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
         assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
         const chatArgs = ChatStub.postMessage.lastCall.firstArg;
