@@ -13,10 +13,15 @@ inputs:
   payload-file-path: # path to JSON payload to send to Slack via webhook
     description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
     required: false
+  update-ts: # The timestamp of a previous message posted to update it instead of posting a new message
+    description: 'The timestamp of a previous message posted. It will update the existing message instead of posting a new message'
+    required: false
 outputs:
   time: # id of output
     description: 'The time'
-  thread_ts: # timestamp on the message that was posted when using bot token
+  thread_ts: # threaded timestamp on the message that was posted when using bot token
+    description: 'The timestamp on the message that was posted into Slack when using bot token'
+  ts: # timestamp of message posted
     description: 'The timestamp on the message that was posted into Slack when using bot token'
 runs:
   using: 'node12'
