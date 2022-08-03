@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - id: slack
-      uses: ../action.yml
+      uses: ./
       with:
         channel-id: C0GHE0CV6
         payload: |
@@ -30,7 +30,7 @@ jobs:
           }
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-    - uses: ../action.yml
+    - uses: ./
       with:
         channel-id: C0GHE0CV6
         update-ts: ${{ steps.slack.outputs.ts }}
