@@ -23,7 +23,7 @@ module.exports = async function slackSend(core) {
       webhookType = process.env.SLACK_WEBHOOK_TYPE.toUpperCase();
     }
 
-    if (botToken === undefined && webhookUrl === undefined) {
+    if ((botToken === undefined || botToken.length <= 0) && (webhookUrl === undefined || webhookUrl.length <= 0)) {
       throw new Error('Need to provide at least one botToken or webhookUrl');
     }
 
