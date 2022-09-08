@@ -60,25 +60,27 @@ module.exports = async function slackSend(core) {
 
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
       const message = core.getInput('slack-message') || '';
-      const channelId = core.getInput('channel-id') || '';
+      const channelIds = core.getInput('channel-id') || '';
       const web = new WebClient(botToken);
 
-      if (channelId.length <= 0) {
+      if (channelIds.length <= 0) {
         console.log('Channel ID is required to run this action. An empty one has been provided');
         throw new Error('Channel ID is required to run this action. An empty one has been provided');
       }
 
       if (message.length > 0 || payload) {
         const ts = core.getInput('update-ts');
-        if (ts) {
+        await Promise.all(channelIds.split(',').map(async (channelId) => {
+          if (ts) {
           // update message
-          webResponse = await web.chat.update({ ts, channel: channelId, text: message, ...(payload || {}) });
-        } else {
+            webResponse = await web.chat.update({ ts, channel: channelId.trim(), text: message, ...(payload || {}) });
+          } else {
           // post message
-          webResponse = await web.chat.postMessage({ channel: channelId, text: message, ...(payload || {}) });
-        }
+            webResponse = await web.chat.postMessage({ channel: channelId.trim(), text: message, ...(payload || {}) });
+          }
+        }));
       } else {
-        console.log('Missing slack-message or payload! Did not send a message via chat.postMessage with botToken', { channel: channelId, text: message, ...(payload) });
+        console.log('Missing slack-message or payload! Did not send a message via chat.postMessage with botToken', { channel: channelIds, text: message, ...(payload) });
         throw new Error('Missing message content, please input a valid payload or message to send. No Message has been send.');
       }
     }
