@@ -19,6 +19,10 @@ Actions jobs that execute what are effectively integration tests for this GitHub
 
 ### Releasing
 
+* Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
+  -  If all issues have been closed, continue with the release.
+  -  If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
+  -  Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
 * Update the version in `package.json`
 * Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release
 * Commit the changes
@@ -26,6 +30,7 @@ Actions jobs that execute what are effectively integration tests for this GitHub
 * Push changes up to GitHub `git push origin main --tags`
 * Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
   GitHub workflow
+* Once released, make sure to close the relevant GitHub Milestone for the version you released.
 
 ## Workflow
 
