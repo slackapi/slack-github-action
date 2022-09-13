@@ -56,16 +56,19 @@ describe('slack-send', () => {
     describe('happy path', () => {
       it('should send a message using the postMessage API', async () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
-        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456,C987654');
         await slackSend(fakeCore);
         assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
         assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
         assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
         assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
         assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
-        const chatArgs = ChatStub.postMessage.lastCall.firstArg;
-        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
-        assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
+        const firstChatArgs = ChatStub.postMessage.firstCall.firstArg;
+        const secondChatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.oneOf('C123456', [firstChatArgs.channel, secondChatArgs.channel], 'First comma-separated channel provided to postMessage');
+        assert.oneOf('C987654', [firstChatArgs.channel, secondChatArgs.channel], 'Second comma-separated channel provided to postMessage');
+        assert.equal(firstChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with first comma-separated channel');
+        assert.equal(secondChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with second comma-separated channel');
       });
 
       it('should send a message using the update API', async () => {
