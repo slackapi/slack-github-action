@@ -89,7 +89,8 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
-    channel-id: 'CHANNEL_ID'
+    # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+    channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
     # For posting a simple plain text message
     slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
   env:
@@ -120,22 +121,6 @@ Using JSON payload for constructing a message is also available:
           }
         ]
       }
-  env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-```
-
-Multiple channels can be sent the same message by providing a comma-separated list of ID's:
-
-```yaml
-- name: Post to a Slack channel
-  id: slack
-  uses: slackapi/slack-github-action@v1.21.0
-  with:
-    # Slack channel id, channel name, or user id to post message.
-    # See also: https://api.slack.com/methods/chat.postMessage#channels
-    channel-id: "CHANNEL_ID_123,CHANNEL_ID_987"
-    # For posting a simple plain text message
-    slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
