@@ -124,6 +124,22 @@ Using JSON payload for constructing a message is also available:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
+Multiple channels can be sent the same message by providing a comma-separated list of ID's:
+
+```yaml
+- name: Post to a Slack channel
+  id: slack
+  uses: slackapi/slack-github-action@v1.21.0
+  with:
+    # Slack channel id, channel name, or user id to post message.
+    # See also: https://api.slack.com/methods/chat.postMessage#channels
+    channel-id: "CHANNEL_ID_123,CHANNEL_ID_987"
+    # For posting a simple plain text message
+    slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+```
+
 #### Update the message
 
 If you would like to notify the real-time updates on a build status, you can modify the message your build job posted in the subsequent steps. In order to do this, the steps after the first message posting can have `update-ts: ${{ steps.slack.outputs.ts }}` in their settings. With this, the step updates the already posted channel message instead of posting a new one.
