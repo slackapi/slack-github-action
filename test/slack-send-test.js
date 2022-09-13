@@ -105,6 +105,18 @@ describe('slack-send', () => {
         assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
         assert.equal(chatArgs.actor, 'user123', 'Correct message provided to postMessage');
       });
+
+      it('should send the same message to multiple channels', async () => {
+        fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456,C987654');
+        await slackSend(fakeCore);
+        const firstChatArgs = ChatStub.postMessage.firstCall.firstArg;
+        const secondChatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.oneOf('C123456', [firstChatArgs.channel, secondChatArgs.channel], 'First comma-separated channel provided to postMessage');
+        assert.oneOf('C987654', [firstChatArgs.channel, secondChatArgs.channel], 'Second comma-separated channel provided to postMessage');
+        assert.equal(firstChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with first comma-separated channel');
+        assert.equal(secondChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with second comma-separated channel');
+      });
     });
     describe('sad path', () => {
       it('should set an error if payload cannot be JSON parsed', async () => {
