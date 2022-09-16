@@ -24,5 +24,5 @@ outputs:
   ts: # timestamp of message posted
     description: 'The timestamp on the message that was posted into Slack when using bot token'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
