@@ -108,11 +108,11 @@ module.exports = async function slackSend(core) {
         payload = flatPayload;
       }
 
-      let axiosOpts = {};
+      const axiosOpts = {};
       try {
         if (parseURL(webhookUrl).scheme === 'https') {
           const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || '';
-          if(httpsProxy && parseURL(httpsProxy).scheme === 'http') {
+          if (httpsProxy && parseURL(httpsProxy).scheme === 'http') {
             const httpsProxyAgent = new HttpsProxyAgent(httpsProxy);
             axiosOpts.httpsAgent = httpsProxyAgent;
 
@@ -121,7 +121,7 @@ module.exports = async function slackSend(core) {
           }
         }
       } catch (err) {
-        console.log('failed to configure https proxy agent for http proxy, using default axios configuration');
+        console.log('failed to configure https proxy agent for http proxy. Using default axios configuration');
       }
 
       try {
