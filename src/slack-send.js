@@ -5,6 +5,8 @@ const axios = require('axios');
 const { promises: fs } = require('fs');
 const path = require('path');
 const markup = require('markup-js');
+const HttpsProxyAgent = require('https-proxy-agent');
+const { parseURL } = require('whatwg-url');
 
 const SLACK_WEBHOOK_TYPES = {
   WORKFLOW_TRIGGER: 'WORKFLOW_TRIGGER',
@@ -106,8 +108,24 @@ module.exports = async function slackSend(core) {
         payload = flatPayload;
       }
 
+      const axiosOpts = {};
       try {
-        await axios.post(webhookUrl, payload);
+        if (parseURL(webhookUrl).scheme === 'https') {
+          const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || '';
+          if (httpsProxy && parseURL(httpsProxy).scheme === 'http') {
+            const httpsProxyAgent = new HttpsProxyAgent(httpsProxy);
+            axiosOpts.httpsAgent = httpsProxyAgent;
+
+            // Use configured tunnel above instead of default axios proxy setup from env vars
+            axiosOpts.proxy = false;
+          }
+        }
+      } catch (err) {
+        console.log('failed to configure https proxy agent for http proxy. Using default axios configuration');
+      }
+
+      try {
+        await axios.post(webhookUrl, payload, axiosOpts);
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
         console.log(payload);

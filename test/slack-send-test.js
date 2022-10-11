@@ -187,6 +187,33 @@ describe('slack-send', () => {
         await slackSend(fakeCore);
         assert(AxiosMock.post.calledWith('https://someurl', payload));
       });
+      describe('proxy config', () => {
+        beforeEach(() => {
+          delete process.env.HTTPS_PROXY;
+        });
+        it('should use https proxy agent when proxy uses HTTP', async () => {
+          process.env.HTTPS_PROXY = 'http://test.proxy:8080/';
+          await slackSend(fakeCore);
+          assert(AxiosMock.post.calledWith('https://someurl', payload, sinon.match.has('httpsAgent').and(sinon.match.has('proxy'))));
+        });
+        it('should use default axios config when no proxy set', async () => {
+          await slackSend(fakeCore);
+          assert(AxiosMock.post.calledWithExactly('https://someurl', payload, {}));
+        });
+        it('should use default axios config when proxy uses HTTPS', async () => {
+          process.env.HTTPS_PROXY = 'https://test.proxy:8080/';
+          await slackSend(fakeCore);
+          assert(AxiosMock.post.calledWithExactly('https://someurl', payload, {}));
+        });
+        it('should use default axios config when proxy URL is invalid', async () => {
+          process.env.HTTPS_PROXY = 'invalid string';
+          const consoleSpy = sinon.spy(console, 'log');
+          await slackSend(fakeCore);
+
+          assert(consoleSpy.calledWith('failed to configure https proxy agent for http proxy. Using default axios configuration'));
+          assert(AxiosMock.post.calledWithExactly('https://someurl', payload, {}));
+        });
+      });
     });
     describe('sad path', () => {
       it('should set an error if the POST to the webhook fails without a response', async () => {
