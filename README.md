@@ -31,7 +31,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -41,7 +41,7 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     # This data can be any valid JSON from a previous step in the GitHub Action
     payload: |
@@ -59,7 +59,7 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     payload-file-path: "./payload-slack-content.json"
   env:
@@ -85,7 +85,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -102,7 +102,7 @@ Using JSON payload for constructing a message is also available:
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -133,7 +133,7 @@ Please note that **the message update step does not accept a channel name.** Set
 
 ```yaml
 - id: slack
-  uses: slackapi/slack-github-action@v1.22.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     # The following message update step does not accept a channel name.
     # Setting a channel ID here for consistency is highly recommended.
@@ -157,7 +157,7 @@ Please note that **the message update step does not accept a channel name.** Set
       }
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-- uses: slackapi/slack-github-action@v1.22.0
+- uses: slackapi/slack-github-action@v1.23.0
   with:
     # Unlike the step posting a new message, this step does not accept a channel name.
     # Please use a channel ID, not a name here.
@@ -203,7 +203,7 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.18.0
+  uses: slackapi/slack-github-action@v1.23.0
   with:
     # For posting a rich message using Block Kit
     payload: |
