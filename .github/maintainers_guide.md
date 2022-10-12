@@ -25,7 +25,8 @@ Actions jobs that execute what are effectively integration tests for this GitHub
   -  Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
 * Update the version in `package.json`
 * Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release
-* Commit the changes
+* Run all tests using `npm test` to make sure everything looks good and the tests pass!
+* Commit the changes on your `main` branch
 * Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`
 * Push changes up to GitHub `git push origin main --tags`
 * Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
