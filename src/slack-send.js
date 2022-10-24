@@ -141,14 +141,14 @@ module.exports = async function slackSend(core) {
     }
 
     if (webResponse && webResponse.ok) {
-      core.setOutput('ts', webResponse.ts);
+      core.exportVariable('ts', webResponse.ts);
       // return the thread_ts if it exists, if not return the ts
       const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
-      core.setOutput('thread_ts', thread_ts);
+      core.exportVariable('thread_ts', thread_ts);
     }
 
     const time = (new Date()).toTimeString();
-    core.setOutput('time', time);
+    core.exportVariable('time', time);
   } catch (error) {
     core.setFailed(error);
   }
