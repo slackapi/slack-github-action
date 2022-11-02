@@ -23,6 +23,8 @@ outputs:
     description: 'The timestamp on the message that was posted into Slack when using bot token'
   ts: # timestamp of message posted
     description: 'The timestamp on the message that was posted into Slack when using bot token'
+  channel_id: # Id of the channel. If channel name was used as input we can get ID from output for later use when updating message or posting to thread.
+    description: 'The channel id of the message that was posted into Slack when using bot token'
 runs:
   using: 'node16'
   main: 'dist/index.js'

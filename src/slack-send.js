@@ -145,6 +145,8 @@ module.exports = async function slackSend(core) {
       // return the thread_ts if it exists, if not return the ts
       const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
       core.setOutput('thread_ts', thread_ts);
+      // return id of the channel from the response
+      core.setOutput('channel_id', webResponse.channel);
     }
 
     const time = (new Date()).toTimeString();
