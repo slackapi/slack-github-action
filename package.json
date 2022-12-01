@@ -49,7 +49,7 @@
     "eslint-plugin-node": "^11.1.0",
     "mocha": "^10.1.0",
     "nyc": "^15.1.0",
-    "rewiremock": "^3.14.3",
+    "rewiremock": "^3.14.4",
     "sinon": "^14.0.1"
   }
 }
