@@ -141,16 +141,16 @@ module.exports = async function slackSend(core) {
     }
 
     if (webResponse && webResponse.ok) {
-      fs.writeFileSync(process.env.GITHUB_OUTPUT, `ts=${webResponse.ts}`);
+      core.setOutput('ts', webResponse.ts);
       // return the thread_ts if it exists, if not return the ts
       const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
-      fs.writeFileSync(process.env.GITHUB_OUTPUT, `thread_ts=${thread_ts}`);
+      core.setOutput('thread_ts', thread_ts);
       // return id of the channel from the response
-      fs.writeFileSync(process.env.GITHUB_OUTPUT, `channel_id=${webResponse.channel}`);
+      core.setOutput('channel_id', webResponse.channel);
     }
 
     const time = (new Date()).toTimeString();
-    fs.writeFileSync(process.env.GITHUB_OUTPUT, `time=${time}`);
+    core.setOutput('time', time);
   } catch (error) {
     core.setFailed(error);
   }
