@@ -1,13 +1,31 @@
 {
-  "text": "Incoming Webhook test for slack send",
-  "blocks": [
-    {
-      "type": "section",
-      "text": {
-        "type": "plain_text",
-        "text": "Content of the event name: {{ github.event_name }}",
-        "emoji": true
-      }
-    }
-  ]
+  "text": "A GitHub Action Event ${{ github.eventName }} has ${{ env.JOB_STATUS }}",
+  "attachments": [{
+    "color": "${{ env.ATTACHMENT_COLOR }}",
+    "fields": [{
+      "title": "Repository",
+      "short": false,
+      "value": "<${{ github.payload.repository.html_url }}|${{ github.payload.repository.full_name }}>"
+    }, {
+      "title": "Ref",
+      "short": false,
+      "value": "${{ github.ref }}"
+    }, {
+      "title": "Commit",
+      "short": false,
+      "value": "<${{ github.payload.head_commit.url }}|${{ github.sha }}>"
+    }, {
+      "title": "Author",
+      "short": false,
+      "value": "${{ github.payload.head_commit.author.name }}"
+    }, {
+      "title": "Message",
+      "short": false,
+      "value": "${{ github.payload.head_commit.message }}"
+    }, {
+      "title": "Workflow",
+      "short": false,
+      "value": "<${{ github.payload.repository.html_url }}/actions/runs/${{ github.runId }}|${{ github.workflow }}>"
+    }]
+  }]
 }

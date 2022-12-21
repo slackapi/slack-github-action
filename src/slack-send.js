@@ -39,8 +39,8 @@ module.exports = async function slackSend(core) {
       try {
         payload = await fs.readFile(path.resolve(payloadFilePath), 'utf-8');
         // parse github context variables
-        const context = { github: github.context };
-        const payloadString = payload.replace('$', '');
+        const context = { github: github.context, env: process.env };
+        const payloadString = payload.replaceAll('${{', '{{');
         payload = markup.up(payloadString, context);
       } catch (error) {
         // passed in payload file path was invalid
