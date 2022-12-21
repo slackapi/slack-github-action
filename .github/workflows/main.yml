@@ -103,7 +103,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: npm ci && npm run build
-    - run: echo "${{ github.event_name }}"
     - name: Post message to Slack with Payload path
       id: slackPayloadFile
       uses: ./
@@ -112,6 +111,8 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        JOB_STATUS: ${{ job.status }}
+        ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}
 
     # Use the output from the `slackIncoming` step
     - name: Check Action output is not empty

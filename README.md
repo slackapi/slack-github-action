@@ -66,6 +66,9 @@ or
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
+> **Warning**
+> [github actions contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) is not available in payload-file-path. Instead, you can use the context from [@actions/github](https://github.com/actions/toolkit/tree/main/packages/github) or the env defined in the step.
+
 ## Technique 2: Slack App
 
 By creating a new Slack app or using an existing one, this approach allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing the [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API method. Using this approach you can instantly post a message without setting up Slack workflows.
