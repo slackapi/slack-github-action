@@ -34,6 +34,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
   uses: slackapi/slack-github-action@v1.23.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 ```
 
 or
