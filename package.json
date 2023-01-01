@@ -40,7 +40,7 @@
     "whatwg-url": "^11.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.34.0",
+    "@vercel/ncc": "^0.36.0",
     "chai": "^4.3.6",
     "eslint": "^8.30.0",
     "eslint-config-airbnb-base": "^15.0.0",
