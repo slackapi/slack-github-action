@@ -47,7 +47,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsdoc": "^39.6.4",
     "eslint-plugin-node": "^11.1.0",
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "rewiremock": "^3.14.4",
     "sinon": "^15.0.1"
