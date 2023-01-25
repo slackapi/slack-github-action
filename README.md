@@ -73,7 +73,7 @@ By creating a new Slack app or using an existing one, this approach allows your 
 ## Setup
 
 * [Create a Slack App][apps] for your workspace (alternatively use an existing app you have already created and installed).
-* Add the [`chat.write`](https://api.slack.com/scopes/chat:write) bot scope under **OAuth & Permissions**.
+* Add the [`chat:write`](https://api.slack.com/scopes/chat:write) bot scope under **OAuth & Permissions**.
 * Install the app to your workspace.
 * Copy the app's Bot Token from the **OAuth & Permissions** page and [add it as a secret in your repo settings][repo-secret] named `SLACK_BOT_TOKEN`.
 * Invite the bot user into the channel you wish to post messages to (`/invite @bot_user_name`).
