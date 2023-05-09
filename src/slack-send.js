@@ -33,7 +33,7 @@ module.exports = async function slackSend(core) {
 
     const payloadFilePath = core.getInput('payload-file-path');
 
-    let webResponse;
+    const webResponses = [];
 
     if (payloadFilePath && !payload) {
       try {
@@ -72,13 +72,25 @@ module.exports = async function slackSend(core) {
 
       if (message.length > 0 || payload) {
         const ts = core.getInput('update-ts');
-        await Promise.all(channelIds.split(',').map(async (channelId) => {
+        let tsParts;
+
+        if (ts) {
+          tsParts = ts.split(',');
+        }
+
+        await Promise.all(channelIds.split(',').map(async (channelId, index) => {
           if (ts) {
-          // update message
-            webResponse = await web.chat.update({ ts, channel: channelId.trim(), text: message, ...(payload || {}) });
+            let tsVal = ts;
+
+            if (tsParts.length > index) {
+              tsVal = tsParts[index];
+            }
+
+            // update message
+            webResponses[index] = await web.chat.update({ tsVal, channel: channelId.trim(), text: message, ...(payload || {}) });
           } else {
-          // post message
-            webResponse = await web.chat.postMessage({ channel: channelId.trim(), text: message, ...(payload || {}) });
+            // post message
+            webResponses[index] = await web.chat.postMessage({ channel: channelId.trim(), text: message, ...(payload || {}) });
           }
         }));
       } else {
@@ -140,13 +152,33 @@ module.exports = async function slackSend(core) {
       }
     }
 
-    if (webResponse && webResponse.ok) {
-      core.setOutput('ts', webResponse.ts);
+    let success = false;
+    const tss = [];
+    const thread_tss = [];
+    const channels = [];
+
+    if (webResponses.length > 0) {
+      success = true;
+
+      webResponses.map((webResponse, index) => {
+        if (webResponse.ok === false) {
+          success = false;
+          return webResponse;
+        }
+
+        tss[index] = webResponse.ts;
+        thread_tss[index] = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
+        channels[index] = webResponse.channel;
+        return webResponse;
+      });
+    }
+
+    if (success) {
+      core.setOutput('ts', tss.join(','));
       // return the thread_ts if it exists, if not return the ts
-      const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
-      core.setOutput('thread_ts', thread_ts);
+      core.setOutput('thread_ts', thread_tss.join(','));
       // return id of the channel from the response
-      core.setOutput('channel_id', webResponse.channel);
+      core.setOutput('channel_id', channels.join(','));
     }
 
     const time = (new Date()).toTimeString();

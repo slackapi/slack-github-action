@@ -4,8 +4,9 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const rewiremock = require('rewiremock/node');
 
+const postResult = { ok: true, ts: '1503435957.111111', thread_ts: '1503435956.000247', channel: 'abcd' };
 const ChatStub = {
-  postMessage: sinon.fake.resolves({ ok: true, ts: '1503435957.111111', thread_ts: '1503435956.000247' }),
+  postMessage: sinon.fake.resolves(postResult),
   update: sinon.fake.resolves({ ok: true, thread_ts: '1503435956.000247' }),
 };
 /* eslint-disable-next-line global-require */
@@ -116,6 +117,12 @@ describe('slack-send', () => {
         assert.oneOf('C987654', [firstChatArgs.channel, secondChatArgs.channel], 'Second comma-separated channel provided to postMessage');
         assert.equal(firstChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with first comma-separated channel');
         assert.equal(secondChatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage with second comma-separated channel');
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.firstCall.lastArg, `${postResult.ts},${postResult.ts}`, 'Output name set to ts values');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert.equal(fakeCore.setOutput.secondCall.lastArg, `${postResult.thread_ts},${postResult.thread_ts}`, 'Output name set to thread_ts values');
+        assert.equal(fakeCore.setOutput.thirdCall.firstArg, 'channel_id', 'Output name set to channel_id');
+        assert.equal(fakeCore.setOutput.thirdCall.lastArg, `${postResult.channel},${postResult.channel}`, 'Output name set to channel_id values');
       });
     });
     describe('sad path', () => {
