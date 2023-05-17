@@ -1,6 +1,16 @@
 # Slack Send GitHub Action
 
-Send data into Slack using this GitHub Action! This package has three different techniques to send data to Slack:
+Send data into Slack using this GitHub Action!
+
+## Sending Variables
+
+You can send GitHub-specific data related to GitHub Action workflow events using [GitHub Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) and [Variables](https://docs.github.com/en/actions/learn-github-actions/variables) that GitHub Actions provides.
+
+For examples on how to leverage this in your workflows, check out the [example workflows we have](https://github.com/slackapi/slack-github-action/tree/main/example-workflows).
+
+## How to Send Data to Slack
+
+This package has three different techniques to send data to Slack:
 
 1) Send data to Slack's Workflow Builder (requires a paid Slack instance).
 2) Send data via a Slack app to post to a specific channel (use an existing custom app or create a new one).
@@ -8,7 +18,7 @@ Send data into Slack using this GitHub Action! This package has three different 
 
 The recommended way to use this action is with Slack's Workflow Builder (if you're on a paid Slack plan).
 
-## Technique 1: Slack Workflow Builder
+### Technique 1: Slack Workflow Builder
 
 > ❗️ This approach requires a paid Slack plan
 
@@ -17,14 +27,14 @@ Sending data to [Slack's Workflow builder](https://slack.com/features/workflow-a
 As part of the [workflow setup](https://slack.com/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks#workflow-setup),
 you will need to define expected variables in the payload the webhook will receive (described in the "Create custom variables" section of the docs). If these variables are missing in the payload, an error is returned.
 
-### Setup
+#### Setup
 
 * [Create a Slack workflow webhook][create-webhook].
 * Copy the webhook URL (`https://hooks.slack.com/workflows/....`) and [add it as a secret in your repo settings][repo-secret] named `SLACK_WEBHOOK_URL`.
 * Add a step to your GitHub action to send data to your Webhook.
 * Configure your Slack workflow to use variables from the incoming payload from the GitHub Action. You can select where you want to post the data and how you want to format it in Slack's workflow builder interface.
 
-### Usage
+#### Usage
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
@@ -66,14 +76,11 @@ or
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
-> **Warning**
-> [github actions contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) is not available in payload-file-path. Instead, you can use the context from [@actions/github](https://github.com/actions/toolkit/tree/main/packages/github) or the env defined in the step.
-
-## Technique 2: Slack App
+### Technique 2: Slack App
 
 By creating a new Slack app or using an existing one, this approach allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing the [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API method. Using this approach you can instantly post a message without setting up Slack workflows.
 
-## Setup
+#### Setup
 
 * [Create a Slack App][apps] for your workspace (alternatively use an existing app you have already created and installed).
 * Add the [`chat:write`](https://api.slack.com/scopes/chat:write) bot scope under **OAuth & Permissions**.
@@ -81,7 +88,7 @@ By creating a new Slack app or using an existing one, this approach allows your 
 * Copy the app's Bot Token from the **OAuth & Permissions** page and [add it as a secret in your repo settings][repo-secret] named `SLACK_BOT_TOKEN`.
 * Invite the bot user into the channel you wish to post messages to (`/invite @bot_user_name`).
 
-### Usage
+#### Usage
 
 Add this Action as a [step][job-step] to your project's GitHub Action Workflow file:
 
@@ -187,13 +194,13 @@ Please note that **the message update step does not accept a channel name.** Set
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
 ```
 
-## Technique 3: Slack Incoming Webhook
+### Technique 3: Slack Incoming Webhook
 
 This approach allows your GitHub Actions job to post a message to a Slack channel or direct message by utilizing [Incoming Webhooks](https://api.slack.com/messaging/webhooks).
 
 Incoming Webhooks conform to the same rules and functionality as any of Slack's other messaging APIs. You can make your posted messages as simple as a single line of text, or make them really useful with [interactive components](https://api.slack.com/messaging/interactivity). To make the message more expressive and useful use [Block Kit](https://api.slack.com/block-kit) to build and test visual components.
 
-## Setup
+#### Setup
 
 * [Create a Slack App][apps] for your workspace (alternatively use an existing app you have already created and installed).
 * Add the [`incoming-webhook`](https://api.slack.com/scopes/incoming-webhook) bot scope under **OAuth & Permissions**.
@@ -201,7 +208,7 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 * Activate and create a new webhook under **Incoming Webhooks**.
 * Copy the Webhook URL from the Webhook you just generated [add it as a secret in your repo settings][repo-secret] named `SLACK_WEBHOOK_URL`.
 
-### Usage
+#### Usage
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
