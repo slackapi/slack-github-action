@@ -36,7 +36,7 @@ jobs:
       id: slackThreadResponse
       uses: ./
       with:
-        channel-id: ${{ secrets.SLACK_CHANNEL_ID }} 
+        channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
         payload: |
             {
               "text": "This message should be posted as a response in thread",
@@ -72,7 +72,7 @@ jobs:
         payload: "{\"author\":\"${{ github.event.sender.login }}\",\"url\":\"${{ env.URL}}\", \"repoName\":\"${{ github.event.repository.full_name }}\", \"status\":\"${{ job.status }}\"}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      
+
 
     # Use the output from the `slackWorkflow` step
     - name: Check Action output is not empty
@@ -103,7 +103,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: npm ci && npm run build
-    - run: echo "${{ github.event_name }}"
+    - name: Dump out GitHub Context
+      run: echo '${{ toJSON(github) }}'
     - name: Post message to Slack with Payload path
       id: slackPayloadFile
       uses: ./
@@ -112,6 +113,8 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        JOB_STATUS: ${{ job.status }}
+        ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}
 
     # Use the output from the `slackIncoming` step
     - name: Check Action output is not empty
