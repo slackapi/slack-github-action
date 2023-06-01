@@ -234,6 +234,23 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 ```
 
+### HTTPS Proxy
+
+If you need to use a proxy to connect with Slack, you can use the `HTTPS_PROXY` (or `https_proxy`) environment variable. In this example we use the Slack App technique, but configuring a proxy works the same way for all of them:
+
+```yaml
+- name: Post to a Slack channel via a proxy
+  id: slack
+  uses: slackapi/slack-github-action@v1.24.0
+  with:
+    channel-id: 'CHANNEL_ID'
+    slack-message: 'This message was sent through a proxy'
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    # Set the HTTPS_PROXY environment variable to whatever your policy requires
+    HTTPS_PROXY: 'http://proxy.example.org:8080'
+```
+
 ## Contributing
 
 See [CONTRIBUTING](.github/contributing.md).

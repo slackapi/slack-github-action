@@ -1,5 +1,4 @@
 const github = require('@actions/github');
-const { WebClient } = require('@slack/web-api');
 const flatten = require('flat');
 const axios = require('axios');
 const { promises: fs } = require('fs');
@@ -7,6 +6,8 @@ const path = require('path');
 const markup = require('markup-js');
 const HttpsProxyAgent = require('https-proxy-agent');
 const { parseURL } = require('whatwg-url');
+
+const { createWebClient } = require('./web-client');
 
 const SLACK_WEBHOOK_TYPES = {
   WORKFLOW_TRIGGER: 'WORKFLOW_TRIGGER',
@@ -63,7 +64,8 @@ module.exports = async function slackSend(core) {
     if (typeof botToken !== 'undefined' && botToken.length > 0) {
       const message = core.getInput('slack-message') || '';
       const channelIds = core.getInput('channel-id') || '';
-      const web = new WebClient(botToken);
+      const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy || '';
+      const web = createWebClient(botToken, httpsProxy);
 
       if (channelIds.length <= 0) {
         console.log('Channel ID is required to run this action. An empty one has been provided');

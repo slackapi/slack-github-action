@@ -189,6 +189,7 @@ describe('slack-send', () => {
       });
       describe('proxy config', () => {
         beforeEach(() => {
+          delete process.env.https_proxy;
           delete process.env.HTTPS_PROXY;
         });
         it('should use https proxy agent when proxy uses HTTP', async () => {
