@@ -139,7 +139,7 @@ Using JSON payload for constructing a message is also available:
 
 If you would like to notify the real-time updates on a build status, you can modify the message your build job posted in the subsequent steps. In order to do this, the steps after the first message posting can have `update-ts: ${{ steps.slack.outputs.ts }}` in their settings. With this, the step updates the already posted channel message instead of posting a new one.
 
-Please note that **the message update step does not accept a channel name.** Set a channel ID for the steps for the actions that update messgages.
+Please note that **the message update step does not accept a channel name.** Set a channel ID for the steps for the actions that update messages.
 
 ```yaml
 - id: slack
