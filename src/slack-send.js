@@ -43,6 +43,7 @@ module.exports = async function slackSend(core) {
         const context = { github: github.context, env: process.env };
         const payloadString = payload.replaceAll('${{', '{{');
         payload = markup.up(payloadString, context);
+        console.log("payload", payload)
       } catch (error) {
         // passed in payload file path was invalid
         console.error(error);
