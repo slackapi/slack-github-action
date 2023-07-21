@@ -20,9 +20,9 @@ The recommended way to use this action is with Slack's Workflow Builder (if you'
 
 ### Technique 1: Slack Workflow Builder
 
-> ❗️ This approach requires a paid Slack plan
+> ❗️ This approach requires a paid Slack plan; it also doesn't support any text formatting
 
-Sending data to [Slack's Workflow builder](https://slack.com/features/workflow-automation) is the recommended way to use this action. This action will send data into Slack via a webhook URL. Follow [these steps to create a Slack workflow using webhooks][create-webhook]. The Slack workflow webhook URL will be in the form `https://hooks.slack.com/workflows/....`. The payload sent by this GitHub action will be flattened (all nested keys moved to the top level) and stringified since Slack's workflow builder only supports top level string values in payloads.
+This technique sends data into Slack via a webhook URL created using [Slack's Workflow builder](https://slack.com/features/workflow-automation). Follow [these steps to create a Slack workflow using webhooks][create-webhook]. The Slack workflow webhook URL will be in the form `https://hooks.slack.com/workflows/....`. The payload sent by this GitHub action will be flattened (all nested keys moved to the top level) and stringified since Slack's workflow builder only supports top level string values in payloads.
 
 As part of the [workflow setup](https://slack.com/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks#workflow-setup),
 you will need to define expected variables in the payload the webhook will receive (described in the "Create custom variables" section of the docs). If these variables are missing in the payload, an error is returned.
