@@ -1,8 +1,8 @@
+const { promises: fs } = require('fs');
+const path = require('path');
 const github = require('@actions/github');
 const flatten = require('flat');
 const axios = require('axios');
-const { promises: fs } = require('fs');
-const path = require('path');
 const markup = require('markup-js');
 const HttpsProxyAgent = require('https-proxy-agent');
 const { parseURL } = require('whatwg-url');
