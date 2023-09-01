@@ -33,7 +33,7 @@
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
     "@slack/web-api": "^6.8.1",
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
     "flat": "^5.0.2",
     "https-proxy-agent": "^5.0.1",
     "markup-js": "^1.5.21",
