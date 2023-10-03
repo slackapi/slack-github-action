@@ -4,7 +4,7 @@ const github = require('@actions/github');
 const flatten = require('flat');
 const axios = require('axios');
 const markup = require('markup-js');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 const { parseURL } = require('whatwg-url');
 
 const { createWebClient } = require('./web-client');
@@ -123,7 +123,7 @@ module.exports = async function slackSend(core) {
           }
         }
       } catch (err) {
-        console.log('failed to configure https proxy agent for http proxy. Using default axios configuration');
+        console.log('failed to configure https proxy agent for http proxy. Using default axios configuration', err);
       }
 
       try {
