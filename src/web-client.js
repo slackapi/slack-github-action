@@ -1,5 +1,5 @@
 const { WebClient } = require('@slack/web-api');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 
 /**
  *

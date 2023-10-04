@@ -35,7 +35,7 @@
     "@slack/web-api": "^6.8.1",
     "axios": "^1.5.1",
     "flat": "^5.0.2",
-    "https-proxy-agent": "^5.0.1",
+    "https-proxy-agent": "^7.0.2",
     "markup-js": "^1.5.21",
     "whatwg-url": "^13.0.0"
   },
