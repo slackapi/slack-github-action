@@ -1,6 +1,6 @@
 # Local runs
 
-For a simple development experience, a local copy of this action can be used in experiments.
+For a simple development experience, a local version of this action can be used in experiments.
 
 **Requirements**:
 
