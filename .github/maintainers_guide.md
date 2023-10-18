@@ -14,7 +14,7 @@ All you need to work with this project is a supported version of [Node.js](https
 ### Developing
 
 Iterate quickly by developing and testing a local copy of this action using `npm run local`.
-Information on setting up and configuring mocked events can be found in [`.github/workflows/local/README.md`](./.github/workflows/local/README.md).
+Information on setting up and configuring mocked events can be found in [`.github/workflows/local/README.md`](./workflows/local/README.md).
 
 ### Testing
 
