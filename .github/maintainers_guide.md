@@ -11,6 +11,12 @@ All you need to work with this project is a supported version of [Node.js](https
 
 ## Tasks
 
+### Developing
+
+Iterate quickly by developing with a local copy of this action using [nektos/act](https://github.com/nektos/act).
+
+Local runs can be performed with `npm run local` and information for configuring mocked events can be found in [`.github/workflows/local/README.md`](./.github/workflows/local/README.md).
+
 ### Testing
 
 When testing locally, ensure at least linting and unit tests pass by running `npm test`.
