@@ -28,7 +28,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: ${{  github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - name: Post message to Slack via botToken
       id: slackToken
@@ -63,7 +63,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: ${{  github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - run: echo "${{ github.event_name }}"
     - name: push trigger
@@ -99,7 +99,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: ${{  github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - run: echo "${{ github.event_name }}"
     - name: Post message to Slack via incoming webhook
@@ -122,7 +122,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: ${{  github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - name: Dump out GitHub Context
       run: echo $JSON
