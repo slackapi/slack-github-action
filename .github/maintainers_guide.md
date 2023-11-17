@@ -11,6 +11,11 @@ All you need to work with this project is a supported version of [Node.js](https
 
 ## Tasks
 
+### Developing
+
+Iterate quickly by developing and testing a local version of this action using `npm run local`.
+Information on setting up and configuring mocked events can be found in [`.github/workflows/local/README.md`](./workflows/local/README.md).
+
 ### Testing
 
 When testing locally, ensure at least linting and unit tests pass by running `npm test`.
