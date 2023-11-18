@@ -1,6 +1,7 @@
 name: Tests
 on:
   pull_request_target:
+    types: [opened, synchronize]
   push:
     branches:
       - main
