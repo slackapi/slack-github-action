@@ -22,6 +22,12 @@ When testing locally, ensure at least linting and unit tests pass by running `np
 Additionally, sending a PR is highly recommended with every change as there are several GitHub
 Actions jobs that execute what are effectively integration tests for this GitHub Action.
 
+#### Checks on PRs
+
+Actions that run the integration tests on PRs from a fork will require approval before running.
+These checks use stored secrets so the changes should be reviewed before approving the workflow to
+avoid accidently leaking tokens!
+
 ### Releasing
 
 * Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
