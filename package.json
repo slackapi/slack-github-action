@@ -38,7 +38,7 @@
     "flat": "^5.0.2",
     "https-proxy-agent": "^7.0.2",
     "markup-js": "^1.5.21",
-    "whatwg-url": "^13.0.0"
+    "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",
