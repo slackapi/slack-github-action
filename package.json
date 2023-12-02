@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",
-    "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env",
+    "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "nyc mocha --config .mocharc.json test/*-test.js",
     "test": "npm run lint && npm run test:mocha",
     "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
@@ -26,8 +26,8 @@
     "url": "https://github.com/slackapi/slack-github-action/issues"
   },
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.10.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.2.0"
   },
   "homepage": "https://github.com/slackapi/slack-github-action#readme",
   "dependencies": {
