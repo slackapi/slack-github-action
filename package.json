@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint .",
-    "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env",
+    "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "nyc mocha --config .mocharc.json test/*-test.js",
     "test": "npm run lint && npm run test:mocha",
     "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
