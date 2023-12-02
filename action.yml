@@ -26,5 +26,5 @@ outputs:
   channel_id: # Id of the channel. If channel name was used as input we can get ID from output for later use when updating message or posting to thread.
     description: 'The channel id of the message that was posted into Slack when using bot token'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
