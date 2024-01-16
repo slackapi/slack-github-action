@@ -7,15 +7,6 @@ on:
       - main
 
 jobs:
-  unit_tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - run: npm test
-
   access_check:
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +15,16 @@ jobs:
       run: |
         echo "Action was not triggered by an organization member. Exiting now."
         exit 1
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    needs: access_check
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - run: npm ci && npm run build
+    - run: npm test
 
   integration_test_botToken:
     runs-on: ubuntu-latest
