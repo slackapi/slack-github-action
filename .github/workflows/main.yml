@@ -7,15 +7,15 @@ on:
       - main
 
 jobs:
-  unit_tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - run: npm test
-
+  # Note: The `pull_request_target` event provides access to repository secrets!
+  #
+  # This is required to run the integration tests on PRs from forked branches.
+  # Any job checking out pull_request.head.sha should require the access_check.
+  #
+  # Actions require collaborator approval to start and might require a re-run.
+  # The proposed changes should be reviewed before approving any workflow jobs.
+  #
+  # Reference: https://michaelheap.com/access-secrets-from-forks/
   access_check:
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +24,16 @@ jobs:
       run: |
         echo "Action was not triggered by an organization member. Exiting now."
         exit 1
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    needs: access_check
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - run: npm ci && npm run build
+    - run: npm test
 
   integration_test_botToken:
     runs-on: ubuntu-latest
