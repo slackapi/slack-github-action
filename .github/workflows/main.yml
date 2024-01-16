@@ -7,6 +7,15 @@ on:
       - main
 
 jobs:
+  # Note: The `pull_request_target` event provides access to repository secrets!
+  #
+  # This is required to run the integration tests on PRs from forked branches.
+  # Any job checking out pull_request.head.sha should require the access_check.
+  #
+  # Actions require collaborator approval to start and might require a re-run.
+  # The proposed changes should be reviewed before approving any workflow jobs.
+  #
+  # Reference: https://michaelheap.com/access-secrets-from-forks/
   access_check:
     runs-on: ubuntu-latest
     steps:
