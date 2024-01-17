@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check user permissions
-      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.author_association != 'MEMBER' }}
+      if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.author_association != 'MEMBER' }}
       run: |
         echo "Action was not triggered by an organization member. Exiting now."
         exit 1
