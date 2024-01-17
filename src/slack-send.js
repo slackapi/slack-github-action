@@ -98,8 +98,8 @@ module.exports = async function slackSend(core) {
       }
 
       if (webhookType === SLACK_WEBHOOK_TYPES.WORKFLOW_TRIGGER) {
-        // flatten JSON payload (no nested attributes)
-        const flatPayload = flatten(payload);
+        // flatten JSON payload (no nested attributes), with nested keys delimited with underscores.
+        const flatPayload = flatten(payload, { delimiter: '_' });
 
         // workflow builder requires values to be strings
         // iterate over every value and convert it to string
