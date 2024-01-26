@@ -1,5 +1,0 @@
-{
-  "oliver": "benji",
-  "bonny": "clyde",
-  "actor":"${{github.actor}}"
-}
