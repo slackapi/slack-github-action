@@ -15,6 +15,7 @@ jobs:
 
   integration_test_botToken:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v4
     - run: npm ci && npm run build
@@ -47,6 +48,7 @@ jobs:
 
   integration_test_webhook:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v4
     - run: npm ci && npm run build
@@ -80,6 +82,7 @@ jobs:
 
   integration_test_incoming_webhook:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v4
     - run: npm ci && npm run build
@@ -100,6 +103,7 @@ jobs:
 
   integration_test_file_payload:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v4
     - run: npm ci && npm run build
