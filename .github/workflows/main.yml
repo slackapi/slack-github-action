@@ -1,47 +1,22 @@
 name: Tests
 on:
-  pull_request_target:
-    types: [opened, synchronize]
+  pull_request:
   push:
     branches:
       - main
 
 jobs:
-  # Note: The `pull_request_target` event provides access to repository secrets!
-  #
-  # This is required to run the integration tests on PRs from forked branches.
-  # Any job checking out pull_request.head.sha should require the access_check.
-  #
-  # Actions require collaborator approval to start and might require a re-run.
-  # The proposed changes should be reviewed before approving any workflow jobs.
-  #
-  # Reference: https://michaelheap.com/access-secrets-from-forks/
-  access_check:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check user permissions
-      if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.author_association != 'MEMBER' }}
-      run: |
-        echo "Action was not triggered by an organization member. Exiting now."
-        exit 1
-
   unit_tests:
     runs-on: ubuntu-latest
-    needs: access_check
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - run: npm test
 
   integration_test_botToken:
     runs-on: ubuntu-latest
-    needs: access_check
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - name: Post message to Slack via botToken
       id: slackToken
@@ -72,11 +47,8 @@ jobs:
 
   integration_test_webhook:
     runs-on: ubuntu-latest
-    needs: access_check
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - run: echo "${{ github.event_name }}"
     - name: push trigger
@@ -108,11 +80,8 @@ jobs:
 
   integration_test_incoming_webhook:
     runs-on: ubuntu-latest
-    needs: access_check
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - run: echo "${{ github.event_name }}"
     - name: Post message to Slack via incoming webhook
@@ -131,11 +100,8 @@ jobs:
 
   integration_test_file_payload:
     runs-on: ubuntu-latest
-    needs: access_check
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci && npm run build
     - name: Dump out GitHub Context
       run: echo $JSON
