@@ -166,7 +166,7 @@ Please note that **the message update step does not accept a channel name.** Set
         ]
       }
   env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 - uses: slackapi/slack-github-action@v1.25.0
   with:
     # Unlike the step posting a new message, this step does not accept a channel name.
@@ -191,7 +191,7 @@ Please note that **the message update step does not accept a channel name.** Set
         ]
       }
   env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
 ### Technique 3: Slack Incoming Webhook
