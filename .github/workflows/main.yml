@@ -8,6 +8,7 @@ on:
 jobs:
   unit_tests:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v4
     - run: npm ci && npm run build
