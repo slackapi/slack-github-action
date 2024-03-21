@@ -53,6 +53,18 @@ describe('slack-send', () => {
       process.env.SLACK_BOT_TOKEN = 'xoxb-xxxxx';
       delete process.env.SLACK_WEBHOOK_URL;
     });
+    describe('but also setting a webhook URL', () => {
+      const fakeWebhookURL = 'https://hooks.slack.com/somethingsomething';
+      beforeEach(() => {
+        process.env.SLACK_WEBHOOK_URL = fakeWebhookURL;
+      });
+      it('should not POST to the webhook URL if using bot token / providing channel-id', async () => {
+        fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        await slackSend(fakeCore);
+        assert(!AxiosMock.post.calledWith(fakeWebhookURL), 'Webhook URL should not be called');
+      });
+    });
     describe('happy path', () => {
       it('should send a message using the postMessage API', async () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
