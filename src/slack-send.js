@@ -6,7 +6,6 @@ const axios = require('axios');
 const markup = require('markup-js');
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const { parseURL } = require('whatwg-url');
-
 const { createWebClient } = require('./web-client');
 
 const SLACK_WEBHOOK_TYPES = {
@@ -134,7 +133,8 @@ module.exports = async function slackSend(core) {
         await axios.post(webhookUrl, payload, axiosOpts);
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
-        console.log(payload);
+        // console.log(payload);
+        console.log(JSON.stringify(payload));
         // console.log(err);
 
         if (err.response) {

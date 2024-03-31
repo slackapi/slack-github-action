@@ -42823,7 +42823,6 @@ const axios = __nccwpck_require__(8757);
 const markup = __nccwpck_require__(1200);
 const { HttpsProxyAgent } = __nccwpck_require__(7219);
 const { parseURL } = __nccwpck_require__(6365);
-
 const { createWebClient } = __nccwpck_require__(8326);
 
 const SLACK_WEBHOOK_TYPES = {
@@ -42951,7 +42950,8 @@ module.exports = async function slackSend(core) {
         await axios.post(webhookUrl, payload, axiosOpts);
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
-        console.log(payload);
+        // console.log(payload);
+        console.log(JSON.stringify(payload));
         // console.log(err);
 
         if (err.response) {
