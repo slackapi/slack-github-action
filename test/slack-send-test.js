@@ -105,6 +105,30 @@ describe('slack-send', () => {
         assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
         assert.equal(chatArgs.actor, 'user123', 'Correct message provided to postMessage');
       });
+      it('should accept a payload-file-path and use it\'s content in the message without replacing anything', async () => {
+        // Prepare
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('payload-file-path').returns('./test/resources/valid-payload.json');
+        fakeCore.getInput.withArgs('use-file-as-valid-json').returns('true');
+        fakeGithub.context.actor = 'user123';
+
+        // Run
+        await slackSend(fakeCore);
+
+        // Assert
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
+        assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        const chatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
+        assert.equal(chatArgs.text, '', 'Correct message provided to postMessage');
+        assert.equal(chatArgs.bonny, 'clyde', 'Correct message provided to postMessage');
+        assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
+        /* eslint-disable-next-line no-template-curly-in-string */
+        assert.equal(chatArgs.actor, '${{github.actor}}', 'Correct message provided to postMessage');
+      });
 
       it('should send the same message to multiple channels', async () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
