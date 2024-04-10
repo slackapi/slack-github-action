@@ -109,7 +109,7 @@ describe('slack-send', () => {
         // Prepare
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         fakeCore.getInput.withArgs('payload-file-path').returns('./test/resources/valid-payload.json');
-        fakeCore.getInput.withArgs('use-file-as-valid-json').returns('true');
+        fakeCore.getInput.withArgs('payload-file-path-parsed').returns('true');
         fakeGithub.context.actor = 'user123';
 
         // Run

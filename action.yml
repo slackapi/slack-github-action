@@ -13,8 +13,8 @@ inputs:
   payload-file-path: # path to JSON payload to send to Slack via webhook
     description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
     required: false
-  use-file-as-valid-json:
-    description: 'Do not try to speically parse github context, markup or other parts. Assume file content is legit'
+  payload-file-path-parsed:
+    description: 'If payload-file-path is provided instead of json payload, do not replace values in the file from `github.context`.'
     required: false
     default: 'false'
   update-ts: # The timestamp of a previous message posted to update it instead of posting a new message
