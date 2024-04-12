@@ -76,7 +76,9 @@ or
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
-> To keep the payload json file as is, without replacing values from `github.context`, pass an additional parameter `payload-file-path-parsed`
+> To send the payload file JSON as is, without replacing templated values with
+> `github.context` or `github.env`, set `payload-file-path-parsed` to `false`.
+> Default: `true`.
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
@@ -84,7 +86,7 @@ or
   uses: slackapi/slack-github-action@v1.25.0
   with:
     payload-file-path: "./payload-slack-content.json"
-    payload-file-path-parsed: 'true'
+    payload-file-path-parsed: false
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```

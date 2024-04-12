@@ -14,9 +14,9 @@ inputs:
     description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
     required: false
   payload-file-path-parsed:
-    description: 'If payload-file-path is provided instead of json payload, do not replace values in the file from `github.context`.'
+    description: 'Replace templated variables in the JSON payload file with values from the GitHub context and environment variables'
+    default: true
     required: false
-    default: 'false'
   update-ts: # The timestamp of a previous message posted to update it instead of posting a new message
     description: 'The timestamp of a previous message posted. It will update the existing message instead of posting a new message'
     required: false

@@ -83,10 +83,11 @@ describe('slack-send', () => {
         assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
       });
 
-      it('should accept a payload-file-path and use it\'s content in the message', async () => {
+      it('should send payload-file-path values with replaced context variables', async () => {
         // Prepare
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         fakeCore.getInput.withArgs('payload-file-path').returns('./test/resources/valid-payload.json');
+        fakeCore.getBooleanInput.withArgs('payload-file-path-parsed').returns(true);
         fakeGithub.context.actor = 'user123';
 
         // Run
@@ -105,11 +106,12 @@ describe('slack-send', () => {
         assert.equal(chatArgs.oliver, 'benji', 'Correct message provided to postMessage');
         assert.equal(chatArgs.actor, 'user123', 'Correct message provided to postMessage');
       });
-      it('should accept a payload-file-path and use it\'s content in the message without replacing anything', async () => {
+
+      it('should send payload-file-path values without replacing context variables', async () => {
         // Prepare
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         fakeCore.getInput.withArgs('payload-file-path').returns('./test/resources/valid-payload.json');
-        fakeCore.getInput.withArgs('payload-file-path-parsed').returns('true');
+        fakeCore.getBooleanInput.withArgs('payload-file-path-parsed').returns(false);
         fakeGithub.context.actor = 'user123';
 
         // Run
