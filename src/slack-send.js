@@ -33,15 +33,15 @@ module.exports = async function slackSend(core) {
 
     const payloadFilePath = core.getInput('payload-file-path');
 
-    const useFileAsIs = core.getInput('payload-file-path-parsed');
+    /** Option to replace templated context variables in the payload file JSON */
+    const payloadFilePathParsed = core.getBooleanInput('payload-file-path-parsed');
 
     let webResponse;
 
     if (payloadFilePath && !payload) {
       try {
         payload = await fs.readFile(path.resolve(payloadFilePath), 'utf-8');
-        if (!useFileAsIs || useFileAsIs !== 'true') {
-          // parse github context variables
+        if (payloadFilePathParsed) {
           const context = { github: github.context, env: process.env };
           const payloadString = payload.replaceAll('${{', '{{');
           payload = markup.up(payloadString, context);
@@ -131,14 +131,12 @@ module.exports = async function slackSend(core) {
 
       try {
         await axios.post(webhookUrl, payload, axiosOpts);
-        // console.log(JSON.stringify(payload));
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
         if ('toJSON' in err) {
           console.error(JSON.stringify(err.toJSON()));
         }
         console.error(`Attempted to POST payload: ${JSON.stringify(payload)}`);
-        // console.log(err);
 
         if (err.response) {
           core.setFailed(err.response.data);
