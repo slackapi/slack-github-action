@@ -76,6 +76,21 @@ or
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
+> To send the payload file JSON as is, without replacing templated values with
+> `github.context` or `github.env`, set `payload-file-path-parsed` to `false`.
+> Default: `true`.
+
+```yaml
+- name: Send custom JSON data to Slack workflow
+  id: slack
+  uses: slackapi/slack-github-action@v1.25.0
+  with:
+    payload-file-path: "./payload-slack-content.json"
+    payload-file-path-parsed: false
+  env:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
 ### Technique 2: Slack App
 
 By creating a new Slack app or using an existing one, this approach allows your GitHub Actions job to post a message in a Slack channel or direct message by utilizing the [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API method. Using this approach you can instantly post a message without setting up Slack workflows.
