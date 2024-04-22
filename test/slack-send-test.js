@@ -68,10 +68,41 @@ describe('slack-send', () => {
         assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
       });
 
-      it('should send a reply-message using the postMessage API', async () => {
+      it('should send a reply-message using the postMessage API if thread-ts input is used', async () => {
         fakeCore.getInput.withArgs('slack-message').returns('who let the dogs out?');
         fakeCore.getInput.withArgs('channel-id').returns('C123456');
         fakeCore.getInput.withArgs('thread-ts').returns('123123');
+        await slackSend(fakeCore);
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
+        assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        const chatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
+        assert.equal(chatArgs.thread_ts, '123123', 'Correct thread_ts provided to postMessage');
+        assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
+      });
+
+      it('should send a reply-message using the postMessage API if thread_ts is passed in the payload', async () => {
+        fakeCore.getInput.withArgs('payload').returns('{"thread_ts":"123123","text":"who let the dogs out?"}');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        await slackSend(fakeCore);
+        assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
+        assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
+        assert(fakeCore.setOutput.secondCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        assert.equal(fakeCore.setOutput.lastCall.firstArg, 'time', 'Output name set to time');
+        assert(fakeCore.setOutput.lastCall.lastArg.length > 0, 'Time output a non-zero-length string');
+        const chatArgs = ChatStub.postMessage.lastCall.firstArg;
+        assert.equal(chatArgs.channel, 'C123456', 'Correct channel provided to postMessage');
+        assert.equal(chatArgs.thread_ts, '123123', 'Correct thread_ts provided to postMessage');
+        assert.equal(chatArgs.text, 'who let the dogs out?', 'Correct message provided to postMessage');
+      });
+
+      it('should send a reply-message using the postMessage API, payload thread_ts overrides input thread_ts', async () => {
+        fakeCore.getInput.withArgs('payload').returns('{"thread_ts":"123123","text":"who let the dogs out?"}');
+        fakeCore.getInput.withArgs('channel-id').returns('C123456');
+        fakeCore.getInput.withArgs('thread-ts').returns('456456');
         await slackSend(fakeCore);
         assert.equal(fakeCore.setOutput.firstCall.firstArg, 'ts', 'Output name set to ts');
         assert.equal(fakeCore.setOutput.secondCall.firstArg, 'thread_ts', 'Output name set to thread_ts');
