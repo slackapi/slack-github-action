@@ -20,6 +20,9 @@ inputs:
   update-ts: # The timestamp of a previous message posted to update it instead of posting a new message
     description: 'The timestamp of a previous message posted. It will update the existing message instead of posting a new message'
     required: false
+  thread-ts: # The timestamp of a previous message posted to post a new message as a thread reply to the existing message
+    description: 'The timestamp of a previous message posted. It will post the new message as a thread reply to the existing message'
+    required: false
 outputs:
   time: # id of output
     description: 'The time'

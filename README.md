@@ -209,6 +209,65 @@ Please note that **the message update step does not accept a channel name.** Set
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
+#### Post as a reply to a message
+
+If you would like to log the real-time updates, you can post new messages as thread replies to the message your build job posted in the subsequent steps. In order to do this, the steps after the first message posting can have `thread-ts: ${{ steps.slack.outputs.ts }}` in their settings. With this, the step creates a new message in the thread of the already posted channel message.
+
+Please note that **the reply message step does not accept a channel name.** Set a channel ID for the steps for the actions that update messages.
+
+```yaml
+- id: slack
+  uses: slackapi/slack-github-action@v1.26.0
+  with:
+    # The following message update step does not accept a channel name.
+    # Setting a channel ID here for consistency is highly recommended.
+    channel-id: "CHANNEL_ID"
+    payload: |
+      {
+        "text": "Deployment started (In Progress)",
+        "attachments": [
+          {
+            "pretext": "Deployment started",
+            "color": "dbab09",
+            "fields": [
+              {
+                "title": "Status",
+                "short": true,
+                "value": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+- uses: slackapi/slack-github-action@v1.26.0
+  with:
+    # Unlike the step posting a new message, this step does not accept a channel name.
+    # Please use a channel ID, not a name here.
+    channel-id: "CHANNEL_ID"
+    thread-ts: ${{ steps.slack.outputs.ts }}
+    payload: |
+      {
+        "text": "Deployment finished (Completed)",
+        "attachments": [
+          {
+            "pretext": "Deployment finished",
+            "color": "28a745",
+            "fields": [
+              {
+                "title": "Status",
+                "short": true,
+                "value": "Completed"
+              }
+            ]
+          }
+        ]
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+```
+
 ### Technique 3: Slack Incoming Webhook
 
 This approach allows your GitHub Actions job to post a message to a Slack channel or direct message by utilizing [Incoming Webhooks](https://api.slack.com/messaging/webhooks).
