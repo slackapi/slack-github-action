@@ -268,6 +268,22 @@ Please note that **the reply message step does not accept a channel name.** Set 
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
+Alternatively, the `thread_ts` value can be passed directly in the payload as illustrated below:
+
+```yaml
+# after having sent a message... 
+- uses: slackapi/slack-github-action@v1.26.0
+  with:
+    channel-id: "CHANNEL_ID"
+    payload: |
+      {
+        "thread_ts": "${{ steps.slack.outputs.ts }}"
+        "text": "Deployment finished (Completed)",
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+```
+
 ### Technique 3: Slack Incoming Webhook
 
 This approach allows your GitHub Actions job to post a message to a Slack channel or direct message by utilizing [Incoming Webhooks](https://api.slack.com/messaging/webhooks).
