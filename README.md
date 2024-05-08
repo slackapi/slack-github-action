@@ -1,5 +1,7 @@
 # Slack Send GitHub Action
 
+[![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
+
 Send data into Slack using this GitHub Action!
 
 ## Sending Variables

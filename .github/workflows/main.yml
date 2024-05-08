@@ -18,7 +18,7 @@ jobs:
     - run: npm test
     - run: npm run test:gen-cov
     - name: Upload coverage to CodeCov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v4.0.1
       with:
         directory: ./coverage
         token: ${{ secrets.CODECOV_TOKEN }}
