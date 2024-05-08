@@ -6,8 +6,9 @@
   "scripts": {
     "lint": "eslint .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
-    "test:mocha": "nyc mocha --config .mocharc.json test/*-test.js",
-    "test": "npm run lint && npm run test:mocha",
+    "test:mocha": "mocha --config .mocharc.json test/*-test.js",
+    "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
+    "test": "npm run lint && nyc npm run test:mocha",
     "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
   },
   "repository": {
