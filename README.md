@@ -64,7 +64,6 @@ or
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
-
 or
 
 > If the `payload` is provided it will take preference over `payload-file-path`
@@ -207,37 +206,6 @@ Please note that **the message update step does not accept a channel name.** Set
             ]
           }
         ]
-      }
-  env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-```
-
-#### Reply to a message
-
-If you want to post a message as a reply, you can populate the `payload` with a `"thread_ts"` field. The steps after the first message posting can have `"thread_ts": "${{ steps.slack.outputs.ts }}"` in their payload. In order to reply to an existing message.
-
-Please note that **that reply to a message does not accept a channel name.** Set a channel ID for the actions that reply to messages in thread.
-
-```yaml
-- id: slack
-  uses: slackapi/slack-github-action@v1.26.0
-  with:
-    channel-id: "CHANNEL_ID"
-    payload: |
-      {
-        "text": "Deployment started (In Progress)"
-      }
-  env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-- uses: slackapi/slack-github-action@v1.26.0
-  with:
-    # Unlike the step posting a new message, this step does not accept a channel name.
-    # Please use a channel ID, not a name here.
-    channel-id: "CHANNEL_ID"
-    payload: |
-      {
-        "thread_ts": "${{ steps.slack.outputs.ts }}"
-        "text": "Deployment finished (Completed)",
       }
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
