@@ -236,8 +236,8 @@ Please note that **reply to a message does not accept a channel name.** Set a ch
     channel-id: "CHANNEL_ID"
     payload: |
       {
-        "thread_ts": "${{ steps.deployment_message.outputs.ts }}"
-        "text": "Deployment finished (Completed)",
+        "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+        "text": "Deployment finished (Completed)"
       }
   env:
     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
