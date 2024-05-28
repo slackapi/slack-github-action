@@ -214,7 +214,7 @@ Please note that **the message update step does not accept a channel name.** Set
 
 #### Reply to a message
 
-If you want to post a message as a reply, you can populate the `payload` with a `"thread_ts"` field. The steps after the first message posting can have `"thread_ts": "${{ steps.deployment_message.outputs.ts }}"` in their payload. In order to reply to an existing message.
+If you want to post a message as a threaded reply, you can populate the `payload` with a `thread_ts` field. This field should equal the `ts` value of the parent message of the thread. If you want to reply to a message previously posted by this Action, you can use the `ts` output provided as the `thread_ts` of a consequent threaded reply, e.g. `"thread_ts": "${{ steps.deployment_message.outputs.ts }}"`.
 
 Please note that **reply to a message does not accept a channel name.** Set a channel ID for the actions that reply to messages in thread.
 
