@@ -6,46 +6,47 @@ on:
       - main
 
 jobs:
-  unit_tests:
+  tests:
+    name: Run tests
     runs-on: ubuntu-latest
     environment: staging
     steps:
-    - uses: actions/checkout@v4
+    - name: "build: checkout the latest changes"
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci
-    - run: npm run build
-    - run: npm test
-    - run: npm run test:gen-cov
-    - name: Upload coverage to CodeCov
+
+    - name: "build: install the required dependencies"
+      run: npm ci
+
+    - name: "build: package the latest changes"
+      run: npm run build
+
+    - name: "unit(test): perform unit test checks"
+      run: npm test
+
+    - name: "unit(test): check unit test coverage"
+      run: npm run test:gen-cov
+
+    - name: "unit(test): upload coverage to CodeCov"
       uses: codecov/codecov-action@v4.0.1
       with:
         directory: ./coverage
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  integration_test_botToken:
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - name: Post message to Slack via botToken
+    - name: "integration(botToken): post a message to channel"
       id: slackToken
       uses: ./
       with:
         channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
         slack-message: 'CI Post from slack-send GitHub Action! Succeeded!!'
-        # payload: "{\"key\":\"value\",\"foo\":\"bar\"}"
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    # Use the output from the `slackToken` step
-    - name: Check Action output is not empty
-      run: test -n "${{ steps.slackToken.outputs.time }}"
+    - name: "integration(botToken): confirm a message was posted"
+      run: test -n "${{ steps.slackToken.outputs.ts }}"
 
-    - name: Post Threaded Response
+    - name: "integration(botToken): post a threaded response"
       id: slackThreadResponse
       uses: ./
       with:
@@ -58,28 +59,22 @@ jobs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-  integration_test_webhook:
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - run: echo "${{ github.event_name }}"
-    - name: push trigger
-      # Save commit url from GitHub Trigger event payload to URL env
+    - name: "integration(botToken): confirm a response was posted"
+      run: test -n "${{ steps.slackThreadResponse.outputs.ts }}"
+
+    - name: "integration(wfb): save the push event trigger commit URL"
       if: "contains(github.event_name, 'push')"
       run: |
         url=${{ github.event.head_commit.url }}
         echo "URL=$url" >> "$GITHUB_ENV"
-    - name: pull request trigger
-      # Save pull request url from GitHub Trigger event payload to URL env
+
+    - name: "integration(wfb): save the pull request event trigger commit URL"
       if: "contains(github.event_name, 'pull_request')"
       run: |
         url=${{ github.event.pull_request.url }}
         echo "URL=$url" >> "$GITHUB_ENV"
-    - name: Post message to Slack via webhook
+
+    - name: "integration(wfb): send a payload via workflow builder webhook"
       id: slackWorkflow
       uses: ./
       with:
@@ -89,47 +84,27 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-
-    # Use the output from the `slackWorkflow` step
-    - name: Check Action output is not empty
+    - name: "integration(wfb): confirm a payload was sent"
       run: test -n "${{ steps.slackWorkflow.outputs.time }}"
 
-  integration_test_incoming_webhook:
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - run: echo "${{ github.event_name }}"
-    - name: Post message to Slack via incoming webhook
+    - name: "integration(incoming): post a message via incoming webhook"
       id: slackIncoming
       uses: ./
       with:
-        # block kit payload
         payload: "{\"text\":\"Incoming Webhook test for slack send\", \"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"plain_text\",\"text\":\"A post by Slack Send GitHub Action. Testing Incoming webhooks\",\"emoji\":true}}]}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-    # Use the output from the `slackIncoming` step
-    - name: Check Action output is not empty
+    - name: "integration(incoming): confirm a webhook was posted"
       run: test -n "${{ steps.slackIncoming.outputs.time }}"
 
-  integration_test_file_payload:
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci && npm run build
-    - name: Dump out GitHub Context
+    - name: "integration(incoming): reveal contents of the github payload"
       run: echo $JSON
       env:
         JSON: ${{ toJSON(github) }}
-    - name: Post message to Slack with Payload path
+
+    - name: "integration(incoming): post a message via payload file"
       id: slackPayloadFile
       uses: ./
       with:
@@ -140,6 +115,5 @@ jobs:
         JOB_STATUS: ${{ job.status }}
         ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}
 
-    # Use the output from the `slackIncoming` step
-    - name: Check Action output is not empty
+    - name: "integration(incoming): confirm a payload file was posted"
       run: test -n "${{ steps.slackPayloadFile.outputs.time }}"
