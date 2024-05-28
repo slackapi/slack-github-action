@@ -219,7 +219,7 @@ If you want to post a message as a reply, you can populate the `payload` with a 
 Please note that **that reply to a message does not accept a channel name.** Set a channel ID for the actions that reply to messages in thread.
 
 ```yaml
-- id: slack
+- id: deployment_message
   uses: slackapi/slack-github-action@v1.26.0
   with:
     channel-id: "CHANNEL_ID"
