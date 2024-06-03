@@ -86,13 +86,21 @@ module.exports = async function slackSend(core) {
             webResponse = await web.chat.postMessage({ channel: channelId.trim(), text: message, ...(payload || {}) });
           }
         }));
+        // TODO: I suppose if multiple channels are provided, the output here will return only one of the messages'
+        // data, not all of them...
+        if (webResponse && webResponse.ok) {
+          core.setOutput('ts', webResponse.ts);
+          // return the thread_ts if it exists, if not return the ts
+          const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
+          core.setOutput('thread_ts', thread_ts);
+          // return id of the channel from the response
+          core.setOutput('channel_id', webResponse.channel);
+        }
       } else {
         console.log('Missing slack-message or payload! Did not send a message via chat.postMessage with botToken', { channel: channelIds, text: message, ...(payload) });
         throw new Error('Missing message content, please input a valid payload or message to send. No Message has been send.');
       }
-    }
-
-    if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
+    } else if (typeof webhookUrl !== 'undefined' && webhookUrl.length > 0) {
       if (!payload) {
         // No Payload was passed in
         console.log('no custom payload was passed in, using default payload that triggered the GitHub Action');
@@ -145,15 +153,6 @@ module.exports = async function slackSend(core) {
         }
         return;
       }
-    }
-
-    if (webResponse && webResponse.ok) {
-      core.setOutput('ts', webResponse.ts);
-      // return the thread_ts if it exists, if not return the ts
-      const thread_ts = webResponse.thread_ts ? webResponse.thread_ts : webResponse.ts;
-      core.setOutput('thread_ts', thread_ts);
-      // return id of the channel from the response
-      core.setOutput('channel_id', webResponse.channel);
     }
 
     const time = (new Date()).toTimeString();
