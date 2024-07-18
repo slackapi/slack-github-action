@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "module": "es2022",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "checkJs": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "baseUrl": ".",
+        "typeRoots": [
+            "./@types",
+            "./node_modules/@types"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "test", // TODO: remove
+        "src/slack-send.js" // TODO: remove
+    ],
+    "include": [
+        "src/**/*.js"
+    ],
+    "jsdoc": {
+        "out": "support/jsdoc",
+        "access": "public"
+    }
+}

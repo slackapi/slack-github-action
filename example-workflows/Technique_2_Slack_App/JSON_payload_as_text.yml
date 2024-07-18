@@ -5,11 +5,12 @@ jobs:
     runs-on: ubuntu-latest
     name: New push to repo
     steps:
-    - name: Send GitHub trigger payload to Slack Workflow Builder
-      id: slack
-      uses: slackapi/slack-github-action@v1.27.0
-      with:
-        channel-id: 'SLACK_CHANNEL_ID' # ID of Slack Channel you want to post to
-        payload: "{\"text\": \"posting from a github action\"}"
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Send GitHub trigger payload to Slack Workflow Builder
+        id: slack
+        uses: slackapi/slack-github-action@v2-development
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            "text": "posting from a github action",
+            "channel": "C0123456789"

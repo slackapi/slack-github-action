@@ -1,15 +1,15 @@
 {
   "name": "slack-github-action",
-  "version": "1.27.0",
-  "description": "The official slack github action. Use this to send data into your Slack workspace",
+  "version": "2.0.0-development",
+  "description": "The official Slack Github Action. Use this to send data into your Slack workspace",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
-    "lint": "eslint .",
+    "lint:fix": "biome check --write",
+    "lint": "biome check",
+    "check": "tsc --noemit --module es2022 --project ./jsconfig.json",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
-    "test:mocha": "mocha --config .mocharc.json test/*-test.js",
-    "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
-    "test": "npm run lint && nyc npm run test:mocha",
-    "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
+    "test": "c8 mocha src/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -35,23 +35,24 @@
     "@actions/core": "^1.10.1",
     "@actions/github": "^6.0.0",
     "@slack/web-api": "^7.3.4",
-    "axios": "^1.7.5",
+    "axios": "^1.7.2",
+    "axios-retry": "^4.5.0",
     "flat": "^5.0.2",
     "https-proxy-agent": "^7.0.5",
-    "markup-js": "^1.5.21",
-    "whatwg-url": "^14.0.0"
+    "markup-js": "^1.5.21"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@types/chai": "^4.3.19",
+    "@types/flat": "^5.0.5",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.10",
+    "@types/sinon": "^17.0.3",
     "@vercel/ncc": "^0.38.1",
-    "chai": "^4.5.0",
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsdoc": "^48.10.2",
-    "eslint-plugin-node": "^11.1.0",
-    "mocha": "^10.7.0",
-    "nyc": "^17.0.0",
-    "rewiremock": "^3.14.5",
-    "sinon": "^18.0.0"
+    "c8": "^10.1.2",
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3",
+    "sinon": "^17.0.1",
+    "typescript": "^5.5.3"
   }
 }

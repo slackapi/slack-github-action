@@ -9,20 +9,17 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout action
-      uses: actions/checkout@v4
-    - name: Build action
-      run: npm install && npm run build
-    - name: Send a message into channel
-      id: slack
-      uses: ./.
-      with:
-        payload: |
-          {
+      - name: Checkout action
+        uses: actions/checkout@v4
+      - name: Build action
+        run: npm install && npm run build
+      - name: Send a message into channel
+        id: slack
+        uses: ./.
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
             "repository": "${{ github.repository }}",
             "pull_request_username": "${{ github.event.pull_request.user.login }}",
             "pull_request_title": ${{ toJSON(github.event.pull_request.title) }},
             "pull_request_url": "${{ github.event.pull_request.html_url }}"
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,3 +1,14 @@
 {
+  "require": [
+    "@actions/core",
+    "@actions/github",
+    "@slack/web-api",
+    "axios",
+    "axios-retry",
+    "flat",
+    "https-proxy-agent",
+    "markup-js"
+  ],
+  "recursive": true,
   "timeout": 3000
 }

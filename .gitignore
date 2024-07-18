@@ -1,5 +1,8 @@
+# Development dependencies
 node_modules
-.DS_Store
-.nyc_output
-dist
+
+# Testing reminants
 coverage
+
+# Additional system files
+.DS_Store
