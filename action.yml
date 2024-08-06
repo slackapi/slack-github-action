@@ -10,6 +10,9 @@ inputs:
   payload: # JSON payload to send to Slack via webhook
     description: 'JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead'
     required: false
+  payload-delimiter: # custom delimiter used to flatten nested values in the JSON payload
+    description: 'Custom delimiter used to flatten nested values in the JSON payload. If not supplied, defaults to a period (".").'
+    required: false
   payload-file-path: # path to JSON payload to send to Slack via webhook
     description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
     required: false
