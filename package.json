@@ -9,7 +9,7 @@
     "test:mocha": "mocha --config .mocharc.json test/*-test.js",
     "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
     "test": "npm run lint && nyc npm run test:mocha",
-    "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
+    "build": "echo test"
   },
   "repository": {
     "type": "git",
