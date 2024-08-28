@@ -29,7 +29,7 @@ This technique sends data into Slack via a webhook URL created using [Slack's Wo
 As part of the [workflow setup](https://slack.com/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks#workflow-setup),
 you will need to define expected variables in the payload the webhook will receive (described in the "Create custom variables" section of the docs). If these variables are missing in the payload, an error is returned.
 
-To match the webhook input format expected by Workflow Builder, the payload will be flattened and stringified (all nested keys are moved to the top level) before being sent. The default delimiter used to flatten payloads is a period (".") but should be changed to an underscore ("_") using the `payload-delimiter` parameter if you're using these as input values in your own workflows.
+To match the webhook input format expected by Workflow Builder, the payload will be flattened and stringified (all nested keys are moved to the top level) before being sent. The default delimiter used to flatten payloads is a period (".") but should be changed to an underscore ("_") using the `payload-delimiter` parameter if you're using nested payloads as input values in your own workflows.
 
 #### Setup
 
