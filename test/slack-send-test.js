@@ -261,6 +261,61 @@ describe('slack-send', () => {
           assert(AxiosMock.post.calledWithExactly('https://someurl', payload, {}));
         });
       });
+      describe('flatten', () => {
+        const mockPayload = {
+          apples: 'tree',
+          bananas: { truthiness: true },
+        };
+        beforeEach(() => {
+          fakeCore.getInput.withArgs('payload').returns(JSON.stringify(mockPayload));
+        });
+        afterEach(() => {
+          delete process.env.SLACK_WEBHOOK_TYPE;
+        });
+        it('defaults to using a period to flatten nested paylods', async () => {
+          process.env.SLACK_WEBHOOK_TYPE = 'WORKFLOW_TRIGGER';
+          await slackSend(fakeCore);
+          const expected = {
+            apples: 'tree',
+            'bananas.truthiness': 'true',
+          };
+          const count = AxiosMock.post.callCount;
+          assert.equal(count, 1);
+          const post = AxiosMock.post.getCall(0);
+          const [url, actual] = post.args;
+          assert.equal(url, 'https://someurl');
+          assert.deepEqual(actual, expected);
+        });
+        it('replaces delimiter with provided payload settings', async () => {
+          fakeCore.getInput.withArgs('payload-delimiter').returns('_');
+          process.env.SLACK_WEBHOOK_TYPE = 'WORKFLOW_TRIGGER';
+          await slackSend(fakeCore);
+          const expected = {
+            apples: 'tree',
+            bananas_truthiness: 'true',
+          };
+          const count = AxiosMock.post.callCount;
+          assert.equal(count, 1);
+          const post = AxiosMock.post.getCall(0);
+          const [url, actual] = post.args;
+          assert.equal(url, 'https://someurl');
+          assert.deepEqual(actual, expected);
+        });
+        it('does not flatten nested values of incoming webhook', async () => {
+          process.env.SLACK_WEBHOOK_TYPE = 'INCOMING_WEBHOOK';
+          await slackSend(fakeCore);
+          const expected = {
+            apples: 'tree',
+            bananas: { truthiness: true },
+          };
+          const count = AxiosMock.post.callCount;
+          assert.equal(count, 1);
+          const post = AxiosMock.post.getCall(0);
+          const [url, actual] = post.args;
+          assert.equal(url, 'https://someurl');
+          assert.deepEqual(actual, expected);
+        });
+      });
     });
     describe('sad path', () => {
       it('should set an error if the POST to the webhook fails without a response', async () => {
