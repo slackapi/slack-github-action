@@ -6,7 +6,6 @@ const axios = require('axios');
 const markup = require('markup-js');
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const { parseURL } = require('whatwg-url');
-
 const { createWebClient } = require('./web-client');
 
 const SLACK_WEBHOOK_TYPES = {
@@ -34,15 +33,19 @@ module.exports = async function slackSend(core) {
 
     const payloadFilePath = core.getInput('payload-file-path');
 
+    /** Option to replace templated context variables in the payload file JSON */
+    const payloadFilePathParsed = core.getBooleanInput('payload-file-path-parsed');
+
     let webResponse;
 
     if (payloadFilePath && !payload) {
       try {
         payload = await fs.readFile(path.resolve(payloadFilePath), 'utf-8');
-        // parse github context variables
-        const context = { github: github.context, env: process.env };
-        const payloadString = payload.replaceAll('${{', '{{');
-        payload = markup.up(payloadString, context);
+        if (payloadFilePathParsed) {
+          const context = { github: github.context, env: process.env };
+          const payloadString = payload.replaceAll('${{', '{{');
+          payload = markup.up(payloadString, context);
+        }
       } catch (error) {
         // passed in payload file path was invalid
         console.error(error);
@@ -131,14 +134,16 @@ module.exports = async function slackSend(core) {
         await axios.post(webhookUrl, payload, axiosOpts);
       } catch (err) {
         console.log('axios post failed, double check the payload being sent includes the keys Slack expects');
-        console.log(payload);
-        // console.log(err);
+        if ('toJSON' in err) {
+          console.error(JSON.stringify(err.toJSON()));
+        }
+        console.error(`Attempted to POST payload: ${JSON.stringify(payload)}`);
 
         if (err.response) {
           core.setFailed(err.response.data);
+        } else {
+          core.setFailed(err.message);
         }
-
-        core.setFailed(err.message);
         return;
       }
     }

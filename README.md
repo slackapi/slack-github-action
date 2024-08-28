@@ -1,5 +1,7 @@
 # Slack Send GitHub Action
 
+[![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
+
 Send data into Slack using this GitHub Action!
 
 ## Sending Variables
@@ -43,7 +45,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -53,7 +55,7 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     # This data can be any valid JSON from a previous step in the GitHub Action
     payload: |
@@ -64,6 +66,7 @@ or
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
+
 or
 
 > If the `payload` is provided it will take preference over `payload-file-path`
@@ -71,9 +74,24 @@ or
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     payload-file-path: "./payload-slack-content.json"
+  env:
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+> To send the payload file JSON as is, without replacing templated values with
+> `github.context` or `github.env`, set `payload-file-path-parsed` to `false`.
+> Default: `true`.
+
+```yaml
+- name: Send custom JSON data to Slack workflow
+  id: slack
+  uses: slackapi/slack-github-action@v1.26.0
+  with:
+    payload-file-path: "./payload-slack-content.json"
+    payload-file-path-parsed: false
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -97,7 +115,7 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -114,7 +132,7 @@ Using JSON payload for constructing a message is also available:
 ```yaml
 - name: Post to a Slack channel
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     # Slack channel id, channel name, or user id to post message.
     # See also: https://api.slack.com/methods/chat.postMessage#channels
@@ -145,7 +163,7 @@ Please note that **the message update step does not accept a channel name.** Set
 
 ```yaml
 - id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     # The following message update step does not accept a channel name.
     # Setting a channel ID here for consistency is highly recommended.
@@ -168,8 +186,8 @@ Please note that **the message update step does not accept a channel name.** Set
         ]
       }
   env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-- uses: slackapi/slack-github-action@v1.24.0
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+- uses: slackapi/slack-github-action@v1.26.0
   with:
     # Unlike the step posting a new message, this step does not accept a channel name.
     # Please use a channel ID, not a name here.
@@ -193,7 +211,38 @@ Please note that **the message update step does not accept a channel name.** Set
         ]
       }
   env:
-    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+```
+
+#### Reply to a message
+
+If you want to post a message as a threaded reply, you can populate the `payload` with a `thread_ts` field. This field should equal the `ts` value of the parent message of the thread. If you want to reply to a message previously posted by this Action, you can use the `ts` output provided as the `thread_ts` of a consequent threaded reply, e.g. `"thread_ts": "${{ steps.deployment_message.outputs.ts }}"`.
+
+Please note that **reply to a message does not accept a channel name.** Set a channel ID for the actions that reply to messages in thread.
+
+```yaml
+- id: deployment_message
+  uses: slackapi/slack-github-action@v1.26.0
+  with:
+    channel-id: "CHANNEL_ID"
+    payload: |
+      {
+        "text": "Deployment started (In Progress)"
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+- uses: slackapi/slack-github-action@v1.26.0
+  with:
+    # Unlike the step posting a new message, this step does not accept a channel name.
+    # Please use a channel ID, not a name here.
+    channel-id: "CHANNEL_ID"
+    payload: |
+      {
+        "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+        "text": "Deployment finished (Completed)"
+      }
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
 ### Technique 3: Slack Incoming Webhook
@@ -215,7 +264,7 @@ Incoming Webhooks conform to the same rules and functionality as any of Slack's 
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     # For posting a rich message using Block Kit
     payload: |
@@ -243,7 +292,7 @@ If you need to use a proxy to connect with Slack, you can use the `HTTPS_PROXY` 
 ```yaml
 - name: Post to a Slack channel via a proxy
   id: slack
-  uses: slackapi/slack-github-action@v1.24.0
+  uses: slackapi/slack-github-action@v1.26.0
   with:
     channel-id: 'CHANNEL_ID'
     slack-message: 'This message was sent through a proxy'
