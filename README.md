@@ -24,10 +24,12 @@ The recommended way to use this action is with Slack's Workflow Builder (if you'
 
 > ❗️ This approach requires a paid Slack plan; it also doesn't support any text formatting
 
-This technique sends data into Slack via a webhook URL created using [Slack's Workflow builder](https://slack.com/features/workflow-automation). Follow [these steps to create a Slack workflow using webhooks][create-webhook]. The Slack workflow webhook URL will be in the form `https://hooks.slack.com/workflows/....`. The payload sent by this GitHub action will be flattened (all nested keys moved to the top level) and stringified since Slack's workflow builder only supports top level string values in payloads.
+This technique sends data into Slack via a webhook URL created using [Slack's Workflow builder](https://slack.com/features/workflow-automation). Follow [these steps to create a Slack workflow using webhooks][create-webhook]. The Slack workflow webhook URL will be in the form `https://hooks.slack.com/workflows/....`.
 
 As part of the [workflow setup](https://slack.com/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks#workflow-setup),
 you will need to define expected variables in the payload the webhook will receive (described in the "Create custom variables" section of the docs). If these variables are missing in the payload, an error is returned.
+
+To match the webhook input format expected by Workflow Builder, the payload will be flattened and stringified (all nested keys are moved to the top level) before being sent. The default delimiter used to flatten payloads is a period (".") but should be changed to an underscore ("_") using the `payload-delimiter` parameter if you're using nested payloads as input values in your own workflows.
 
 #### Setup
 
@@ -44,6 +46,8 @@ Add this Action as a [step][job-step] to your project's GitHub Action Workflow f
 - name: Send GitHub Action trigger data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v1.26.0
+  with:
+    payload-delimiter: "_"
   env:
     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
