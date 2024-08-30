@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import github from "@actions/github";
 import flatten from "flat";
+import yaml from "js-yaml";
 import markup from "markup-js";
 import Config from "./config.js";
 import SlackError from "./errors.js";
@@ -63,6 +64,17 @@ export default class Content {
       );
     }
     try {
+      const content = yaml.load(config.inputs.payload, {
+        schema: yaml.JSON_SCHEMA,
+      });
+      return /** @type {Content} */ (content);
+    } catch (error) {
+      if (error instanceof Error) {
+        config.core.debug("Failed to parse input payload as YAML");
+        config.core.debug(error.message);
+      }
+    }
+    try {
       const trimmed = config.inputs.payload.trim();
       if (
         !config.inputs.payload.startsWith("{") &&
@@ -106,7 +118,22 @@ export default class Content {
         "utf-8",
       );
       if (!config.inputs.payloadFilePathParsed) {
-        return JSON.parse(content);
+        if (
+          config.inputs.payloadFilePath.endsWith("yaml") ||
+          config.inputs.payloadFilePath.endsWith("yml")
+        ) {
+          const load = yaml.load(content, {
+            schema: yaml.JSON_SCHEMA,
+          });
+          return /** @type {Content} */ (load);
+        }
+        if (config.inputs.payloadFilePath.endsWith("json")) {
+          return JSON.parse(content);
+        }
+        throw new SlackError(
+          config.core,
+          `Failed to parse file extension ${config.inputs.payloadFilePath}`,
+        );
       }
       const template = content.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
       const context = {
