@@ -37,11 +37,11 @@ outputs:
   time:
     description: "The epoch time of job completion"
   ok:
-    description: ""
+    description: "If the requested completed without errors"
   channel_id:
     description: "The channel ID of a message posted using a token"
   response:
-    description: ""
+    description: "A stringified version of the Slack API response"
   thread_ts:
     description: "The threaded timestamp on a message posted using a token"
   ts:
