@@ -13,7 +13,7 @@ export default async function send(core) {
   const config = new Config(core);
   try {
     await post(config);
-    config.core.setOutput("time", new Date().valueOf() / 1000);
+    config.core.setOutput("time", Math.floor(new Date().valueOf() / 1000));
   } catch (error) {
     throw new SlackError(core, error, config.inputs.errors);
   }
