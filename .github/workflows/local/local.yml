@@ -19,10 +19,10 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           payload: |
-            "repository": "${{ github.repository }}",
-            "pull_request_username": "${{ github.event.pull_request.user.login }}",
-            "pull_request_title": ${{ toJSON(github.event.pull_request.title) }},
-            "pull_request_url": "${{ github.event.pull_request.html_url }}"
+            repository: ${{ github.repository }}
+            pull_request_username: ${{ github.event.pull_request.user.login }}
+            pull_request_title: ${{ toJSON(github.event.pull_request.title) }}
+            pull_request_url: ${{ github.event.pull_request.html_url }}
       - name: Post a token message into channel
         id: api
         uses: ./.
@@ -30,17 +30,8 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
-            "text": "greetings <@USLACKBOT>",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": ":wave: greetings <@USLACKBOT>"
-                }
-              }
-            ]
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "Action happens at <https://github.com/${{ github.repository }}>"
       - name: Upload this workflow file
         id: file
         uses: ./.
@@ -48,7 +39,48 @@ jobs:
           method: files.uploadV2
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            "channel_id": "${{ secrets.SLACK_CHANNEL_ID }}",
-            "initial_comment": "This code exists here",
-            "file": "./.github/workflows/local/local.yml",
-            "filename": "action.yml"
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            initial_comment: "This code exists here"
+            file: .github/workflows/local/local.yml
+            filename: action.yml
+      - name: Initiate the deployment sequence
+        id: slack
+        uses: ./.
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "Deployment started :eyes:"
+            attachments:
+              - color: "dbab09"
+                fields:
+                  - title: "Status"
+                    short: true
+                    value: "In Progress"
+      - name: Countdown
+        run: sleep 10
+      - name: Launch time is now
+        uses: ./.
+        with:
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            ts: "${{ steps.slack.outputs.ts }}"
+            text: "Deployment finished :rocket:"
+            attachments:
+              - color: "28a745"
+                fields:
+                  - title: "Status"
+                    short: true
+                    value: "Completed"
+      - name: Celebrate wins
+        uses: ./.
+        with:
+          method: reactions.add
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            timestamp: ${{ steps.slack.outputs.ts }}
+            name: "tada"
