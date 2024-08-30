@@ -209,6 +209,7 @@ describe("config", () => {
 
   describe("retries", () => {
     it("warns if an invalid retries option is provided", async () => {
+      mocks.axios.post.returns(Promise.resolve("LGTM"));
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
