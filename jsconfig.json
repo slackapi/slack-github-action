@@ -16,9 +16,7 @@
         ]
     },
     "exclude": [
-        "node_modules",
-        "test", // TODO: remove
-        "src/slack-send.js" // TODO: remove
+        "node_modules"
     ],
     "include": [
         "src/**/*.js"
