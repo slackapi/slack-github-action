@@ -1,131 +1,148 @@
-# Slack Send GitHub Action
+# Slack Send
+
+> the GitHub Action for sending data to Slack
 
 [![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
 
-Send data into Slack with a Slack [API method][methods] like [`chat.postMessage`][chat.postMessage]
-and [`files.uploadV2`][files.uploadV2], or uses webhooks to [start workflows](#technique-1-slack-workflow-builder) in Workflow Builder and
-[post messages](#technique-3-slack-incoming-webhook) with this GitHub Action!
+Send data into Slack with a Slack [API method](#technique-2-slack-api-method)
+like [`chat.postMessage`][chat.postMessage] and
+[`files.uploadV2`][files.uploadV2], or use webhooks to
+[start workflows](#technique-1-slack-workflow-builder) in Workflow Builder and
+[post messages](#technique-3-slack-incoming-webhook) with webhooks using this
+GitHub Action!
 
-## Sending Variables
+## Sending data
 
-You can send GitHub-specific data related to GitHub Action workflow events using
-[GitHub Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts)
-and
-[Variables](https://docs.github.com/en/actions/learn-github-actions/variables)
-that GitHub Actions provides.
+Different ways to send data share overlapping styles of gathering the data to be
+sent, intersecting between the `payload` and `payload-file-path` inputs and the
+`method` and `webook` techniques.
+
+Either payload input option can be used with either technique, with both YAML
+and JSON formats being accepted.
+
+**Examples**
+
+```yaml
+- name: Post a message to a channel using a token
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    method: chat.postMessage
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      text: "Actions happen at <https://github.com/${{ github.repository }}>"
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+```
+
+```yaml
+- name: Start a Slack workflow using a webhook URL
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    payload-file-path: ./build-artifacts.json
+```
+
+If neither payload input option is provided, the
+[GitHub context][github-context] is used which has details specific to the
+repository and run of the workflow.
+
+The final payload content doesn't have to be fixed either, with
+[additional configurations](#additional-configurations) available for
+customization.
+
+### Example workflows
 
 For examples on how to leverage this in your workflows, check out the
-[example workflows we have](https://github.com/slackapi/slack-github-action/tree/main/example-workflows).
+[example workflows we have][examples] available.
 
-## How to Send Data to Slack
+## Sending techniques
 
-This package has three different techniques to send data to Slack:
+This Action offers three different techniques to send data to Slack:
 
-1. Send data to Slack's Workflow Builder (requires a paid Slack instance).
-2. Send data to a Slack API method using a secret token with specified scopes.
-3. Send data via a Slack Incoming Webhook URL (use an existing custom app or
-   create a new one).
-
-The recommended way to use this action is with Slack's Workflow Builder (if
-you're on a paid Slack plan).
+1. Send data with a webhook to start a worflow in Workflow Builder.
+2. Send data using a Slack API method and a secret token with required scopes.
+3. Send data as a message with a Slack Incoming Webhook URL.
 
 ### Technique 1: Slack Workflow Builder
 
-> ❗️ This approach requires a paid Slack plan; it also doesn't support any text
-> formatting
+> ❗️ This technique requires [a Slack paid plan][plans] to use Workflow Builder.
 
-This technique sends data into Slack via a webhook URL created using [Slack's Workflow builder](https://slack.com/features/workflow-automation) . Follow [these steps to create a Slack workflow using webhooks][create-webhook]. The Slack workflow webhook URL will be in the form `https://hooks.slack.com/workflows/....`.
-
-As part of the [workflow setup](https://slack.com/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks#workflow-setup),
-you will need to define expected variables in the payload the webhook will receive (described in the "Create custom variables" section of the docs). If these variables are missing in the payload, an error is returned.
-
-To match the webhook input format expected by Workflow Builder, the payload will be flattened and stringified (all nested keys are moved to the top level) before being sent. The default delimiter used to flatten payloads is a period (".") but should be changed to an underscore ("\_") using the `payload-delimiter` parameter if you're using nested payloads as input values in your own workflows.
+This technique sends data to Slack using a webhook to start a workflow created
+using the [Slack Workflow Builder][wfb]. Follow
+[these steps to create a Slack workflow using webhooks][wfb-create].
 
 #### Setup
 
-- [Create a Slack workflow webhook][create-webhook].
-- Copy the webhook URL (`https://hooks.slack.com/workflows/....`) and
-  [add it as a secret in your repo settings][repo-secret] named
-  `SLACK_WEBHOOK_URL`.
-- Add a step to your GitHub action to send data to your Webhook.
-- Configure your Slack workflow to use variables from the incoming payload from
-  the GitHub Action. You can select where you want to post the data and how you
-  want to format it in Slack's workflow builder interface.
+Starting in Slack, some prerequisite preparations are necessary:
+
+1. [Create a Slack workflow][wfb-create] that starts with a webhook.
+2. Copy the webhook URL and [add it as a repository secret][repo-secret] called
+   `SLACK_WEBHOOK_URL`.
+3. Add a step to your GitHub Action to send data to your webhook.
+4. Configure your Slack workflow to use the incoming payload variables from the
+   the GitHub Action. You can then adjust the steps of the workflow to use these
+   values in creative and clever ways.
+
+Note: The webhook URL will resemble something like so:
+
+```txt
+https://hooks.slack.com/triggers/T0123456789/3141592653589/c6e6c0d868b3054ca0f4611a5dbadaf
+```
 
 #### Usage
 
-Add this Action as a [step][job-step] to your project's GitHub Action Workflow
-file:
+Add this Action as a [step][job-step] to your project's GitHub Action workflow
+file with the configurations you want.
+
+##### Sending values from the GitHub default context
+
+In the example below, no payload input values are being provided so values from
+the [GitHub context][github-context] specific to the job are used:
 
 ```yaml
-- name: Send GitHub Action trigger data to Slack workflow
-  id: slack
+- name: Send GitHub Action data to a Slack workflow
   uses: slackapi/slack-github-action@v2-development
   with:
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     payload-delimiter: "_"
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
-or
+While also using `payload-delimiter` the payload is flattened and stringified to
+match the webhook input format expected by Workflow Builder.
+
+##### Providing parsed payload information as strings
+
+Provided input values for payload information are sent to the webhook URL after
+parsing the workflow:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
-  id: slack
   uses: slackapi/slack-github-action@v2-development
   with:
-    # This data can be any valid JSON from a previous step in the GitHub Action
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     payload: |
-      "key": "value",
-      "foo": "bar"
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+      status: "${{ job.status }}"
+      option: "false"
 ```
 
-or
-
-> If the `payload` is provided it will take preference over `payload-file-path`
-
-```yaml
-- name: Send custom JSON data to Slack workflow
-  id: slack
-  uses: slackapi/slack-github-action@v2-development
-  with:
-    payload-file-path: "./payload-slack-content.json"
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-```
-
-> To send the payload file JSON as is, without replacing templated values with
-> `github.context` or `github.env`, set `payload-file-path-parsed` to `false`.
-> Default: `true`.
-
-```yaml
-- name: Send custom JSON data to Slack workflow
-  id: slack
-  uses: slackapi/slack-github-action@v2-development
-  with:
-    payload-file-path: "./payload-slack-content.json"
-    payload-file-path-parsed: false
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-```
-
-### Technique 2: Slack API token
+### Technique 2: Slack API method
 
 A bot token or user token or [token of some other kind][tokens] can be used to
-call one of many [Slack API methods][methods]! This includes [`chat.postMessage`][chat.postMessage]
-and the official `@slack/web-api` implemention of [`files.uploadV2`][files.uploadV2]
+call one of many [Slack API methods][methods]! This includes
+[`chat.postMessage`][chat.postMessage] and the official `@slack/web-api`
+implemention of [`files.uploadV2`][files.uploadV2].
 
-By creating a new Slack app or using an existing one, this approach allows your
-GitHub Actions job to post a message in a Slack channel or direct message by
-utilizing the [chat.postMessage](https://api.slack.com/methods/chat.postMessage)
-API method. Using this approach you can instantly post a message without setting
-up Slack workflows.
+Setting up a workflow with this technique allows you to instantly interact with
+the Slack API methods without setting up a Slack workflow.
 
 #### Setup
 
-- [Create a Slack App][apps] for your workspace (alternatively use an existing
-  app you have already created and installed).
-- Add the [`chat:write`](https://api.slack.com/scopes/chat:write) bot scope
-  under **OAuth & Permissions**.
-- Install the app to your workspace.
+The exact [API method][methods] used will change the required [scopes][scopes],
+but setup should be similar for all methods:
+
+- [Create a Slack App][apps] for your workspace or use an existing one.
+- Add the [`chat:write`][chat:write] bot scope under the **OAuth & Permissions**
+  page.
+- Install the app to your workspace using the **Install App** page.
 - Copy the app's Bot Token from the **OAuth & Permissions** page and
   [add it as a secret in your repo settings][repo-secret] named
   `SLACK_BOT_TOKEN`.
@@ -134,48 +151,51 @@ up Slack workflows.
 
 #### Usage
 
-Add this Action as a [step][job-step] to your project's GitHub Action Workflow
-file:
+Choosing inputs for these steps is left as an exercise for the actioneer, but
+these snippets might be helpful when starting.
+
+##### Posting a message with text
+
+An introductory call to the `chat.postMessage` method can be done by
+[adding this step][job-step] to a job in your workflow:
 
 ```yaml
 - name: Post to a Slack channel
-  id: slack
   uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      "channel": "C0123456789",
-      "text": "howdy <@channel>!"
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "howdy <@channel>!"
 ```
 
-Posting payloads with nested JSON, like block messages with block kit, works as
-the API call hopes:
+##### Posting a message with blocks
+
+More detailed messages with nested JSON, like block messages made with block
+kit, work as the API call might hope:
 
 ```yaml
 - name: Post to a Slack channel
-  id: slack
   uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      "channel": "C0123456789",
-      "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-      "blocks": [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-          }
-        }
-      ]
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      blocks:
+        - type: "section"
+          text:
+            type: "mrkdwn"
+            text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 ```
 
-#### File uploads
+##### Uploading a file
 
-Calling web API methods with `@slack/web-api` makes uploading files just another API call, but with all of the advantages of `files.uploadV2`:
+Calling web API methods with [`@slack/web-api`][slack-web-api] makes uploading
+files just another API call, but with all of the advantages of
+[`files.uploadV2`][files.uploadV2]:
 
 ```yaml
 - name: Share a file to that channel
@@ -183,21 +203,17 @@ Calling web API methods with `@slack/web-api` makes uploading files just another
   with:
     method: files.uploadV2
     payload: |
-      "channel_id": "C0123456789",
-      "initial_comment": "the results are in!",
-      "file": "results.out",
-      "filename": "results-${{ github.sha }}.out"
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      initial_comment: "the results are in!"
+      file: "results.out"
+      filename: "results-${{ github.sha }}.out"
 ```
 
-Using JSON payload for constructing a message is also available:
+##### Updating a message
 
-#### Update the message
-
-If you would like to notify the real-time updates on a build status, you can
-modify the message your build job posted in the subsequent steps. In order to do
-this, the steps after the first message posting can have
-`update_ts: ${{ steps.slack.outputs.ts }}` in their settings. With this, the
-step updates the already posted channel message instead of posting a new one.
+Following up on a message after it's posted, such as updates for a build status,
+can be done by chaining multiple steps together using outputs from past steps as
+inputs to current ones:
 
 ```yaml
 - name: Initiate the deployment launch sequence
@@ -207,93 +223,80 @@ step updates the already posted channel message instead of posting a new one.
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      "channel": "C0123456789",
-      "text": "Deployment started (In Progress)",
-      "attachments": [
-        {
-          "pretext": "Deployment started",
-          "color": "dbab09",
-          "fields": [
-            {
-              "title": "Status",
-              "short": true,
-              "value": "In Progress"
-            }
-          ]
-        }
-      ]
-- name: Countdown
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "Deployment started :eyes:"
+      attachments:
+        - color: "dbab09"
+          fields:
+            - title: "Status"
+              short: true
+              value: "In Progress"
+- name: Countdown until launch
   run: sleep 10
-- uses: slackapi/slack-github-action@v2-development
+- name: Update the original message with success
+  uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.update
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      "ts": "${{ steps.slack.outputs.ts }}",
-      "text": "Deployment finished (Completed)",
-      "attachments": [
-        {
-          "pretext": "Deployment finished",
-          "color": "28a745",
-          "fields": [
-            {
-              "title": "Status",
-              "short": true,
-              "value": "Completed"
-            }
-          ]
-        }
-      ]
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      ts: ${{ steps.slack.outputs.ts }}
+      text: "Deployment finished! :rocket:"
+      attachments:
+        - color: "28a745"
+          fields:
+            - title: "Status"
+              short: true
+              value: "Completed"
 ```
 
-Please note that **the message update step does not accept a channel name.** Set
-a channel ID for the steps for the actions that update messages.
+##### Replying to a message
 
-#### Reply to a message
-
-If you want to post a message as a threaded reply, you can populate the `payload` with a `thread_ts` field. This field should equal the `ts` value of the parent message of the thread. If you want to reply to a message previously posted by this Action, you can use the `ts` output provided as the `thread_ts` of a consequent threaded reply, e.g. `"thread_ts": "${{ steps.deployment_message.outputs.ts }}"`.
+Posting threaded replies to a message from a past job can be done by including
+the `thread_ts` attribute of the **parent** message in the `payload`:
 
 ```yaml
-- id: deployment_message
+- name: Initiate a deployment
+  uses: slackapi/slack-github-action@v2-development
+  id: deployment_message
+  with:
+    method: chat.postMessage
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "Deployment started :eyes:"
+- name: Conclude the deployment
   uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      "channel": "C0123456789",
-      "text": "Deployment started (In Progress)"
-- uses: slackapi/slack-github-action@v2-development
-  with:
-    method: chat.postMessage
-    token: ${{ secrets.SLACK_BOT_TOKEN }}
-    payload: |
-      "channel": "C0123456789",
-      "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-      "text": "Deployment finished (Completed)"
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      thread_ts: ${{ steps.deployment_message.outputs.ts }}
+      text: "Deployment finished! :rocket:"
 ```
 
-Please note that **reply to a message does not accept a channel name.** Set a channel ID for the actions that reply to messages in thread.
+### Technique 3: Slack incoming webhook
 
-### Technique 3: Slack Incoming Webhook
-
-This approach allows your GitHub Actions job to post a message to a Slack
-channel or direct message by utilizing
-[Incoming Webhooks](https://api.slack.com/messaging/webhooks).
+This technique uses GitHub Actions to post messages to a channel or direct
+message using [incoming webhooks][incoming-webhook] from a Slack app.
 
 Incoming Webhooks conform to the same rules and functionality as any of Slack's
 other messaging APIs. You can make your posted messages as simple as a single
 line of text, or make them really useful with
-[interactive components](https://api.slack.com/messaging/interactivity). To make
-the message more expressive and useful use
-[Block Kit](https://api.slack.com/block-kit) to build and test visual
-components.
+[interactive components][interactivity]. To make the message more expressive and
+useful use [Block Kit][block-kit] to build and test visual components.
 
 #### Setup
 
+A similar approach to [Technique 1](#technique-1-slack-workflow-builder) is
+taken to create apps and setup the workflow, but webhooks are gathered from a
+different source:
+
 - [Create a Slack App][apps] for your workspace (alternatively use an existing
   app you have already created and installed).
-- Add the [`incoming-webhook`](https://api.slack.com/scopes/incoming-webhook)
-  bot scope under **OAuth & Permissions**.
+- Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth &
+  Permissions**.
 - Install the app to your workspace (you will select a channel to notify).
 - Activate and create a new webhook under **Incoming Webhooks**.
 - Copy the Webhook URL from the Webhook you just generated
@@ -302,60 +305,94 @@ components.
 
 #### Usage
 
+Add the collected webhook from above to a workflow and configure the job using
+[`mrkdwn`][mrkdwn] formatting values for a message or [Block Kit][block-kit]
+blocks:
+
+```yaml
+- name: Send custom JSON data to Slack workflow
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    payload: |
+      text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      blocks:
+        - type: "section"
+          text:
+            type: "mrkdwn"
+            text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+```
+
+## Additional configurations
+
+Not all of the above settings serve every customization of a workflow, so these
+options might be useful.
+
+### Parsing templated variables
+
+Additional [variables][github-variables] provided by Github can be used to
+replace templated variables in the `payload-file-path` file using the option
+to parse payloads with the `payload-file-path-parsed` option:
+
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
   uses: slackapi/slack-github-action@v2-development
   with:
-    # For posting a rich message using Block Kit
+    payload-file-path: "./payload-slack-content.json"
+    payload-file-path-parsed: true
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-    payload: |
-      "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-      "blocks": [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-          }
-        }
-      ]
 ```
 
-### HTTPS Proxy
+This replaces variables templated with as `${{ github.repository }}` with the
+values found in the action context.
+
+### HTTPS proxy
 
 If you need to use a proxy to connect with Slack, you can use the `HTTPS_PROXY`
-(or `https_proxy`) environment variable. In this example we use the Slack App
+or `https_proxy` environment variable. In this example we use the Slack App
 technique, but configuring a proxy works the same way for all of them:
 
 ```yaml
 - name: Post to a Slack channel via a proxy
-  id: slack
   uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.postMessage
+    proxy: "http://proxy.example.org:8080" # Change this to a custom value
     token: ${{ secrets.SLACK_BOT_TOKEN }}
-    # Set the HTTPS_PROXY environment variable to whatever your policy requires
-    proxy: "http://proxy.example.org:8080"
     payload: |
-      "channel": "C0123456789",
-      "message": "This message was sent through a proxy"
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      message: "This message was sent through a proxy"
 ```
-
-## Contributing
-
-All contributions are encouraged! Check out the [CONTRIBUTING](.github/contributing.md) guide to learn more.
 
 ## License
 
-See [LICENSE](LICENSE).
+This project is licensed under the [MIT license](LICENSE).
+
+## Contributing
+
+All contributions are encouraged! Check out the
+[contributor's guide][contributing] to learn more.
 
 [apps]: https://api.slack.com/apps
+[block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
-[create-webhook]: https://slack.com/intl/en-ca/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks
+[chat:write]: https://api.slack.com/scopes/chat:write
+[contributing]: .github/contributing.md
+[examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.uploadV2]: https://slack.dev/node-slack-sdk/web-api/#upload-a-file
+[github-context]: https://docs.github.com/en/actions/learn-github-actions/contexts
+[github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
+[incoming-webhook]: https://api.slack.com/messaging/webhooks
+[incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
+[interactivity]: https://api.slack.com/messaging/interactivity
 [job-step]: https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idsteps
 [methods]: https://api.slack.com/methods
+[mrkdwn]: https://api.slack.com/reference/surfaces/formatting
+[plans]: https://slack.com/pricing
 [repo-secret]: https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository
+[scopes]: https://api.slack.com/scopes
+[slack-web-api]: https://slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
-[wfb-triggers]: https://api.slack.com/automation/triggers/webhook
+[wfb]: https://slack.com/features/workflow-automation
+[wfb-create]: https://slack.com/intl/en-ca/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks

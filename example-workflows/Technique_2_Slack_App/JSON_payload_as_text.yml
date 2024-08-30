@@ -12,5 +12,5 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            "text": "posting from a github action",
-            "channel": "C0123456789"
+            text: "posting from a github action"
+            channel: "C0123456789"

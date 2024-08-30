@@ -11,5 +11,5 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           payload: |
-            "key": "value",
-            "foo": "bar"
+            key: value
+            foo: bar
