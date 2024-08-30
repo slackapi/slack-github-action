@@ -12,7 +12,7 @@ jobs:
       - name: Checkout action
         uses: actions/checkout@v4
       - name: Build action
-        run: npm install && npm run build
+        run: npm install
       - name: Send a message into channel
         id: slack
         uses: ./.
