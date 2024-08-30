@@ -20,9 +20,6 @@ jobs:
       - name: "build: install the required dependencies"
         run: npm ci
 
-      - name: "build: package the latest changes"
-        run: npm run build
-
       - name: "unit(test): perform lints and formatting checks"
         run: npm run lint
 
@@ -48,8 +45,8 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            "channel": ${{ secrets.SLACK_CHANNEL_ID }},
-            "text": "CI Post from slack-send GitHub Action! Succeeded!!"
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "CI Post from slack-send GitHub Action! Succeeded!!"
 
       - name: "integration(botToken): confirm a message was posted"
         run: test -n "${{ steps.slackToken.outputs.ts }}"
@@ -61,9 +58,9 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            "channel": ${{ secrets.SLACK_CHANNEL_ID }}
-            "text": "This message should be posted as a response in thread",
-            "thread_ts": "${{ steps.slackToken.outputs.thread_ts }}"
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "This message should be posted as a response in thread"
+            thread_ts: ${{ steps.slackToken.outputs.thread_ts }}
 
       - name: "integration(botToken): confirm a response was posted"
         run: test -n "${{ steps.slackThreadResponse.outputs.ts }}"
@@ -98,17 +95,13 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
           payload: |
-            "text":"Incoming Webhook test for slack send",
-            "blocks":[
-              {
-                "type":"section",
-                "text":{
-                  "type":"plain_text",
-                  "text":"A post by Slack Send GitHub Action. Testing Incoming webhooks",
-                  "emoji":true
-                }
-              }
-            ]
+            text: "Incoming Webhook test for slack send"
+            blocks:
+              - type: section
+                text:
+                  type: plain_text
+                  text: "A post by Slack Send GitHub Action. Testing Incoming webhooks"
+                  emoji: true
 
       - name: "integration(incoming): confirm a webhook was posted"
         run: test -n "${{ steps.slackIncoming.outputs.time }}"
