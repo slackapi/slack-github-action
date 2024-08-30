@@ -12,10 +12,12 @@ import SlackError from "./errors.js";
  */
 export default class Client {
   /**
+   * Possible response values related to messages from the API.
    * @typedef MessageResult - Possible message values from API methods.
    * @prop {string} [threadTs] - timestamp of the top threaded message.
    * @prop {string} [ts] - timestamp of the message.
-   * @prop {string} [channelId] - ID of the channel.
+   * @prop {string} [channel] - ID of the channel.
+   * @see {@link https://api.slack.com/methods/chat.postMessage#examples}
    */
 
   /**
@@ -42,8 +44,8 @@ export default class Client {
     if (!response.ok) {
       throw new Error(response.error);
     }
-    if (response.channelId) {
-      config.core.setOutput("channel_id", response.channelId);
+    if (response.channel) {
+      config.core.setOutput("channel_id", response.channel);
     }
     if (response.threadTs) {
       config.core.setOutput("thread_ts", response.threadTs);
