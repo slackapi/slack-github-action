@@ -34,9 +34,6 @@ jobs:
       - name: "unit(test): perform unit test checks"
         run: npm test
 
-      - name: "unit(test): check unit test coverage"
-        run: npm run test:gen-cov
-
       - name: "unit(test): upload coverage to CodeCov"
         uses: codecov/codecov-action@v4.5.0
         with:
