@@ -23,6 +23,12 @@ jobs:
       - name: "build: package the latest changes"
         run: npm run build
 
+      - name: "unit(test): perform lints and formatting checks"
+        run: npm run lint
+
+      - name: "unit(test): perform check of typings"
+        run: npm run check
+
       - name: "unit(test): perform unit test checks"
         run: npm test
 
