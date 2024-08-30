@@ -171,7 +171,6 @@ the API call hopes:
           }
         }
       ]
-    }
 ```
 
 #### File uploads
