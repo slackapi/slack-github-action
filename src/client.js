@@ -38,7 +38,10 @@ export default class Client {
     /**
      * @type {webapi.WebAPICallResult & MessageResult}
      */
-    const response = await client.apiCall(config.inputs.method, config.content);
+    const response = await client.apiCall(
+      config.inputs.method,
+      config.content.values,
+    );
     config.core.setOutput("ok", response.ok);
     config.core.setOutput("response", JSON.stringify(response));
     if (!response.ok) {

@@ -1,11 +1,7 @@
-import fs from "node:fs";
-import path from "node:path";
 import core from "@actions/core";
-import github from "@actions/github";
 import webapi from "@slack/web-api";
 import axios from "axios";
-import flatten from "flat";
-import markup from "markup-js";
+import Content from "./content.js";
 import SlackError from "./errors.js";
 
 /**
@@ -66,11 +62,6 @@ export default class Config {
   axios;
 
   /**
-   * @typedef Content - The provided and parsed payload object.
-   * @type {Record<string, any>}
-   */
-
-  /**
    * @type {Content} - The parsed payload data to send.
    */
   content;
@@ -100,6 +91,8 @@ export default class Config {
     this.axios = axios;
     this.core = core;
     this.webapi = webapi;
+    core.setSecret(core.getInput("token"));
+    core.setSecret(core.getInput("webhook"));
     this.inputs = {
       errors: core.getBooleanInput("errors"),
       method: core.getInput("method"),
@@ -118,6 +111,27 @@ export default class Config {
       webhook:
         core.getInput("webhook") || process.env.SLACK_WEBHOOK_URL || null,
     };
+    this.validate();
+    core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
+    this.content = new Content(this);
+    core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
+  }
+
+  /**
+   * Confirm the configurations are correct enough to continue.
+   */
+  validate() {
+    switch (this.inputs.retries) {
+      case this.Retries.ZERO:
+      case this.Retries.FIVE:
+      case this.Retries.TEN:
+      case this.Retries.RAPID:
+        break;
+      default:
+        core.warning(
+          `Invalid input! An unknown "retries" value was used: ${this.inputs.retries}`,
+        );
+    }
     switch (true) {
       case !!this.inputs.token && !!this.inputs.webhook:
         core.debug(
@@ -148,112 +162,6 @@ export default class Config {
           core,
           "Missing input! Either a token or webhook is required to take action.",
         );
-    }
-    switch (true) {
-      case !!this.inputs.payload && !!this.inputs.payloadFilePath:
-        throw new SlackError(
-          core,
-          "Invalid input! Just the payload or payload file path is required.",
-        );
-      case !!this.inputs.payload:
-        this.content = this.getContentPayload(core);
-        break;
-      case !!this.inputs.payloadFilePath:
-        this.content = this.getContentPayloadFilePath(core);
-        break;
-      default:
-        core.debug("Missing payload so gathering inputs from action context.");
-        this.content = github.context;
-        break;
-    }
-    if (this.inputs.payloadDelimiter) {
-      this.content = flatten(this.content, {
-        delimiter: this.inputs.payloadDelimiter,
-      });
-      for (const key of Object.keys(this.content)) {
-        this.content[key] = `${this.content[key]}`;
-      }
-    }
-    core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
-    switch (this.inputs.retries) {
-      case this.Retries.ZERO:
-      case this.Retries.FIVE:
-      case this.Retries.TEN:
-      case this.Retries.RAPID:
-        break;
-      default:
-        core.warning(
-          `Invalid input! An unknown "retries" value was used: ${this.inputs.retries}`,
-        );
-    }
-    core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
-  }
-
-  /**
-   * Format request content from payload values for use in the request.
-   * @param {core} core - GitHub Actions core utilities.
-   * @throws if the input payload or payload file path is invalid JSON.
-   * @returns {Content} - the parsed JSON payload to use in requests.
-   */
-  getContentPayload(core) {
-    if (!this.inputs.payload) {
-      throw new SlackError(core, "Invalid input! No payload content found");
-    }
-    try {
-      const trimmed = this.inputs.payload.trim();
-      if (
-        !this.inputs.payload.startsWith("{") &&
-        !this.inputs.payload.endsWith("}")
-      ) {
-        core.debug("Wrapping input payload in braces to create valid JSON");
-        const comma = trimmed.replace(/,$/, ""); // remove trailing comma
-        const wrap = `{${comma}}`;
-        return JSON.parse(wrap);
-      }
-      return JSON.parse(trimmed);
-    } catch (error) {
-      if (error instanceof Error) {
-        core.error(error);
-      }
-      throw new SlackError(
-        core,
-        "Invalid input! Failed to parse the JSON content of the payload",
-      );
-    }
-  }
-
-  /**
-   * Format request content from the payload file path for use in the request.
-   * @param {core} core - GitHub Actions core utilities.
-   * @throws if the input payload or payload file path is invalid JSON.
-   * @returns {Content} - the parsed JSON payload to use in requests.
-   */
-  getContentPayloadFilePath(core) {
-    if (!this.inputs.payloadFilePath) {
-      throw new SlackError(core, "Invalid input! No payload found for content");
-    }
-    try {
-      const content = fs.readFileSync(
-        path.resolve(this.inputs.payloadFilePath),
-        "utf-8",
-      );
-      if (!this.inputs.payloadFilePathParsed) {
-        return JSON.parse(content);
-      }
-      const template = content.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
-      const context = {
-        env: process.env,
-        github: github.context,
-      };
-      return JSON.parse(markup.up(template, context));
-    } catch (error) {
-      if (error instanceof Error) {
-        core.error(error);
-      }
-      throw new SlackError(
-        core,
-        "Invalid input! Failed to parse the JSON content of the payload file",
-      );
     }
   }
 }

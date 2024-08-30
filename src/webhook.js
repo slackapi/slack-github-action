@@ -24,7 +24,7 @@ export default class Webhook {
     };
     const response = await config.axios.post(
       config.inputs.webhook,
-      config.content,
+      config.content.values,
       options,
     );
     config.core.debug(JSON.stringify(response.data));
