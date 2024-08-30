@@ -13,8 +13,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Build action
         run: npm install
-      - name: Send a message into channel
-        id: slack
+      - name: Post a webhook message into channel
+        id: webhook
         uses: ./.
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -23,3 +23,32 @@ jobs:
             "pull_request_username": "${{ github.event.pull_request.user.login }}",
             "pull_request_title": ${{ toJSON(github.event.pull_request.title) }},
             "pull_request_url": "${{ github.event.pull_request.html_url }}"
+      - name: Post a token message into channel
+        id: api
+        uses: ./.
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
+            "text": "greetings <@USLACKBOT>",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":wave: greetings <@USLACKBOT>"
+                }
+              }
+            ]
+      - name: Upload this workflow file
+        id: file
+        uses: ./.
+        with:
+          method: files.uploadV2
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            "channel_id": "${{ secrets.SLACK_CHANNEL_ID }}",
+            "initial_comment": "This code exists here",
+            "file": "./.github/workflows/local/local.yml",
+            "filename": "action.yml"
