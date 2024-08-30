@@ -22,8 +22,6 @@ export default class Content {
   constructor(config) {
     switch (true) {
       case !!config.inputs.payload && !!config.inputs.payloadFilePath:
-        console.error(config.inputs.payload);
-        console.error(config.inputs.payloadFilePath);
         throw new SlackError(
           config.core,
           "Invalid input! Just the payload or payload file path is required.",
