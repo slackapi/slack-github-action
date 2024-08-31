@@ -91,8 +91,6 @@ export default class Config {
     this.axios = axios;
     this.core = core;
     this.webapi = webapi;
-    core.setSecret(core.getInput("token"));
-    core.setSecret(core.getInput("webhook"));
     this.inputs = {
       errors: core.getBooleanInput("errors"),
       method: core.getInput("method"),
