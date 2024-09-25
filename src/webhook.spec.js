@@ -10,12 +10,13 @@ describe("webhook", () => {
 
   describe("success", () => {
     it("sends the parsed payload to the provided webhook", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("payload").returns('"message":"hello"');
+      mocks.axios.post.returns(Promise.resolve("LGTM"));
       try {
-        mocks.core.getInput
-          .withArgs("webhook")
-          .returns("https://hooks.slack.com");
-        mocks.core.getInput.withArgs("payload").returns('"message":"hello"');
-        mocks.axios.post.returns(Promise.resolve("LGTM"));
         await send(mocks.core);
         assert.equal(mocks.axios.post.getCalls().length, 1);
         const [url, payload, options] = mocks.axios.post.getCall(0).args;
@@ -42,6 +43,21 @@ describe("webhook", () => {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg,
           "Missing input! Either a token or webhook is required to take action.",
+        );
+      }
+    });
+
+    it("requires that a webhook type is provided in input", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      try {
+        await send(mocks.core);
+        assert.fail("Failed to throw for missing input");
+      } catch {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
         );
       }
     });

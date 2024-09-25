@@ -87,6 +87,7 @@ jobs:
           # Normalized payload with info pulled out from GitHub trigger event
           payload: '{"author":"${{ github.event.sender.login }}","url":"${{ env.URL}}", "repoName":"${{ github.event.repository.full_name }}", "status":"${{ job.status }}"}'
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
 
       - name: "integration(wfb): confirm a payload was sent"
         run: test -n "${{ steps.slackWorkflow.outputs.time }}"
@@ -96,8 +97,9 @@ jobs:
         uses: ./
         with:
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
           payload: |
-            text: "Incoming Webhook test for slack send"
+            text: "Incoming webhook test for slack send"
             blocks:
               - type: section
                 text:
@@ -119,6 +121,7 @@ jobs:
         with:
           payload-file-path: ./.github/resources/payload-notification.json
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
         env:
           JOB_STATUS: ${{ job.status }}
           ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}

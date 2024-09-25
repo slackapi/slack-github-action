@@ -17,6 +17,7 @@ describe("content", () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns(`
         "message": "LGTM!",
         "channel": "C0123456789",
@@ -49,6 +50,7 @@ describe("content", () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns(`{
           "message": "this is wrapped",
           "channel": "C0123456789"
@@ -66,6 +68,7 @@ describe("content", () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
@@ -82,13 +85,14 @@ describe("content", () => {
     });
 
     it("replaces templated variables in the payload file", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       mocks.core.getBooleanInput
         .withArgs("payload-file-path-parsed")
         .returns(true);
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
         .returns(`{
@@ -104,10 +108,11 @@ describe("content", () => {
     });
 
     it("flattens nested payloads if a delimiter is provided", async () => {
+      mocks.core.getInput.withArgs("payload-delimiter").returns("_");
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("payload-delimiter").returns("_");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns(`
           "apples": "tree",
           "bananas": {
@@ -128,6 +133,7 @@ describe("content", () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns(`"message"="hello"`);
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       try {
@@ -145,6 +151,7 @@ describe("content", () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("{");
       try {
         await send(mocks.core);
@@ -158,10 +165,11 @@ describe("content", () => {
     });
 
     it("fails to parse a file path that does not exist", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("unknown.json");
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("payload-file-path").returns("unknown.json");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for nonexistent files");

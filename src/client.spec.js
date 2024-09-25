@@ -44,8 +44,8 @@ describe("client", () => {
      */
     it("calls the method with the provided token and content", async () => {
       try {
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput
           .withArgs("payload")
           .returns(`"text": "hello", "channel": "C0123456789"`);

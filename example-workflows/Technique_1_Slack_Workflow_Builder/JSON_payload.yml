@@ -10,6 +10,7 @@ jobs:
         uses: slackapi/slack-github-action@v2-development
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
           payload: |
             key: value
             foo: bar

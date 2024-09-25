@@ -49,6 +49,7 @@ export default class Config {
    * @property {Retries} retries - The retries method to use for failed requests.
    * @property {string?} token - The authentication value used with the Slack API.
    * @property {string?} webhook - A location for posting request payloads.
+   * @property {string?} webhookType - Posting method to use with the webhook.
    */
 
   /**
@@ -108,6 +109,7 @@ export default class Config {
       token: core.getInput("token") || process.env.SLACK_TOKEN || null,
       webhook:
         core.getInput("webhook") || process.env.SLACK_WEBHOOK_URL || null,
+      webhookType: core.getInput("webhook-type"),
     };
     this.validate();
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
@@ -154,6 +156,21 @@ export default class Config {
       case !!this.inputs.webhook:
         core.debug("Setting the provided webhook as a secret variable.");
         core.setSecret(this.inputs.webhook);
+        if (!this.inputs.webhookType) {
+          throw new SlackError(
+            core,
+            "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          );
+        }
+        if (
+          this.inputs.webhookType !== "incoming-webhook" &&
+          this.inputs.webhookType !== "webhook-trigger"
+        ) {
+          throw new SlackError(
+            core,
+            "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          );
+        }
         break;
       default:
         throw new SlackError(

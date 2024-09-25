@@ -17,6 +17,7 @@ describe("send", () => {
 
   it("exists and can be called", async () => {
     mocks.core.getInput.withArgs("webhook").returns("https://hooks.slack.com");
+    mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
     mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
     await send(mocks.core);
   });

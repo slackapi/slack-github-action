@@ -34,22 +34,6 @@ describe("config", () => {
     });
   });
 
-  describe("validate", () => {
-    it("warns if an invalid retries option is provided", async () => {
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("retries").returns("FOREVER");
-      await send(mocks.core);
-      assert.isTrue(
-        mocks.core.warning.calledWith(
-          'Invalid input! An unknown "retries" value was used: FOREVER',
-        ),
-      );
-    });
-  });
-
   describe("secrets", async () => {
     it("treats the provided token as a secret", async () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
@@ -62,6 +46,7 @@ describe("config", () => {
 
     it("treats the provided webhook as a secret", async () => {
       mocks.core.getInput.withArgs("webhook").returns("https://slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       try {
         await send(mocks.core);
       } catch {
@@ -69,6 +54,23 @@ describe("config", () => {
           mocks.core.setSecret.withArgs("https://slack.com").called,
         );
       }
+    });
+  });
+
+  describe("validate", () => {
+    it("warns if an invalid retries option is provided", async () => {
+      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.core.getInput.withArgs("retries").returns("FOREVER");
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      await send(mocks.core);
+      assert.isTrue(
+        mocks.core.warning.calledWith(
+          'Invalid input! An unknown "retries" value was used: FOREVER',
+        ),
+      );
     });
   });
 });

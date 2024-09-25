@@ -33,6 +33,9 @@ inputs:
   webhook:
     description: "A location for posting request payloads"
     required: false
+  webhook-type:
+    description: "Posting with either an incoming webhook or webhook trigger"
+    required: false
 outputs:
   time:
     description: "The epoch time of job completion"

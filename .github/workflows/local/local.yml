@@ -18,6 +18,7 @@ jobs:
         uses: ./.
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
           payload: |
             repository: ${{ github.repository }}
             pull_request_username: ${{ github.event.pull_request.user.login }}

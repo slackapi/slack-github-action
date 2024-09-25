@@ -37,8 +37,9 @@ and JSON formats being accepted.
 - name: Start a Slack workflow using a webhook URL
   uses: slackapi/slack-github-action@v2-development
   with:
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     payload-file-path: ./build-artifacts.json
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
 ```
 
 If neither payload input option is provided, the
@@ -102,8 +103,9 @@ the [GitHub context][github-context] specific to the job are used:
 - name: Send GitHub Action data to a Slack workflow
   uses: slackapi/slack-github-action@v2-development
   with:
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     payload-delimiter: "_"
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
 ```
 
 While also using `payload-delimiter` the payload is flattened and stringified to
@@ -119,6 +121,7 @@ parsing the workflow:
   uses: slackapi/slack-github-action@v2-development
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
     payload: |
       status: "${{ job.status }}"
       option: "false"
@@ -314,6 +317,7 @@ blocks:
   uses: slackapi/slack-github-action@v2-development
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: incoming-webhook
     payload: |
       text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
       blocks:
@@ -342,6 +346,7 @@ to parse payloads with the `payload-file-path-parsed` option:
     payload-file-path: "./payload-slack-content.json"
     payload-file-path-parsed: true
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
 ```
 
 This replaces variables templated with as `${{ github.repository }}` with the
