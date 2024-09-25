@@ -1,4 +1,4 @@
-import webapi from "@slack/web-api";
+import webapi, { LogLevel } from "@slack/web-api";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "./config.js";
 import SlackError from "./errors.js";
@@ -34,6 +34,17 @@ export default class Client {
     const client = new config.webapi.WebClient(config.inputs.token, {
       agent: this.proxies(config)?.httpsAgent,
       retryConfig: this.retries(config.inputs.retries),
+      logger: {
+        debug: config.core.debug,
+        info: config.core.info,
+        warn: config.core.warning,
+        error: config.core.error,
+        getLevel: () => {
+          return config.core.isDebug() ? LogLevel.DEBUG : LogLevel.INFO;
+        },
+        setLevel: (_level) => { },
+        setName: (_name) => { },
+      },
     });
     /**
      * @type {webapi.WebAPICallResult & MessageResult}
