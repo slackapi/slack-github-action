@@ -275,7 +275,7 @@ the `thread_ts` attribute of the **parent** message in the `payload`:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      thread_ts: ${{ steps.deployment_message.outputs.ts }}
+      thread_ts: "${{ steps.deployment_message.outputs.ts }}"
       text: "Deployment finished! :rocket:"
 ```
 

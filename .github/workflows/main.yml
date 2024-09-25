@@ -62,7 +62,7 @@ jobs:
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: "This message should be posted as a response in thread"
-            thread_ts: ${{ steps.slackToken.outputs.ts }}
+            thread_ts: "${{ steps.slackToken.outputs.ts }}"
 
       - name: "integration(botToken): confirm a response was posted"
         run: test -n "${{ steps.slackThreadResponse.outputs.ts }}"
