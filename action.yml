@@ -17,9 +17,9 @@ inputs:
   payload-file-path:
     description: "Path to a file containing the valid JSON payload"
     required: false
-  payload-file-path-parsed:
+  payload-templated:
     default: "false"
-    description: "If templated variables in the JSON payload are replaced"
+    description: "If templated variables in the input payloads should be replaced"
     required: false
   proxy:
     description: "An optional alternate proxied route to for HTTPS connections"

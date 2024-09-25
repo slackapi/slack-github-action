@@ -86,9 +86,7 @@ describe("content", () => {
 
     it("replaces templated variables in the payload file", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.core.getBooleanInput
-        .withArgs("payload-file-path-parsed")
-        .returns(true);
+      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");

@@ -117,7 +117,7 @@ export default class Content {
         path.resolve(config.inputs.payloadFilePath),
         "utf-8",
       );
-      if (!config.inputs.payloadFilePathParsed) {
+      if (!config.inputs.payloadTemplated) {
         if (
           config.inputs.payloadFilePath.endsWith("yaml") ||
           config.inputs.payloadFilePath.endsWith("yml")

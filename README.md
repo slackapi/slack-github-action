@@ -335,8 +335,8 @@ options might be useful.
 ### Parsing templated variables
 
 Additional [variables][github-variables] provided by Github can be used to
-replace templated variables in the `payload-file-path` file using the option
-to parse payloads with the `payload-file-path-parsed` option:
+replace templated variables in the `payload-file-path` file using the option to
+parse payloads with the `payload-templated` option:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
@@ -344,7 +344,7 @@ to parse payloads with the `payload-file-path-parsed` option:
   uses: slackapi/slack-github-action@v2-development
   with:
     payload-file-path: "./payload-slack-content.json"
-    payload-file-path-parsed: true
+    payload-templated: true
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     webhook-type: webhook-trigger
 ```
