@@ -42,8 +42,8 @@ export default class Client {
         getLevel: () => {
           return config.core.isDebug() ? LogLevel.DEBUG : LogLevel.INFO;
         },
-        setLevel: (_level) => { },
-        setName: (_name) => { },
+        setLevel: (_level) => {},
+        setName: (_name) => {},
       },
     });
     /**
