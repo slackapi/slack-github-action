@@ -8,8 +8,8 @@ Send data into Slack with a Slack [API method](#technique-2-slack-api-method)
 like [`chat.postMessage`][chat.postMessage] and
 [`files.uploadV2`][files.uploadV2], or use webhooks to
 [start workflows](#technique-1-slack-workflow-builder) in Workflow Builder and
-[post messages](#technique-3-slack-incoming-webhook) with webhooks using this
-GitHub Action!
+[post messages](#technique-3-slack-incoming-webhook) with incoming webhooks
+using this GitHub Action!
 
 ## Sending data
 
