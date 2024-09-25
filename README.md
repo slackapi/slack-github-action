@@ -390,7 +390,7 @@ All contributions are encouraged! Check out the
 [methods]: https://api.slack.com/methods
 [mrkdwn]: https://api.slack.com/reference/surfaces/formatting
 [plans]: https://slack.com/pricing
-[repo-secret]: https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository
+[repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
