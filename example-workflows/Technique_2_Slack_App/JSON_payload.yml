@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Send GitHub trigger payload to Slack Workflow Builder
         id: slack
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2-development
         with:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           method: chat.postMessage

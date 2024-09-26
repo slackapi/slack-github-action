@@ -202,7 +202,7 @@ files just another API call, but with all of the advantages of
 
 ```yaml
 - name: Share a file to that channel
-  uses: slackapi/slack-github-action@v2
+  uses: slackapi/slack-github-action@v2-development
   with:
     method: files.uploadV2
     payload: |
@@ -335,8 +335,8 @@ options might be useful.
 ### Parsing templated variables
 
 Additional [variables][github-variables] provided by Github can be used to
-replace templated variables in the `payload-file-path` file using the option to
-parse payloads with the `payload-templated` option:
+replace templated variables in the provided payloads using the option to parse
+payloads with the `payload-templated` option:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
