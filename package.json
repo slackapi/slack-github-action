@@ -9,7 +9,7 @@
     "lint": "biome check",
     "check": "tsc --noemit --module es2022 --project ./jsconfig.json",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
-    "test": "c8 mocha src/*.spec.js"
+    "test": "c8 mocha test/*.spec.js"
   },
   "repository": {
     "type": "git",

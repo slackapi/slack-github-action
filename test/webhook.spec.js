@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { mocks } from "./index.spec.js";
-import send from "./send.js";
-import Webhook from "./webhook.js";
+import send from "../src/send.js";
+import Webhook from "../src/webhook.js";
 
 describe("webhook", () => {
   afterEach(() => {
@@ -23,7 +23,7 @@ describe("webhook", () => {
         assert.equal(url, "https://hooks.slack.com");
         assert.deepEqual(payload, { message: "hello" });
         assert.equal(
-          /** @type {import("axios-retry").IAxiosRetryConfig} */ (options)
+          /** @type {import("axios-retry").IAxiosRetryConfig} */(options)
             .retries,
           5,
         );

@@ -1,7 +1,7 @@
 import { assert } from "chai";
-import Config from "./config.js";
+import Config from "../src/config.js";
 import { mocks } from "./index.spec.js";
-import send from "./send.js";
+import send from "../src/send.js";
 
 /**
  * Confirm values from the action input or environment variables are gathered
