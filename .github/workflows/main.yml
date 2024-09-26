@@ -120,6 +120,7 @@ jobs:
         uses: ./
         with:
           payload-file-path: ./.github/resources/payload-notification.json
+          payload-templated: true
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
           webhook-type: incoming-webhook
         env:
