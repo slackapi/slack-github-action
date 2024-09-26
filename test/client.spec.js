@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { mocks } from "./index.spec.js";
 import send from "../src/send.js";
+import { mocks } from "./index.spec.js";
 
 describe("client", () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
-import { mocks } from "./index.spec.js";
 import send from "../src/send.js";
+import { mocks } from "./index.spec.js";
 
 /**
  * This is a collection of integration tests that make sure modules are doing
