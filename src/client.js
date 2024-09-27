@@ -86,7 +86,7 @@ export default class Client {
       };
     } catch (err) {
       config.core.warning(
-        "Failed to configure HTTPS proxy agent for HTTP proxy so using the default axios configuration.",
+        "Failed to configure the HTTPS proxy agent so using the default axios configuration.",
       );
       console.error(err);
       return undefined;
