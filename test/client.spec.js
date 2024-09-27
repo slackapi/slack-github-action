@@ -142,6 +142,8 @@ describe("client", () => {
           mocks.core.setOutput.getCall(1).lastArg,
           JSON.stringify(response),
         );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
     });
 
@@ -168,6 +170,8 @@ describe("client", () => {
           mocks.core.setOutput.getCall(1).lastArg,
           JSON.stringify(response),
         );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
     });
   });
