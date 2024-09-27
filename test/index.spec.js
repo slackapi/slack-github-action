@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import core from "@actions/core";
+import webapi from "@slack/web-api";
 import axios, { AxiosError } from "axios";
 import sinon from "sinon";
+import SlackError from "../src/errors.js";
 
 /**
  * Hello experimenter! These tests are here to confirm that the happy paths keep
@@ -42,6 +44,7 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
+    this.api = sinon.stub(webapi.WebClient.prototype, "apiCall");
     this.axios = this.sandbox.stub(axios);
     this.core = this.sandbox.stub(core);
     this.fs = this.sandbox.stub(fs);
@@ -54,6 +57,7 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
+    this.api.resetHistory();
     this.axios.post.resetHistory();
   }
 }
