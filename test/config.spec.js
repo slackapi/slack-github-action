@@ -39,6 +39,7 @@ describe("config", () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       try {
         await send(mocks.core);
+        assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
         assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
       }
@@ -49,6 +50,7 @@ describe("config", () => {
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       try {
         await send(mocks.core);
+        assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
         assert.isTrue(
           mocks.core.setSecret.withArgs("https://slack.com").called,
