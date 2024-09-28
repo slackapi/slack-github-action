@@ -35,7 +35,7 @@ Find and store the bot token:
 
 ```sh
 $ open https://api.slack.com/apps/A0123456789/oauth
-vim .env
+$ vim .env
 export SLACK_BOT_TOKEN=xoxb-0123456789-example-0000000001
 ```
 
@@ -47,7 +47,7 @@ $ vim .env
 export SLACK_WEBHOOK_TRIGGER=https://hooks.slack.com/triggers/T0123456789/...
 ```
 
-Gather and save an incoming webhook for a workspace:
+Gather and save an incoming webhook for a channel in a workspace:
 
 ```sh
 $ open https://api.slack.com/apps/A0123456789/incoming-webhooks
