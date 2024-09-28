@@ -15,17 +15,51 @@ $ npm run local  # Test techniques
 ## Setting up an app
 
 The saved `local.yml` workflow uses `webhook` and `method` for a combination of
-features, which expects the following scopes:
+features, and expects the values found in `manifest.json`.
 
-- `chat:write`
-- `files:write`
-- `reactions:write`
-
-These scopes aren't required if the methods used change, but others might be if
+These values aren't required if the methods used change, but others might be if
 different API methods are called!
 
-This app will have useful variables that can be configured as values in this
-next section.
+### Installing with the CLI
+
+Quick setup for the saved workflow can be achieved using the provided manifest
+and these [Slack CLI](https://api.slack.com/automation/cli) commands:
+
+```sh
+$ slack install
+$ vim .env
+export SLACK_CHANNEL_ID=C0123456789  # Invite the bot to this channel!
+```
+
+Find and store the bot token:
+
+```sh
+$ open https://api.slack.com/apps/A0123456789/oauth
+vim .env
+export SLACK_BOT_TOKEN=xoxb-0123456789-example-0000000001
+```
+
+Create the webhook trigger for use in Workflow Builder:
+
+```sh
+$ slack trigger create --trigger-def triggers/webhook.json
+$ vim .env
+export SLACK_WEBHOOK_TRIGGER=https://hooks.slack.com/triggers/T0123456789/...
+```
+
+Gather and save an incoming webhook for a workspace:
+
+```sh
+$ open https://api.slack.com/apps/A0123456789/incoming-webhooks
+$ vim .env
+export SLACK_INCOMING_WEBHOOK=https://hooks.slack.com/services/T0123456789/...
+```
+
+Once variables are set for new app, start the workflow with the same command:
+
+```sh
+$ npm run local  # Test techniques
+```
 
 ## Configuring values
 

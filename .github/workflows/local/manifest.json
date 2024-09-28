@@ -1,0 +1,77 @@
+{
+  "_metadata": {
+    "major_version": 2
+  },
+  "display_information": {
+    "name": "slacktion",
+    "description": "an application for developing the Slack GitHub Action"
+  },
+  "features": {
+    "app_home": {
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": true
+    },
+    "bot_user": {
+      "display_name": "slacktion"
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "chat:write",
+        "chat:write.public",
+        "files:write",
+        "incoming-webhook",
+        "reactions:write"
+      ]
+    }
+  },
+  "settings": {
+    "org_deploy_enabled": true,
+    "incoming_webhooks": {
+      "incoming_webhooks_enabled": true
+    }
+  },
+  "workflows": {
+    "pr_notifications": {
+      "title": "Pull request notifier",
+      "description": "A new changeset has been submitted",
+      "input_parameters": {
+        "properties": {
+          "channel_id": {
+            "type": "slack#/types/channel_id"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "pull_request_username": {
+            "type": "string"
+          },
+          "pull_request_title": {
+            "type": "string"
+          },
+          "pull_request_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel_id",
+          "repository",
+          "pull_request_username",
+          "pull_request_title",
+          "pull_request_url"
+        ]
+      },
+      "steps": [
+        {
+          "id": "0",
+          "function_id": "slack#/functions/send_message",
+          "inputs": {
+            "channel_id": "{{inputs.channel_id}}",
+            "message": "{{inputs.repository}}(@{{inputs.pull_request_username}}): <{{inputs.pull_request_url}}|{{inputs.pull_request_title}}>"
+          }
+        }
+      ]
+    }
+  }
+}
