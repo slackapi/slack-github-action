@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "ncc build src/index.js --license licenses.txt",
+    "build": "ncc build src/index.js --license licenses.txt --source-map",
     "check": "tsc --noemit --module es2022 --project ./jsconfig.json",
     "lint:fix": "biome check --write",
     "lint": "biome check",
