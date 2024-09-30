@@ -1,4 +1,4 @@
-# Local runs
+# Development workflows
 
 For a simple development experience, a local version of this action can be used
 in experiments:
