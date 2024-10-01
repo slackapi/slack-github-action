@@ -148,6 +148,18 @@ jobs:
             text: "Finished at `${{ steps.finished.outputs.time }}`"
             thread_ts: "${{ steps.timer.outputs.thread_ts }}"
 
+      - name: "integration(method): post a file into a channel"
+        id: file
+        uses: ./
+        with:
+          method: files.uploadV2
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            initial_comment: ":robot_face: The codes exists here"
+            file: .github/workflows/test.yml
+            filename: action.yml
+
       - name: "integration(incoming): confirm the thread ended"
         run: test -n "${{ steps.done.outputs.time }}"
 
@@ -173,7 +185,7 @@ jobs:
               - type: section
                 text:
                   type: plain_text
-                  text: "A post by Slack Send GitHub Action. Testing Incoming webhooks"
+                  text: ":link: A message was received via incoming webhook"
                   emoji: true
 
       - name: "integration(incoming): confirm a webhook was posted"
