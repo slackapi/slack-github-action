@@ -1,9 +1,0 @@
-{
-  "runtime": "actions",
-  "hooks": {
-    "get-manifest": "cat manifest.json #"
-  },
-  "config": {
-    "protocol-version": ["default"]
-  }
-}

@@ -33,34 +33,28 @@
     }
   },
   "workflows": {
-    "pr_notifications": {
-      "title": "Pull request notifier",
-      "description": "A new changeset has been submitted",
+    "event_notifications": {
+      "title": "GitHub event notifications",
+      "description": "A new changeset has been discovered",
       "input_parameters": {
         "properties": {
+          "author": {
+            "type": "string"
+          },
           "channel_id": {
             "type": "slack#/types/channel_id"
           },
-          "repository": {
+          "repo_name": {
             "type": "string"
           },
-          "pull_request_username": {
+          "status": {
             "type": "string"
           },
-          "pull_request_title": {
-            "type": "string"
-          },
-          "pull_request_url": {
+          "event_url": {
             "type": "string"
           }
         },
-        "required": [
-          "channel_id",
-          "repository",
-          "pull_request_username",
-          "pull_request_title",
-          "pull_request_url"
-        ]
+        "required": ["author", "channel_id", "repo_name", "status", "event_url"]
       },
       "steps": [
         {
@@ -68,7 +62,7 @@
           "function_id": "slack#/functions/send_message",
           "inputs": {
             "channel_id": "{{inputs.channel_id}}",
-            "message": "{{inputs.repository}}(@{{inputs.pull_request_username}}): <{{inputs.pull_request_url}}|{{inputs.pull_request_title}}>"
+            "message": "{{inputs.repo_name}}(@{{inputs.author}}): `{{inputs.status}}` <{{inputs.event_url}}|Check it out here>!"
           }
         }
       ]

@@ -114,7 +114,7 @@ match the webhook input format expected by Workflow Builder.
 ##### Providing parsed payload information as strings
 
 Provided input values for payload information are sent to the webhook URL after
-parsing the workflow:
+the job is started:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
@@ -194,24 +194,6 @@ kit, work as the API call might hope:
             text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 ```
 
-##### Uploading a file
-
-Calling web API methods with [`@slack/web-api`][slack-web-api] makes uploading
-files just another API call, but with all of the advantages of
-[`files.uploadV2`][files.uploadV2]:
-
-```yaml
-- name: Share a file to that channel
-  uses: slackapi/slack-github-action@v2-development
-  with:
-    method: files.uploadV2
-    payload: |
-      channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      initial_comment: "the results are in!"
-      file: "results.out"
-      filename: "results-${{ github.sha }}.out"
-```
-
 ##### Updating a message
 
 Following up on a message after it's posted, such as updates for a build status,
@@ -277,6 +259,24 @@ the `thread_ts` attribute of the **parent** message in the `payload`:
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
       thread_ts: "${{ steps.deployment_message.outputs.ts }}"
       text: "Deployment finished! :rocket:"
+```
+
+##### Uploading a file
+
+Calling web API methods with [`@slack/web-api`][slack-web-api] makes uploading
+files just another API call, but with all of the advantages of
+[`files.uploadV2`][files.uploadV2]:
+
+```yaml
+- name: Share a file to that channel
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    method: files.uploadV2
+    payload: |
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      initial_comment: "the results are in!"
+      file: "results.out"
+      filename: "results-${{ github.sha }}.out"
 ```
 
 ### Technique 3: Slack incoming webhook

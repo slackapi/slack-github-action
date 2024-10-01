@@ -1,4 +1,4 @@
-name: Local run
+name: Development run
 
 # Requires mocking the "public" event to begin this workflow and avoid actual runs
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
@@ -11,43 +11,32 @@ jobs:
     steps:
       - name: Checkout action
         uses: actions/checkout@v4
-      - name: Build action
+      - name: Install dependencies
         run: npm install
-      - name: Post a webhook message into channel
-        id: webhook
-        uses: ./.
+      - name: Start a workflow with a webhook trigger
+        id: wfb
+        uses: ./
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_TRIGGER }}
           webhook-type: webhook-trigger
           payload: |
+            author: ${{ github.event.sender.login }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            repository: ${{ github.repository }}
-            pull_request_title: ${{ toJSON(github.event.pull_request.title) }}
-            pull_request_url: ${{ github.event.pull_request.html_url }}
-            pull_request_username: ${{ github.event.pull_request.user.login }}
+            event_url: ${{ github.event.pull_request.html_url }}
+            repo_name: ${{ github.event.repository.full_name }}
+            status: ${{ job.status }}
       - name: Post a token message into channel
         id: api
-        uses: ./.
+        uses: ./
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            text: "Action happens at <https://github.com/${{ github.repository }}>"
-      - name: Upload this workflow file
-        id: file
-        uses: ./.
-        with:
-          method: files.uploadV2
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            initial_comment: "This code exists here"
-            file: .github/workflows/local/local.yml
-            filename: action.yml
+            text: ":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>"
       - name: Initiate the deployment sequence
         id: slack
-        uses: ./.
+        uses: ./
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -62,7 +51,7 @@ jobs:
                     value: "In Progress"
       - name: Write starting statistics
         id: stats
-        uses: ./.
+        uses: ./
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -74,31 +63,22 @@ jobs:
         run: sleep 3
       - name: Launch time is now
         id: finished
-        uses: ./.
+        uses: ./
         with:
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             ts: "${{ steps.slack.outputs.ts }}"
-            text: "Deployment finished :rocket:"
+            text: "Deployment finished :tada:"
             attachments:
               - color: "28a745"
                 fields:
                   - title: "Status"
                     short: true
                     value: "Completed"
-      - name: Celebrate wins
-        uses: ./.
-        with:
-          method: reactions.add
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            timestamp: ${{ steps.slack.outputs.ts }}
-            name: "tada"
       - name: Include ending statistics
-        uses: ./.
+        uses: ./
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -106,8 +86,28 @@ jobs:
             channel: ${{ steps.slack.outputs.channel_id }}
             text: "Finished at `${{ steps.finished.outputs.time }}`"
             thread_ts: ${{ steps.stats.outputs.thread_ts }}
+      - name: Celebrate wins
+        uses: ./
+        with:
+          method: reactions.add
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            timestamp: ${{ steps.slack.outputs.ts }}
+            name: "ship"
+      - name: Upload this workflow file
+        id: file
+        uses: ./
+        with:
+          method: files.uploadV2
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            initial_comment: ":robot_face: The codes exists here"
+            file: .github/workflows/develop.yml
+            filename: action.yml
       - name: Write one final webhook
-        uses: ./.
+        uses: ./
         with:
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK }}
           webhook-type: incoming-webhook
