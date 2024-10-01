@@ -1,5 +1,5 @@
 {
-  "text": "A GitHub Action Event ${{ github.eventName }} has ${{ env.JOB_STATUS }}",
+  "text": ":email: A GitHub Action `${{ github.eventName }}` event status is ${{ env.JOB_STATUS }}",
   "attachments": [
     {
       "color": "${{ env.ATTACHMENT_COLOR }}",
