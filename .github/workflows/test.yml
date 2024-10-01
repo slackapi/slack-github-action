@@ -188,7 +188,7 @@ jobs:
         id: payload_file
         uses: ./
         with:
-          payload-file-path: ./.github/resources/.actions/incoming-webhook.json
+          payload-file-path: ./.github/resources/.slack/incoming-webhook.json
           payload-templated: true
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK }}
           webhook-type: incoming-webhook
