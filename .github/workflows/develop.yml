@@ -42,7 +42,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            text: "Deployment started :eyes:"
+            text: ":eyes: Testing started..."
             attachments:
               - color: "dbab09"
                 fields:
@@ -70,7 +70,7 @@ jobs:
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             ts: "${{ steps.slack.outputs.ts }}"
-            text: "Deployment finished :tada:"
+            text: ":microscope: Testing finished!"
             attachments:
               - color: "28a745"
                 fields:
@@ -94,7 +94,7 @@ jobs:
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             timestamp: ${{ steps.slack.outputs.ts }}
-            name: "ship"
+            name: "eye-in-speech-bubble"
       - name: Upload this workflow file
         id: file
         uses: ./

@@ -62,7 +62,7 @@
           "function_id": "slack#/functions/send_message",
           "inputs": {
             "channel_id": "{{inputs.channel_id}}",
-            "message": "{{inputs.repo_name}}(@{{inputs.author}}): `{{inputs.status}}` <{{inputs.event_url}}|Check it out here>!"
+            "message": ":ship: {{inputs.repo_name}}(@{{inputs.author}}): `{{inputs.status}}` <{{inputs.event_url}}|Check it out here>!"
           }
         }
       ]

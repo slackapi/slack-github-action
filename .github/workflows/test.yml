@@ -92,7 +92,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            text: "Event received :eyes:"
+            text: ":eyes: Event received..."
             attachments:
               - color: "dbab09"
                 fields:
@@ -129,7 +129,7 @@ jobs:
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             ts: ${{ steps.blocks.outputs.ts }}
-            text: "Event processed! :gear:"
+            text: ":gear: Event processed!"
             attachments:
               - color: "28a745"
                 fields:
