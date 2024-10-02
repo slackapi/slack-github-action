@@ -32,6 +32,39 @@ describe("config", () => {
       assert.equal(config.inputs.retries, config.Retries.ZERO);
       assert.equal(config.inputs.token, "xoxb-example");
     });
+
+    it("errors when both the token and webhook is provided", async () => {
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      try {
+        new Config(mocks.core);
+        assert.fail("Failed to error when invalid inputs are provided");
+      } catch (err) {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "Invalid input! Either the token or webhook is required - not both.",
+        );
+        assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
+        assert.isTrue(
+          mocks.core.setSecret.withArgs("https://example.com").called,
+        );
+      }
+    });
+
+    it("errors if the webhook type does not match techniques", async () => {
+      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("post");
+      try {
+        new Config(mocks.core);
+        assert.fail("Failed to error when invalid inputs are provided");
+      } catch (err) {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+        );
+      }
+    });
   });
 
   describe("secrets", async () => {
