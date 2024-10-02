@@ -1,4 +1,6 @@
 import { assert } from "chai";
+import { HttpsProxyAgent } from "https-proxy-agent";
+import Config from "../src/config.js";
 import send from "../src/send.js";
 import Webhook from "../src/webhook.js";
 import { mocks } from "./index.spec.js";
@@ -58,6 +60,66 @@ describe("webhook", () => {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg,
           "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+        );
+      }
+    });
+  });
+
+  describe("proxies", () => {
+    it("skips proxying an http webhook url altogether", async () => {
+      mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
+      const config = new Config(mocks.core);
+      const webhook = new Webhook();
+      const request = webhook.proxies(config);
+      assert.isUndefined(request);
+    });
+
+    it("sets up the proxy agent for the provided https proxy", async () => {
+      const proxy = "https://example.com";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      const config = new Config(mocks.core);
+      const webhook = new Webhook();
+      const { httpsAgent, proxy: proxying } = webhook.proxies(config);
+      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
+      assert.isNotFalse(proxying);
+    });
+
+    it("sets up the agent without proxy for http proxies", async () => {
+      const proxy = "http://example.com";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      const config = new Config(mocks.core);
+      const webhook = new Webhook();
+      const { httpsAgent, proxy: proxying } = webhook.proxies(config);
+      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
+      assert.isFalse(proxying);
+    });
+
+    it("fails to configure proxies with an invalid proxied url", async () => {
+      const proxy = "https://";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      try {
+        const config = new Config(mocks.core);
+        const webhook = new Webhook();
+        webhook.proxies(config);
+        assert.fail("An invalid proxy URL was not thrown as error!");
+      } catch {
+        assert.include(
+          mocks.core.warning.lastCall.firstArg,
+          "Failed to configure the HTTPS proxy agent so using default configurations.",
         );
       }
     });

@@ -37,35 +37,34 @@ export default class Webhook {
    * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
    */
   proxies(config) {
+    const { webhook, proxy } = config.inputs;
     try {
-      if (!config.inputs.webhook) {
+      if (!webhook) {
         throw new Error("No webhook was provided to proxy to");
       }
-      const httpsProxy =
-        process.env.HTTPS_PROXY || process.env.https_proxy || "";
-      if (!httpsProxy) {
+      if (!proxy) {
         return undefined;
       }
-      if (new URL(config.inputs.webhook).protocol !== "https:") {
+      if (new URL(webhook).protocol !== "https:") {
         config.core.debug(
           "The webhook destination is not HTTPS so skipping the HTTPS proxy",
         );
         return undefined;
       }
-      switch (new URL(httpsProxy).protocol) {
+      switch (new URL(proxy).protocol) {
         case "https:":
           return {
-            httpsAgent: new HttpsProxyAgent(httpsProxy),
+            httpsAgent: new HttpsProxyAgent(proxy),
           };
         case "http:":
           return {
-            httpsAgent: new HttpsProxyAgent(httpsProxy),
+            httpsAgent: new HttpsProxyAgent(proxy),
             proxy: false,
           };
       }
     } catch (err) {
       config.core.warning(
-        "Failed to configure HTTPS proxy agent for HTTP proxy so using the default axios configuration.",
+        "Failed to configure the HTTPS proxy agent so using default configurations.",
       );
       console.error(err);
     }
