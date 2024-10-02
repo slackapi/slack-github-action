@@ -1,4 +1,6 @@
 import { assert } from "chai";
+import Client from "../src/client.js";
+import Config from "../src/config.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -172,6 +174,38 @@ describe("client", () => {
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
+      }
+    });
+  });
+
+  describe("proxies", () => {
+    it("sets up the proxy agent for the provided https proxy", async () => {
+      const proxy = "https://example.com";
+      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      const config = new Config(mocks.core);
+      const client = new Client();
+      const { httpsAgent, proxy: proxying } = client.proxies(config);
+      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
+      assert.isNotFalse(proxying);
+    });
+
+    it("fails to configure proxies with an invalid proxied url", async () => {
+      const proxy = "https://";
+      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      try {
+        const config = new Config(mocks.core);
+        const client = new Client();
+        client.proxies(config);
+        assert.fail("An invalid proxy URL was not thrown as error!");
+      } catch {
+        assert.include(
+          mocks.core.warning.lastCall.firstArg,
+          "Failed to configure the HTTPS proxy agent so using default configurations.",
+        );
       }
     });
   });

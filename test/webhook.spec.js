@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "../src/config.js";
 import send from "../src/send.js";
 import Webhook from "../src/webhook.js";

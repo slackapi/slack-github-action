@@ -82,21 +82,21 @@ export default class Client {
    * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
    */
   proxies(config) {
+    const proxy = config.inputs.proxy;
     try {
-      const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy;
-      if (!httpsProxy) {
+      if (!proxy) {
         return undefined;
       }
       return {
-        httpsAgent: new HttpsProxyAgent(httpsProxy),
+        httpsAgent: new HttpsProxyAgent(proxy),
       };
     } catch (err) {
       config.core.warning(
-        "Failed to configure the HTTPS proxy agent so using the default axios configuration.",
+        "Failed to configure the HTTPS proxy agent so using default configurations.",
       );
       console.error(err);
-      return undefined;
     }
+    return undefined;
   }
 
   /**
