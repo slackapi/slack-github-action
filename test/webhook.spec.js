@@ -125,16 +125,16 @@ describe("webhook", () => {
   });
 
   describe("retries", () => {
-    it("uses the configured retries in requests", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
+    it("uses a default of five retries in requests", async () => {
+      const webhook = new Webhook();
+      const result = webhook.retries();
+      assert.equal(result.retries, 5);
     });
 
     it('does not attempt retries when "0" is set', async () => {
       const webhook = new Webhook();
-      const result = webhook.retries("0").retries;
-      assert.equal(result, 0);
+      const result = webhook.retries("0");
+      assert.equal(result.retries, 0);
     });
 
     it('attempts a default amount of "5" retries', async () => {

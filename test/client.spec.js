@@ -1,3 +1,4 @@
+import webapi from "@slack/web-api";
 import { assert } from "chai";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
@@ -207,6 +208,59 @@ describe("client", () => {
           "Failed to configure the HTTPS proxy agent so using default configurations.",
         );
       }
+    });
+  });
+
+  describe("retries", () => {
+    it("uses a default of five retries in requests", async () => {
+      const client = new Client();
+      const result = client.retries();
+      assert.equal(
+        result.retries,
+        webapi.retryPolicies.fiveRetriesInFiveMinutes.retries,
+      );
+    });
+
+    it('does not attempt retries when "0" is set', async () => {
+      const webhook = new Client();
+      const result = webhook.retries("0");
+      assert.equal(result.retries, 0);
+    });
+
+    it('attempts a default amount of "5" retries', async () => {
+      const webhook = new Client();
+      const result = webhook.retries("5");
+      assert.equal(
+        result.retries,
+        webapi.retryPolicies.fiveRetriesInFiveMinutes.retries,
+      );
+      assert.equal(
+        result.factor,
+        webapi.retryPolicies.fiveRetriesInFiveMinutes.factor,
+      );
+    });
+
+    it('attempts "10" retries in around "30" minutes', async () => {
+      const webhook = new Client();
+      const result = webhook.retries("10");
+      assert.equal(
+        result.retries,
+        webapi.retryPolicies.tenRetriesInAboutThirtyMinutes.retries,
+      );
+      assert.equal(
+        result.factor,
+        webapi.retryPolicies.tenRetriesInAboutThirtyMinutes.factor,
+      );
+    });
+
+    it('attempts a "rapid" burst of "12" retries in seconds', async () => {
+      const webhook = new Client();
+      const result = webhook.retries("RAPID");
+      assert.equal(
+        result.retries,
+        webapi.retryPolicies.rapidRetryPolicy.retries,
+      );
+      assert.equal(result.factor, webapi.retryPolicies.rapidRetryPolicy.factor);
     });
   });
 });
