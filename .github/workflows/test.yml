@@ -160,10 +160,7 @@ jobs:
             file: .github/workflows/test.yml
             filename: action.yml
 
-      - name: "integration(incoming): confirm the thread ended"
-        run: test -n "${{ steps.done.outputs.time }}"
-
-      - name: Celebrate wins
+      - name: "integration(method): react to the completed update message"
         uses: ./
         with:
           method: reactions.add
@@ -172,6 +169,9 @@ jobs:
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             timestamp: ${{ steps.blocks.outputs.ts }}
             name: "tada"
+
+      - name: "integration(incoming): confirm the thread ended"
+        run: test -n "${{ steps.done.outputs.time }}"
 
       - name: "integration(incoming): post a message via incoming webhook"
         id: incoming
