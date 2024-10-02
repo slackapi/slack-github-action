@@ -55,6 +55,7 @@
     "c8": "^10.1.2",
     "chai": "^5.1.1",
     "mocha": "^10.7.3",
+    "mocha-suppress-logs": "^0.5.1",
     "sinon": "^19.0.2",
     "typescript": "^5.5.3"
   }
