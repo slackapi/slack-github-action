@@ -117,3 +117,10 @@ jobs:
 
     - name: "integration(incoming): confirm a payload file was posted"
       run: test -n "${{ steps.slackPayloadFile.outputs.time }}"
+
+    - name: "chore(health): check up on recent changes to the health score"
+      uses: slackapi/slack-health-score@v0.1.1
+      with:
+        codecov_token: ${{ secrets.CODECOV_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        extension: js
