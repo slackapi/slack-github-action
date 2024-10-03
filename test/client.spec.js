@@ -1,3 +1,4 @@
+import core from "@actions/core";
 import webapi from "@slack/web-api";
 import { assert } from "chai";
 import Client from "../src/client.js";
@@ -11,27 +12,45 @@ describe("client", () => {
   });
 
   describe("inputs", () => {
-    it("requires a token is provided in inputs", async () => {
+    it("requires a method is provided in inputs", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: core,
+        inputs: {
+          token: "xoxb-example",
+        },
+      };
       try {
-        await send(mocks.core);
+        await new Client().post(config);
         assert.fail("Failed to throw for missing input");
       } catch {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! Either a token or webhook is required to take action.",
+          "No API method was provided for use",
         );
       }
     });
 
-    it("requires a method is provided in inputs", async () => {
+    it("requires a token is provided in inputs", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: core,
+        inputs: {
+          method: "chat.postMessage",
+        },
+      };
       mocks.core.getInput.withArgs("token").returns("xoxb-example-001");
       try {
-        await send(mocks.core);
+        await new Client().post(config);
         assert.fail("Failed to throw for missing input");
       } catch {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! A method must be decided to use the token provided.",
+          "No token was provided to post with",
         );
       }
     });
