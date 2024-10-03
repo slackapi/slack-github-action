@@ -68,7 +68,7 @@ export default class Client {
       config.core.setOutput("channel_id", response.channel);
     }
     if (response.message?.thread_ts) {
-      config.core.setOutput("thread_ts", response.message?.thread_ts);
+      config.core.setOutput("thread_ts", response.message.thread_ts);
     }
     if (response.ts) {
       config.core.setOutput("ts", response.ts);
