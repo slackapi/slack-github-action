@@ -16,6 +16,24 @@ describe("content", () => {
     mocks.core.getInput.withArgs("token").returns("xoxb-example");
   });
 
+  describe("flatten", () => {
+    it("flattens nested payloads provided with delimiter", async () => {
+      mocks.core.getInput.withArgs("payload").returns(`
+        "apples": "tree",
+        "bananas": {
+          "truthiness": true
+        }
+      `);
+      mocks.core.getInput.withArgs("payload-delimiter").returns("_");
+      const config = new Config(mocks.core);
+      const expected = {
+        apples: "tree",
+        bananas_truthiness: "true",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+  });
+
   describe("get", () => {
     it("errors if both a payload and file path are provided", async () => {
       mocks.core.getInput.withArgs("payload").returns(`"message"="hello"`);
@@ -32,8 +50,8 @@ describe("content", () => {
     });
   });
 
-  describe("content", async () => {
-    it("accepts and parses yaml as a valid payload format", async () => {
+  describe("payload", async () => {
+    it("parses complete YAML from the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`
           message: "this is wrapped"
           channel: "C0123456789"
@@ -46,7 +64,7 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
-    it("accepts and parses complete json as payload input", async () => {
+    it("parses complete JSON from the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`{
           "message": "this is wrapped",
           "channel": "C0123456789"
@@ -60,7 +78,20 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
-    it("wraps incomplete payload in braces for valid JSON", async () => {
+    it("trims last comma JSON with the input payload", async () => {
+      mocks.core.getInput.withArgs("payload").returns(`
+        "message": "LGTM!",
+        "channel": "C0123456789",
+      `);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "LGTM!",
+        channel: "C0123456789",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
+    it("wraps incomplete JSON from the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`
         "message": "LGTM!",
         "channel": "C0123456789",
@@ -89,7 +120,7 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
-    it("fails if no payload content is provided as input", async () => {
+    it("fails if no payload content is provided in input", async () => {
       /**
        * @type {Config}
        */
@@ -110,7 +141,7 @@ describe("content", () => {
       }
     });
 
-    it("fails if the provided input payload is invalid JSON", async () => {
+    it("fails if invalid JSON exists in the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns("{");
       try {
         await send(mocks.core);
@@ -124,27 +155,11 @@ describe("content", () => {
     });
   });
 
-  describe("file", async () => {
-    it("parses JSON from a known file without replacements", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+  describe("payload file", async () => {
+    it("parses complete YAML from the input payload file", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
       mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
-            "message": "drink water",
-            "channel": "C6H12O6H2O2"
-          }`);
-      const config = new Config(mocks.core);
-      const expected = {
-        message: "drink water",
-        channel: "C6H12O6H2O2",
-      };
-      assert.deepEqual(config.content.values, expected);
-    });
-
-    it("parses YAML from a known file without replacements", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.yml");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.yml"), "utf-8")
+        .withArgs(path.resolve("example.yaml"), "utf-8")
         .returns(`
             message: "drink water"
             channel: "C6H12O6H2O2"
@@ -157,10 +172,10 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
-    it("parses YAML from the extended file extension", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
+    it("parses complete YML from the input payload file", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.yml");
       mocks.fs.readFileSync
-        .withArgs(path.resolve("example.yaml"), "utf-8")
+        .withArgs(path.resolve("example.yml"), "utf-8")
         .returns(`
             message: "drink coffee"
             channel: "C0FFEEEEEEEE"
@@ -169,6 +184,22 @@ describe("content", () => {
       const expected = {
         message: "drink coffee",
         channel: "C0FFEEEEEEEE",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
+    it("parses complete JSON from the input payload file", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+            "message": "drink water",
+            "channel": "C6H12O6H2O2"
+          }`);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "drink water",
+        channel: "C6H12O6H2O2",
       };
       assert.deepEqual(config.content.values, expected);
     });
@@ -218,24 +249,6 @@ describe("content", () => {
           "Invalid input! Failed to parse contents of the provided payload file",
         );
       }
-    });
-  });
-
-  describe("flatten", () => {
-    it("flattens nested payloads if a delimiter is provided", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
-        "apples": "tree",
-        "bananas": {
-          "truthiness": true
-        }
-      `);
-      mocks.core.getInput.withArgs("payload-delimiter").returns("_");
-      const config = new Config(mocks.core);
-      const expected = {
-        apples: "tree",
-        bananas_truthiness: "true",
-      };
-      assert.deepEqual(config.content.values, expected);
     });
   });
 });
