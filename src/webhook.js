@@ -40,7 +40,10 @@ export default class Webhook {
     const { webhook, proxy } = config.inputs;
     try {
       if (!webhook) {
-        throw new Error("No webhook was provided to proxy to");
+        throw new SlackError(
+          config.core,
+          "No webhook was provided to proxy to",
+        );
       }
       if (!proxy) {
         return undefined;

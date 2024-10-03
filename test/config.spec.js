@@ -52,6 +52,31 @@ describe("config", () => {
       }
     });
 
+    it("errors if neither the token or webhook is provided", async () => {
+      try {
+        new Config(mocks.core);
+        assert.fail("Failed to error when invalid inputs are provided");
+      } catch (err) {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "Missing input! Either a token or webhook is required to take action.",
+        );
+      }
+    });
+
+    it("errors if a webhook is provided without the type", async () => {
+      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
+      try {
+        new Config(mocks.core);
+        assert.fail("Failed to error when invalid inputs are provided");
+      } catch (err) {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+        );
+      }
+    });
+
     it("errors if the webhook type does not match techniques", async () => {
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
       mocks.core.getInput.withArgs("webhook-type").returns("post");

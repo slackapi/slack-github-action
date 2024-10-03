@@ -1,3 +1,4 @@
+import core from "@actions/core";
 import { assert } from "chai";
 import Config from "../src/config.js";
 import send from "../src/send.js";
@@ -37,34 +38,45 @@ describe("webhook", () => {
 
   describe("failure", () => {
     it("requires that a webhook is provided in inputs", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: core,
+        inputs: {},
+      };
       try {
-        await send(mocks.core);
+        await new Webhook().post(config);
         assert.fail("Failed to throw for missing input");
       } catch {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! Either a token or webhook is required to take action.",
-        );
-      }
-    });
-
-    it("requires that a webhook type is provided in input", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for missing input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          "No webhook was provided to post to",
         );
       }
     });
   });
 
   describe("proxies", () => {
+    it("requires a webhook is included in the inputs", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: core,
+        inputs: {},
+      };
+      try {
+        new Webhook().proxies(config);
+        assert.fail("Failed to throw for missing input");
+      } catch {
+        assert.include(
+          mocks.core.setFailed.lastCall.firstArg,
+          "No webhook was provided to proxy to",
+        );
+      }
+    });
+
     it("skips proxying an http webhook url altogether", async () => {
       mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
