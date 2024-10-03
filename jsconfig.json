@@ -1,19 +1,15 @@
 {
     "compilerOptions": {
+        "strict": true,
+        "baseUrl": ".",
+        "checkJs": true,
+        "esModuleInterop": true,
         "module": "es2022",
         "moduleResolution": "node",
-        "esModuleInterop": true,
-        "checkJs": true,
-        "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "baseUrl": ".",
-        "typeRoots": [
-            "./@types",
-            "./node_modules/@types"
-        ]
+        "noFallthroughCasesInSwitch": true
     },
     "exclude": [
         "node_modules"
