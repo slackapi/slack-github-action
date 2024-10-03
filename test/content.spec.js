@@ -12,12 +12,12 @@ import { mocks } from "./index.spec.js";
 describe("content", () => {
   beforeEach(() => {
     mocks.reset();
+    mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+    mocks.core.getInput.withArgs("token").returns("xoxb-example");
   });
 
   describe("get", () => {
     it("errors if both a payload and file path are provided", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns(`"message"="hello"`);
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       try {
@@ -34,8 +34,6 @@ describe("content", () => {
 
   describe("content", async () => {
     it("accepts and parses yaml as a valid payload format", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns(`
           message: "this is wrapped"
           channel: "C0123456789"
@@ -49,8 +47,6 @@ describe("content", () => {
     });
 
     it("accepts and parses complete json as payload input", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns(`{
           "message": "this is wrapped",
           "channel": "C0123456789"
@@ -65,8 +61,6 @@ describe("content", () => {
     });
 
     it("wraps incomplete payload in braces for valid JSON", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns(`
         "message": "LGTM!",
         "channel": "C0123456789",
@@ -117,8 +111,6 @@ describe("content", () => {
     });
 
     it("fails if the provided input payload is invalid JSON", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns("{");
       try {
         await send(mocks.core);
@@ -134,8 +126,6 @@ describe("content", () => {
 
   describe("file", async () => {
     it("parses JSON from a known file without replacements", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
@@ -152,8 +142,6 @@ describe("content", () => {
     });
 
     it("parses YAML from a known file without replacements", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload-file-path").returns("example.yml");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.yml"), "utf-8")
@@ -170,8 +158,6 @@ describe("content", () => {
     });
 
     it("parses YAML from the extended file extension", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.yaml"), "utf-8")
@@ -209,8 +195,6 @@ describe("content", () => {
     });
 
     it("fails to parse a file path that does not exist", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload-file-path").returns("unknown.json");
       try {
         await send(mocks.core);
@@ -224,8 +208,6 @@ describe("content", () => {
     });
 
     it("fails to parse a file with an unknown extension", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload-file-path").returns("unknown.md");
       try {
         await send(mocks.core);
@@ -241,8 +223,6 @@ describe("content", () => {
 
   describe("flatten", () => {
     it("flattens nested payloads if a delimiter is provided", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("payload").returns(`
         "apples": "tree",
         "bananas": {
