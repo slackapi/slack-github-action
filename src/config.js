@@ -112,7 +112,7 @@ export default class Config {
     };
     this.validate();
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
-    this.content = new Content(this);
+    this.content = new Content().get(this);
     core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
   }
 

@@ -3,7 +3,6 @@ import core from "@actions/core";
 import webapi from "@slack/web-api";
 import axios, { AxiosError } from "axios";
 import sinon from "sinon";
-import SlackError from "../src/errors.js";
 
 /**
  * Hello experimenter! These tests are here to confirm that the happy paths keep
@@ -59,6 +58,9 @@ export class Mock {
     this.sandbox.reset();
     this.api.resetHistory();
     this.axios.post.resetHistory();
+    this.core.getInput.reset();
+    this.core.getInput.withArgs("errors").returns("false");
+    this.core.getInput.withArgs("retries").returns("5");
   }
 }
 

@@ -11,7 +11,7 @@ import { mocks } from "./index.spec.js";
  * specifications.
  */
 describe("send", () => {
-  afterEach(() => {
+  beforeEach(() => {
     mocks.reset();
   });
 

@@ -13,14 +13,11 @@ import SlackError from "./errors.js";
  */
 export default class Content {
   /**
-   * @type {Record<string, any>}
-   */
-  values;
-
-  /**
+   * Gather content from the provided payload or payload file path with parsings.
    * @param {Config} config
+   * @returns {this} - An instance of this Content class.
    */
-  constructor(config) {
+  get(config) {
     switch (true) {
       case !!config.inputs.payload && !!config.inputs.payloadFilePath:
         throw new SlackError(
@@ -48,11 +45,12 @@ export default class Content {
         this.values[key] = `${this.values[key]}`;
       }
     }
+    return this;
   }
 
   /**
    * Format request content from payload values for use in the request.
-   * @param {Config} config - GitHub Actions core utilities.
+   * @param {Config} config
    * @throws if the input payload or payload file path is invalid JSON.
    * @returns {Content} - the parsed JSON payload to use in requests.
    */
@@ -64,9 +62,12 @@ export default class Content {
       );
     }
     try {
-      const content = yaml.load(config.inputs.payload, {
-        schema: yaml.JSON_SCHEMA,
-      });
+      const input = this.templatize(config, config.inputs.payload);
+      const content = /** @type {Content} */ (
+        yaml.load(input, {
+          schema: yaml.JSON_SCHEMA,
+        })
+      );
       return /** @type {Content} */ (content);
     } catch (error) {
       if (error instanceof Error) {
@@ -92,16 +93,17 @@ export default class Content {
       if (error instanceof Error) {
         config.core.error(error);
       }
+      console.error(error);
       throw new SlackError(
         config.core,
-        "Invalid input! Failed to parse the JSON content of the payload",
+        "Invalid input! Failed to parse contents of the provided payload",
       );
     }
   }
 
   /**
    * Format request content from the payload file path for use in the request.
-   * @param {Config} config - GitHub Actions core utilities.
+   * @param {Config} config
    * @throws if the input payload or payload file path is invalid JSON.
    * @returns {Content} - the parsed JSON payload to use in requests.
    */
@@ -113,42 +115,54 @@ export default class Content {
       );
     }
     try {
-      const content = fs.readFileSync(
+      const input = fs.readFileSync(
         path.resolve(config.inputs.payloadFilePath),
         "utf-8",
       );
-      if (!config.inputs.payloadTemplated) {
-        if (
-          config.inputs.payloadFilePath.endsWith("yaml") ||
-          config.inputs.payloadFilePath.endsWith("yml")
-        ) {
-          const load = yaml.load(content, {
-            schema: yaml.JSON_SCHEMA,
-          });
-          return /** @type {Content} */ (load);
-        }
-        if (config.inputs.payloadFilePath.endsWith("json")) {
-          return JSON.parse(content);
-        }
-        throw new SlackError(
-          config.core,
-          `Failed to parse file extension ${config.inputs.payloadFilePath}`,
-        );
+      const content = this.templatize(config, input);
+      if (
+        config.inputs.payloadFilePath.endsWith("yaml") ||
+        config.inputs.payloadFilePath.endsWith("yml")
+      ) {
+        const load = yaml.load(content, {
+          schema: yaml.JSON_SCHEMA,
+        });
+        return /** @type {Content} */ (load);
       }
-      const template = content.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
-      const context = {
-        env: process.env,
-        github: github.context,
-      };
-      return JSON.parse(markup.up(template, context));
+      if (config.inputs.payloadFilePath.endsWith("json")) {
+        return JSON.parse(content);
+      }
+      throw new SlackError(
+        config.core,
+        `Failed to parse file extension ${config.inputs.payloadFilePath}`,
+      );
     } catch (error) {
       if (error instanceof Error) {
         config.core.error(error);
       }
+      console.error(error);
       throw new SlackError(
         config.core,
-        "Invalid input! Failed to parse the JSON content of the payload file",
+        "Invalid input! Failed to parse contents of the provided payload file",
       );
     }
+  }
+
+  /**
+   * Replace templated variables in the provided content if requested.
+   * @param {Config} config
+   * @param {string} input - The initial value of the content.
+   * @returns {string} Content with templatized variables replaced.
+   */
+  templatize(config, input) {
+    if (!config.inputs.payloadTemplated) {
+      return input;
+    }
+    const template = input.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
+    const context = {
+      env: process.env,
+      github: github.context,
+    };
+    return markup.up(template, context);
   }
 }

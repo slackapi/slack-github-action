@@ -5,7 +5,7 @@ import Webhook from "../src/webhook.js";
 import { mocks } from "./index.spec.js";
 
 describe("webhook", () => {
-  afterEach(() => {
+  beforeEach(() => {
     mocks.reset();
   });
 
