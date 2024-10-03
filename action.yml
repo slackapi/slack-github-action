@@ -38,7 +38,7 @@ inputs:
     required: false
 outputs:
   time:
-    description: "The epoch time of job completion"
+    description: "The unix epoch time that the job completed"
   ok:
     description: "If the requested completed without errors"
   channel_id:
