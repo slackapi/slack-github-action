@@ -51,4 +51,4 @@ outputs:
     description: "The timestamp on a message posted using a token"
 runs:
   using: "node20"
-  main: "src/index.js"
+  main: "dist/index.js"

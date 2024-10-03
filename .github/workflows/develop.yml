@@ -13,6 +13,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         run: npm install
+      - name: Package the build
+        run: npm run build
       - name: Start a workflow with a webhook trigger
         id: wfb
         uses: ./
