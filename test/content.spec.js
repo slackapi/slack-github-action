@@ -78,6 +78,35 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
+    it("templatizes variables with matching variables", async () => {
+      mocks.core.getInput
+        .withArgs("payload")
+        .returns("message: Served ${{ env.NUMBER }} from ${{ github.apiUrl }}");
+      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.NUMBER = 12;
+      const config = new Config(mocks.core);
+      process.env.NUMBER = undefined;
+      const expected = {
+        message: "Served 12 from https://api.github.com",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
+    /**
+     * @see {@link https://github.com/slackapi/slack-github-action/issues/203}
+     */
+    it("templatizes variables with missing variables", async () => {
+      mocks.core.getInput
+        .withArgs("payload")
+        .returns("message: What makes ${{ env.TREASURE }} a secret");
+      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "What makes ??? a secret",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
     it("trims last comma JSON with the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`
         "message": "LGTM!",
@@ -200,6 +229,41 @@ describe("content", () => {
       const expected = {
         message: "drink water",
         channel: "C6H12O6H2O2",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
+    it("templatizes variables with matching variables", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+            "message": "Served $\{\{ env.NUMBER }} from $\{\{ github.apiUrl }}"
+          }`);
+      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.NUMBER = 12;
+      const config = new Config(mocks.core);
+      process.env.NUMBER = undefined;
+      const expected = {
+        message: "Served 12 from https://api.github.com",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
+    /**
+     * @see {@link https://github.com/slackapi/slack-github-action/issues/203}
+     */
+    it("templatizes variables with missing variables", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+            "message": "What makes $\{\{ env.TREASURE }} a secret"
+          }`);
+      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "What makes ??? a secret",
       };
       assert.deepEqual(config.content.values, expected);
     });
