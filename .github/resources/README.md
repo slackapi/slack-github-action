@@ -60,13 +60,17 @@ The saved `develop.yml` workflows use the same `webhook` and `method` examples
 but skip tests that happen during upstream checks:
 
 ```sh
-$ cp .env.example .env  # Set credentials
-$ vim .env
+$ cp .env.example .env  # Create credentials
+$ vim .env              # Update credentials
+$ cat .env              # Reveal credentials
 export SLACK_BOT_TOKEN=xoxb-01010101-example
 export SLACK_CHANNEL_ID=C0123456789
 export SLACK_INCOMING_WEBHOOK=https://hooks.slack.com/services/T0123456789/B0123456789/abcdefghijklmnopqrstuvwxyz
 export SLACK_WEBHOOK_TRIGGER=https://hooks.slack.com/triggers/T0123456789/00000000000/abcdefghijklmnopqrstuvwxyz
 ```
+
+Environment variables and credentials should be set in the created `.env` file
+for use in workflows and actions.
 
 Once credentials are configured and workflows updated, the following command
 runs the workflow using `act` and the above settings:
