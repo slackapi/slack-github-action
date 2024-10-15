@@ -7,5 +7,5 @@ node_modules
 # Extra files
 .DS_Store
 
-# Testing reminants
+# Testing remnants
 coverage
