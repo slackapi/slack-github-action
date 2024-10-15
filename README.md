@@ -43,7 +43,7 @@ and JSON formats being accepted.
 ```
 
 If neither payload input option is provided, the
-[GitHub context][github-context] is used which has details specific to the
+[GitHub Actions context][github-context] is used which has details specific to the
 repository and run of the workflow.
 
 The final payload content doesn't have to be fixed either, with
