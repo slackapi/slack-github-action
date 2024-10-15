@@ -43,8 +43,8 @@ tested. Required values include:
 
 - `SLACK_BOT_TOKEN`: xoxb-01010101-example
 - `SLACK_CHANNEL_ID`: C0123456789
-- `SLACK_INCOMING_WEBHOOK`: https://hooks.slack.com/services/T0123456789/...
-- `SLACK_WEBHOOK_TRIGGER`: https://hooks.slack.com/triggers/T0123456789/...
+- `SLACK_INCOMING_WEBHOOK`: https://hooks.slack.com/services/T0123456789/B0123456789/abcdefghijklmnopqrstuvwxyz
+- `SLACK_WEBHOOK_TRIGGER`: https://hooks.slack.com/triggers/T0123456789/00000000000/abcdefghijklmnopqrstuvwxyz
 
 ### Experimenting for development
 
