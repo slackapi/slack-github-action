@@ -18,8 +18,8 @@ and collect the **bot token** and **incoming webhook** from app settings.
 Where these are stored will depend on the configurations to run and will follow
 in the next sections.
 
-Also be sure to add the new bot to a channel for posting messages or errors
-happen.
+Also be sure to add the new bot to a channel, and while keeping track of that
+**channel ID** for posting messages or errors happen.
 
 ## Running the workflows
 
