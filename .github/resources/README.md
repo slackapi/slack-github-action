@@ -4,6 +4,32 @@ For a quick development experience and fast testing setup, the app needed with
 this action is configured using the [app manifest][manifest] and can be used in
 experiments with the [Slack CLI][cli].
 
+## Overview
+
+This app showcases all three techniques of sending data into Slack and follows
+patterns found in the integration tests.
+
+- **Technique 1** Slack Workflow Builder: Use a Slack webhook trigger to start a
+  workflow in Slack Workflow Builder.
+- **Technique 2** Slack API method: Call a Slack API method using a token and
+  data provided through the GitHub Workflow.
+- **Technique 3** Incoming webhook: Post a message to a Slack channel using an
+  incoming webhook.
+
+Configurations for the Slack app and workflow, and the GitHub Actions workflow
+are found in the following files:
+
+- Slack app settings: [`.github/resources/.slack/manifest.json`][slacktion]
+- GitHub Actions steps: [`.github/workflows/develop.yml`][develop]
+
+Either the techniques or app settings and workflow setups can be adjusted during
+testing and development. For experimenting with new changes, we recommend using
+the [steps for development](#experimenting-for-development) while the
+[steps for CI](#testing-in-ci) is useful when using this app in an actual GitHub
+Actions workflow.
+
+### Getting started
+
 Start by gathering credentials of an application equipped for action:
 
 ```sh
@@ -107,5 +133,7 @@ of the `.github/resources/.actions/event.json` file.
 Reference: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 
 [cli]: https://api.slack.com/automation/cli/commands
+[develop]: ../workflows/develop.yml
 [manifest]: https://api.slack.com/concepts/manifests
 [secrets]: https://github.com/slackapi/slack-github-action/settings/secrets/actions
+[slacktion]: ./.slack/manifest.json
