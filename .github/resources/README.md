@@ -12,6 +12,9 @@ $ slack trigger create  # SLACK_WEBHOOK_TRIGGER
 $ slack deploy          # SLACK_BOT_TOKEN and SLACK_INCOMING_WEBHOOK
 ```
 
+Gather the **webhook trigger** from the output of the `trigger create` command
+and collect the **bot token** and **incoming webhook** from app settings.
+
 Where these are stored will depend on the configurations to run and will follow
 in the next sections.
 
