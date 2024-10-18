@@ -12,8 +12,8 @@ For examples on how to leverage this in your workflows, check out the [example w
 
 You can provide data to send with this GitHub Action from various sources:
 
-* The default event [context][event-context] with a [payload][event-payload] matching the GitHub event
-* A custom JSON payload with optional [variables][variables] provided in the GitHub Action step
+* The default event [context][event-context] with a [payload][event-payload] matching the GitHub event.
+* A custom JSON payload with optional [variables][variables] provided in the GitHub Action step.
 
 The custom payload can be provided inline in your GitHub workflow or from a file, [detailed with technique 1](#technique-1-slack-workflow-builder), and will be used instead of the default event context if included.
 
