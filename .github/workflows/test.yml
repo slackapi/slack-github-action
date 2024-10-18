@@ -55,6 +55,12 @@ jobs:
           url=${{ github.event.pull_request.html_url }}
           echo "EVENT_URL=$url" >> "$GITHUB_ENV"
 
+      - name: "temp(inputs): use and print the github octokit context"
+        uses: ./
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_TRIGGER }}
+          webhook-type: webhook-trigger
+
       - name: "integration(wfb): send a payload to workflow builder via webhook trigger"
         id: wfb
         uses: ./
