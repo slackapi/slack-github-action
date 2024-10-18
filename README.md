@@ -386,7 +386,7 @@ All contributions are encouraged! Check out the
 [contributing]: .github/contributing.md
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.uploadV2]: https://slack.dev/node-slack-sdk/web-api/#upload-a-file
-[github-context]: https://docs.github.com/en/actions/learn-github-actions/contexts
+[github-context]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
