@@ -4,11 +4,18 @@
 
 Send data into Slack using this GitHub Action!
 
-## Sending Variables
-
-You can send GitHub-specific data related to GitHub Action workflow events using [GitHub Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) and [Variables](https://docs.github.com/en/actions/learn-github-actions/variables) that GitHub Actions provides.
+## Example Workflows
 
 For examples on how to leverage this in your workflows, check out the [example workflows we have](https://github.com/slackapi/slack-github-action/tree/main/example-workflows).
+
+## Sending Variables
+
+You can provide data to send with this GitHub Action from various sources:
+
+* The default event [context][event-context] with a [payload][event-payload] matching the GitHub event.
+* A custom JSON payload with optional [variables][variables] provided in the GitHub Action step.
+
+The custom payload can be provided inline in your GitHub workflow or from a file, [detailed with technique 1](#technique-1-slack-workflow-builder), and will be used instead of the default event context if included.
 
 ## How to Send Data to Slack
 
@@ -312,7 +319,10 @@ See [CONTRIBUTING](.github/contributing.md).
 
 See [LICENSE](LICENSE).
 
+[apps]: https://api.slack.com/apps
 [create-webhook]: https://slack.com/intl/en-ca/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks
+[event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
+[event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 [job-step]: https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idsteps
 [repo-secret]: https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository
-[apps]: https://api.slack.com/apps
+[variables]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
