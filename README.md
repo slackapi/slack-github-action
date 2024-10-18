@@ -1,4 +1,4 @@
-# Slack Send
+# Slack Send GitHub Action
 
 > the GitHub Action for sending data to Slack
 
