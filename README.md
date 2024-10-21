@@ -25,8 +25,8 @@ You can provide data to send to Slack from this GitHub Action and either source:
 These input options are valid for all techniques, but some techniques require
 specific constraints with certain requirements for valid inputs.
 
-Additional [configurations](#additional-configurations) are also available for
-more customizations to the provided payload.
+Additional [configurations](#additional-configurations) and other details are
+also available for more customizations to the provided payload.
 
 ## Sending techniques
 
