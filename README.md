@@ -94,10 +94,11 @@ https://hooks.slack.com/triggers/T0123456789/3141592653589/c6e6c0d868b3054ca0f46
 Add this Action as a [step][job-step] to your project's GitHub Action workflow
 file with the configurations you want.
 
-##### Sending values from the GitHub default context
+##### Sending values from the default GitHub event context
 
 In the example below, no payload input values are being provided so values from
-the [GitHub context][github-context] specific to the job are used:
+the GitHub [context][event-context] and [payload][event-payload] specific to the
+job are used:
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
