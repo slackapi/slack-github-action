@@ -34,7 +34,6 @@ export default class Content {
         config.core.debug(
           "Missing payload so gathering inputs from action context.",
         );
-        console.log(github.context);
         this.values = github.context;
         break;
     }
