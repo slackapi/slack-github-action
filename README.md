@@ -4,56 +4,29 @@
 
 [![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
 
-Send data into Slack with a Slack [API method](#technique-2-slack-api-method)
-like [`chat.postMessage`][chat.postMessage] and
-[`files.uploadV2`][files.uploadV2], or use webhooks to
-[start workflows](#technique-1-slack-workflow-builder) in Workflow Builder and
-[post messages](#technique-3-slack-incoming-webhook) with incoming webhooks
-using this GitHub Action!
-
-## Sending data
-
-Different ways to send data share overlapping styles of gathering the data to be
-sent, intersecting between the `payload` and `payload-file-path` inputs and the
-`method` and `webook` techniques.
-
-Either payload input option can be used with either technique, with both YAML
-and JSON formats being accepted.
-
-**Examples**
-
-```yaml
-- name: Post a message to a channel using a token
-  uses: slackapi/slack-github-action@v2-development
-  with:
-    method: chat.postMessage
-    token: ${{ secrets.SLACK_BOT_TOKEN }}
-    payload: |
-      text: "Actions happen at <https://github.com/${{ github.repository }}>"
-      channel: ${{ secrets.SLACK_CHANNEL_ID }}
-```
-
-```yaml
-- name: Start a Slack workflow using a webhook URL
-  uses: slackapi/slack-github-action@v2-development
-  with:
-    payload-file-path: ./build-artifacts.json
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-    webhook-type: webhook-trigger
-```
-
-If neither payload input option is provided, the
-[GitHub Actions context][github-context] is used which has details specific to the
-repository and run of the workflow.
-
-The final payload content doesn't have to be fixed either, with
-[additional configurations](#additional-configurations) available for
-customization.
-
-### Example workflows
+## Example workflows
 
 For examples on how to leverage this in your workflows, check out the
 [example workflows we have][examples] available.
+
+## Sending variables
+
+There are different [techniques to send data](#sending-techniques) into Slack
+and whichever one is chosen will require a certain set of customized inputs, as
+described later.
+
+You can provide data to send to Slack from this GitHub Action and either source:
+
+- The default event [context][event-context] with a [payload][event-payload]
+  matching the GitHub event.
+- A custom JSON payload with optional [variables][variables] provided in the
+  GitHub Action step.
+
+These input options are valid for all techniques, but some techniques require
+specific constraints with certain requirements for valid inputs.
+
+Additional [configurations](#additional-configurations) are also available for
+more customizations to the provided payload.
 
 ## Sending techniques
 
@@ -385,9 +358,10 @@ All contributions are encouraged! Check out the
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
 [chat:write]: https://api.slack.com/scopes/chat:write
 [contributing]: .github/contributing.md
+[event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
+[event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.uploadV2]: https://slack.dev/node-slack-sdk/web-api/#upload-a-file
-[github-context]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
@@ -400,5 +374,6 @@ All contributions are encouraged! Check out the
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
+[variables]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [wfb]: https://slack.com/features/workflow-automation
 [wfb-create]: https://slack.com/intl/en-ca/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks
