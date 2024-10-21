@@ -6,7 +6,7 @@
 
 ## Example workflows
 
-For examples on how to leverage this in your workflows, check out the
+For examples on how to leverage this Action in workflows, check out
 [example workflows we have][examples] available.
 
 ## Sending variables
