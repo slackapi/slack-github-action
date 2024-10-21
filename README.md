@@ -19,8 +19,8 @@ You can provide data to send to Slack from this GitHub Action and either source:
 
 - The default event [context][event-context] with a [payload][event-payload]
   matching the GitHub event.
-- A custom JSON payload with optional [variables][variables] provided in the
-  GitHub Action step.
+- A custom payload with optional [variables][variables] provided in the GitHub
+  Action step.
 
 These input options are valid for all techniques, but some techniques require
 specific constraints with certain requirements for valid inputs.
