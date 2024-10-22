@@ -317,12 +317,12 @@ options might be useful.
 ### Flattening nested payloads
 
 Variables and data provided in the payload might contain nested fields that need
-to be flattened before being
-[sent with a webhook trigger](#technique-1-slack-workflow-builder) to match the
-expected input format of [Workflow Builder][wfb].
+to be flattened before being sent with a
+[webhook trigger](#technique-1-slack-workflow-builder) to match the expected
+input format of [Workflow Builder][wfb].
 
 The `payload-delimiter` option will flatten the input payload using the provided
-delimiter and will make values stringified:
+delimiter and will also make values stringified:
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
