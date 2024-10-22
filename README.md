@@ -33,30 +33,32 @@ also available for more customizations to the provided payload.
 This Action offers three different techniques to send data to Slack:
 
 1. Send data with a webhook to start a workflow in [Workflow Builder][wfb].
-2. Send data using [a Slack API method][methods] and a secret token with required scopes.
+2. Send data using [a Slack API method][methods] and a secret token with
+   required scopes.
 3. Send data as a message with a Slack [incoming webhook][incoming-webhook] URL.
 
 ### Technique 1: Slack Workflow Builder
 
-> ❗️ This technique requires [a Slack paid plan][plans] to use Workflow Builder.
+> :memo: This technique requires [a Slack paid plan][plans] to use Workflow
+> Builder.
 
 This technique sends data to Slack using a webhook to start a workflow created
-using the [Slack Workflow Builder][wfb]. Follow
-[these steps to create a Slack workflow using webhooks][wfb-create].
+using Slack [Workflow Builder][wfb].
 
 #### Setup
 
-Starting in Slack, some prerequisite preparations are necessary:
+Start in Slack to create a Slack workflow:
 
-1. [Create a Slack workflow][wfb-create] that starts with a webhook.
+1. [Create a Slack workflow][wfb-create] that starts from a webhook.
 2. Copy the webhook URL and [add it as a repository secret][repo-secret] called
    `SLACK_WEBHOOK_URL`.
-3. Add a step to your GitHub Action to send data to your webhook.
-4. Configure your Slack workflow to use the incoming payload variables from the
-   the GitHub Action. You can then adjust the steps of the workflow to use these
+3. Add this Action as a step to your GitHub workflow and set the input payload
+   to send.
+4. Configure your Slack workflow to use the payload variables sent from the
+   GitHub Action. You can then update the steps of the Slack workflow to use these
    values in creative and clever ways.
 
-Note: The webhook URL will resemble something like so:
+The webhook URL will resemble something like so:
 
 ```txt
 https://hooks.slack.com/triggers/T0123456789/3141592653589/c6e6c0d868b3054ca0f4611a5dbadaf
