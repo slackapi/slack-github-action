@@ -73,9 +73,9 @@ file with the configurations you want.
 
 ##### Sending values from the default GitHub event context
 
-In the example below, no payload input values are being provided so values from
-the GitHub [context][event-context] and [payload][event-payload] specific to the
-job are used:
+In the example below, the default GitHub event [context][event-context] and
+event [payload][event-payload] associated with the job that started the GitHub
+workflow are sent to the provided webhook URL:
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
@@ -86,8 +86,12 @@ job are used:
     webhook-type: webhook-trigger
 ```
 
-While also using `payload-delimiter` the payload is flattened and stringified to
-match the webhook input format expected by Workflow Builder.
+Accessing variables sent to [Workflow Builder][wfb] with a webhook require that
+the payload variables are flattened with stringified values. Nested variables in
+the provided payload can be both flattened and also stringified with the
+`payload-delimiter` option or changed with other
+[configurations](#additional-configurations) to match this format expected from
+Workflow Builder.
 
 ##### Providing parsed payload information as strings
 
@@ -309,6 +313,25 @@ blocks:
 
 Not all of the above settings serve every customization of a workflow, so these
 options might be useful.
+
+### Flattening nested payloads
+
+Variables and data provided in the payload might contain nested fields that need
+to be flattened before being
+[sent with a webhook trigger](#technique-1-slack-workflow-builder) to match the
+expected input format of [Workflow Builder][wfb].
+
+The `payload-delimiter` option will flatten the input payload using the provided
+delimiter and will make values stringified:
+
+```yaml
+- name: Send GitHub Action data to a Slack workflow
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    payload-delimiter: "_"
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
+```
 
 ### Parsing templated variables
 
