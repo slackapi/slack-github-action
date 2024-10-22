@@ -335,9 +335,9 @@ delimiter and will also make values stringified:
 
 ### Parsing templated variables
 
-Additional [variables][github-variables] provided by Github can be used to
-replace templated variables in the provided payloads using the option to parse
-payloads with the `payload-templated` option:
+Additional variables provided in the Github event [context][event-context] and
+event [payload][event-payload] can be used to replace templated variables in the
+input payload with the `payload-templated` option:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
@@ -350,8 +350,8 @@ payloads with the `payload-templated` option:
     webhook-type: webhook-trigger
 ```
 
-This replaces variables templated with as `${{ github.repository }}` with the
-values found in the action context.
+This replaces variables templated as `${{ github.payload.repository.html_url }}`
+with the values found in the Action context.
 
 ### HTTPS proxy
 
