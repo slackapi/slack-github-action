@@ -207,7 +207,7 @@ inputs to current ones:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      ts: ${{ steps.slack.outputs.ts }}
+      ts: "${{ steps.slack.outputs.ts }}"
       text: "Deployment finished! :rocket:"
       attachments:
         - color: "28a745"
