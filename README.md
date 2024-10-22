@@ -32,10 +32,12 @@ also available for more customizations to the provided payload.
 
 This Action offers three different techniques to send data to Slack:
 
-1. Send data with a webhook to start a workflow in [Workflow Builder][wfb].
-2. Send data using [a Slack API method][methods] and a secret token with
-   required scopes.
-3. Send data as a message with a Slack [incoming webhook][incoming-webhook] URL.
+1. [**Technique 1**](#technique-1-slack-workflow-builder): Send data with a
+   webhook to start a workflow in [Workflow Builder][wfb].
+2. [**Technique 2**](#technique-2-slack-api-method): Send data using
+   [a Slack API method][methods] and a secret token with required scopes.
+3. [**Technique 3**](#technique-3-slack-incoming-webhook): Send data as a
+   message with a Slack [incoming webhook][incoming-webhook] URL.
 
 ### Technique 1: Slack Workflow Builder
 
@@ -55,8 +57,8 @@ Start in Slack to create a Slack workflow:
 3. Add this Action as a step to your GitHub workflow and set the input payload
    to send.
 4. Configure your Slack workflow to use the payload variables sent from the
-   GitHub Action. You can then update the steps of the Slack workflow to use these
-   values in creative and clever ways.
+   GitHub Action. You can then update the steps of the Slack workflow to use
+   these values in creative and clever ways.
 
 The webhook URL will resemble something like so:
 
