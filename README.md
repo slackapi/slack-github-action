@@ -32,9 +32,9 @@ also available for more customizations to the provided payload.
 
 This Action offers three different techniques to send data to Slack:
 
-1. Send data with a webhook to start a worflow in Workflow Builder.
-2. Send data using a Slack API method and a secret token with required scopes.
-3. Send data as a message with a Slack Incoming Webhook URL.
+1. Send data with a webhook to start a workflow in [Workflow Builder][wfb].
+2. Send data using [a Slack API method][methods] and a secret token with required scopes.
+3. Send data as a message with a Slack [incoming webhook][incoming-webhook] URL.
 
 ### Technique 1: Slack Workflow Builder
 
