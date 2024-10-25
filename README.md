@@ -149,6 +149,10 @@ The exact Slack API [method][methods] used will require setting various sets of
 6. [Add this Action as a step][job-step] to your GitHub workflow and set the
    input payload to send.
 
+Methods that require an app configuration token should gather this token
+from the [app configuration token][config-tokens] settings instead of from a
+specific app since this token is associated with the **workspace**.
+
 #### Usage
 
 Choosing inputs for these steps is left as an exercise for the actioneer, but
@@ -399,6 +403,7 @@ All contributions are encouraged! Check out the
 [block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
 [chat:write]: https://api.slack.com/scopes/chat:write
+[config-tokens]: https://api.slack.com/reference/manifests#config-tokens
 [contributing]: .github/contributing.md
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
