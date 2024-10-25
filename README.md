@@ -389,7 +389,7 @@ All contributions are encouraged! Check out the
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.upload]: https://api.slack.com/messaging/files#upload
-[files.uploadV2]: https://slack.dev/node-slack-sdk/web-api/#upload-a-file
+[files.uploadV2]: https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
@@ -400,7 +400,7 @@ All contributions are encouraged! Check out the
 [plans]: https://slack.com/pricing
 [repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
 [scopes]: https://api.slack.com/scopes
-[slack-web-api]: https://slack.dev/node-slack-sdk/web-api
+[slack-web-api]: https://tools.slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
 [variables]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [wfb]: https://slack.com/features/workflow-automation
