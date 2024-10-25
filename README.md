@@ -117,8 +117,8 @@ call one of many [Slack API methods][methods]! This includes the
 [uploading a file][files.upload] with the convenience of the `@slack/web-api`
 implementation for the [`files.uploadV2`][files.uploadV2] method.
 
-Setting up a workflow with this technique allows you to instantly interact with
-the Slack API methods without setting up a Slack workflow.
+Setting up a GitHub workflow with this technique unlocks instant interactions
+with the Slack API methods using just a Slack API token.
 
 #### Setup
 
