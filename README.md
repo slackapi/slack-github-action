@@ -138,16 +138,16 @@ messages or [uploading a file][files.upload] with the convenience of the
 The exact Slack API [method][methods] used will require setting various sets of
 [scopes][scopes], but setup should be similar for all methods:
 
-- [Create a Slack app][apps] for your workspace or use an existing app.
-- Select a [method][methods] to call and add the required **scopes** to your app
-  under the **OAuth & Permissions** page on app settings.
-- Install the app to your workspace using the **Install App** page.
-- Find the [token][tokens] minted for the Slack API method being called from the
-  **OAuth & Permissions** page.
-- Add the token as [a repository secret][repo-secret] called `SLACK_BOT_TOKEN`
-  or something similar and memorable.
-- [Add this Action as a step][job-step] to your GitHub workflow and set the
-  input payload to send.
+1. [Create a Slack app][apps] for your workspace or use an existing app.
+2. Select a [method][methods] to call and add the required **scopes** to your
+   app under the **OAuth & Permissions** page on app settings.
+3. Install the app to your workspace using the **Install App** page.
+4. Find the [token][tokens] minted for the Slack API method being called from
+   the **OAuth & Permissions** page.
+5. Add the token as [a repository secret][repo-secret] called `SLACK_BOT_TOKEN`
+   or something similar and memorable.
+6. [Add this Action as a step][job-step] to your GitHub workflow and set the
+   input payload to send.
 
 #### Usage
 
