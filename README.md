@@ -116,8 +116,8 @@ call one of [the Slack API methods][methods] with this technique.
 
 This includes the [`chat.postMessage`][chat.postMessage] method for posting
 messages or [uploading a file][files.upload] with the convenience of the
-`@slack/web-api` implementation for the [`files.uploadV2`][files.uploadV2]
-method.
+[`@slack/web-api`][slack-web-api] implementation for the
+[`files.uploadV2`][files.uploadV2] method.
 
 #### Setup
 
