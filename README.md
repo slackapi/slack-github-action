@@ -109,6 +109,20 @@ the job is started:
       option: "false"
 ```
 
+##### Gathering details of the payload from a saved file
+
+Input values for the payload to be sent can also be provided in a file, either
+in JSON or YAML format:
+
+```yaml
+- name: Send custom JSON data to Slack workflow
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    payload-file-path: "./artifacts.json"
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
+```
+
 ### Technique 2: Slack API method
 
 A bot token or user token or [token of some other kind][tokens] can be used to
