@@ -112,9 +112,10 @@ the job is started:
 ### Technique 2: Slack API method
 
 A bot token or user token or [token of some other kind][tokens] can be used to
-call one of many [Slack API methods][methods]! This includes
-[`chat.postMessage`][chat.postMessage] and the official `@slack/web-api`
-implemention of [`files.uploadV2`][files.uploadV2].
+call one of many [Slack API methods][methods]! This includes the
+[`chat.postMessage`][chat.postMessage] method for posting messages or
+[uploading a file][files.upload] with the convenience of the `@slack/web-api`
+implementation for the [`files.uploadV2`][files.uploadV2] method.
 
 Setting up a workflow with this technique allows you to instantly interact with
 the Slack API methods without setting up a Slack workflow.
@@ -388,6 +389,7 @@ All contributions are encouraged! Check out the
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
+[files.upload]: https://api.slack.com/messaging/files#upload
 [files.uploadV2]: https://slack.dev/node-slack-sdk/web-api/#upload-a-file
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
