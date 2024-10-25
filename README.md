@@ -99,7 +99,7 @@ Provided input values for payload information are sent to the webhook URL after
 the job is started:
 
 ```yaml
-- name: Send custom event details to Slack workflow
+- name: Send custom event details to a Slack workflow
   uses: slackapi/slack-github-action@v2-development
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
