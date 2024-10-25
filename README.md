@@ -54,8 +54,8 @@ Start in Slack to create a Slack workflow:
 1. [Create a Slack workflow][wfb-create] that starts from a webhook.
 2. Copy the webhook URL and [add it as a repository secret][repo-secret] called
    `SLACK_WEBHOOK_URL`.
-3. Add this Action as a step to your GitHub workflow and set the input payload
-   to send.
+3. [Add this Action as a step][job-step] to your GitHub workflow and set the
+   input payload to send.
 4. Configure your Slack workflow to use the payload variables sent from the
    GitHub Action. You can then update the steps of the Slack workflow to use
    these values in creative and clever ways.
@@ -68,8 +68,8 @@ https://hooks.slack.com/triggers/T0123456789/3141592653589/c6e6c0d868b3054ca0f46
 
 #### Usage
 
-Add this Action as a [step][job-step] to your project's GitHub Action workflow
-file with the configurations you want.
+Update the input payloads sent from this GitHub Action to your Slack workflow
+using the following options:
 
 ##### Sending values from the default GitHub event context
 
