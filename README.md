@@ -112,13 +112,12 @@ the job is started:
 ### Technique 2: Slack API method
 
 A bot token or user token or [token of some other kind][tokens] can be used to
-call one of many [Slack API methods][methods]! This includes the
-[`chat.postMessage`][chat.postMessage] method for posting messages or
-[uploading a file][files.upload] with the convenience of the `@slack/web-api`
-implementation for the [`files.uploadV2`][files.uploadV2] method.
+call one of [the Slack API methods][methods] with this technique.
 
-Setting up a GitHub workflow with this technique unlocks instant interactions
-with the Slack API methods using just a Slack API token.
+This includes the [`chat.postMessage`][chat.postMessage] method for posting
+messages or [uploading a file][files.upload] with the convenience of the
+`@slack/web-api` implementation for the [`files.uploadV2`][files.uploadV2]
+method.
 
 #### Setup
 
