@@ -404,4 +404,4 @@ All contributions are encouraged! Check out the
 [tokens]: https://api.slack.com/concepts/token-types
 [variables]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [wfb]: https://slack.com/features/workflow-automation
-[wfb-create]: https://slack.com/intl/en-ca/help/articles/360041352714-Create-more-advanced-workflows-using-webhooks
+[wfb-create]: https://slack.com/help/articles/360041352714-Build-a-workflow--Create-a-workflow-that-starts-outside-of-Slack
