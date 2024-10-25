@@ -121,8 +121,8 @@ method.
 
 #### Setup
 
-The exact [API method][methods] used will change the required [scopes][scopes],
-but setup should be similar for all methods:
+The exact [Slack API method][methods] used will require setting various sets of
+[scopes][scopes], but setup should be similar for all methods:
 
 - [Create a Slack App][apps] for your workspace or use an existing one.
 - Add the [`chat:write`][chat:write] bot scope under the **OAuth & Permissions**
