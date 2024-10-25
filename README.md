@@ -155,8 +155,9 @@ app since this token is associated with the **workspace**.
 
 #### Usage
 
-Choosing inputs for these steps is left as an exercise for the actioneer, but
-these snippets might be helpful when starting.
+Choosing inputs for these steps is left as an exercise for the actioneer since
+each of the Slack API methods requires certain values and parameters, but these
+snippets might be helpful when starting.
 
 ##### Posting a message with text
 
