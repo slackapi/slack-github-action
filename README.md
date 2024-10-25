@@ -149,9 +149,9 @@ The exact Slack API [method][methods] used will require setting various sets of
 6. [Add this Action as a step][job-step] to your GitHub workflow and set the
    input payload to send.
 
-Methods that require an app configuration token should gather this token
-from the [app configuration token][config-tokens] settings instead of from a
-specific app since this token is associated with the **workspace**.
+Methods that require an app configuration token should gather this token from
+the [app configuration token][config-tokens] settings instead of from a specific
+app since this token is associated with the **workspace**.
 
 #### Usage
 
