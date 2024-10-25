@@ -135,7 +135,7 @@ messages or [uploading a file][files.upload] with the convenience of the
 
 #### Setup
 
-The exact [Slack API method][methods] used will require setting various sets of
+The exact Slack API [method][methods] used will require setting various sets of
 [scopes][scopes], but setup should be similar for all methods:
 
 - [Create a Slack App][apps] for your workspace or use an existing one.
