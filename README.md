@@ -283,11 +283,10 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
 This technique uses GitHub Actions to post a message to a channel or direct
 message using [incoming webhooks][incoming-webhook] with a Slack app.
 
-Incoming Webhooks conform to the same rules and functionality as any of Slack's
-other messaging APIs. You can make your posted messages as simple as a single
-line of text, or make them really useful with
-[interactive components][interactivity]. To make the message more expressive and
-useful use [Block Kit][block-kit] to build and test visual components.
+Incoming webhooks follow the same [formatting][formatting] patterns as other
+Slack messaging APIs. Posted messages can be as short as a single line of text,
+include additional interactivity with [interactive components][interactivity],
+or be formatted with [Block Kit][block-kit] to build visual components.
 
 #### Setup
 
@@ -409,6 +408,7 @@ All contributions are encouraged! Check out the
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.upload]: https://api.slack.com/messaging/files#upload
 [files.uploadV2]: https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file
+[formatting]: https://api.slack.com/reference/surfaces/formatting
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
