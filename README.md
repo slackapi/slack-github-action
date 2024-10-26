@@ -310,7 +310,7 @@ using [`mrkdwn`][mrkdwn] formatting values for a message or [Block Kit][block-ki
 blocks:
 
 ```yaml
-- name: Send custom JSON data to Slack workflow
+- name: Post a message in a channel
   uses: slackapi/slack-github-action@v2-development
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
