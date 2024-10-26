@@ -374,7 +374,7 @@ input payload with the `payload-templated` option:
 This replaces variables templated as `${{ github.payload.repository.html_url }}`
 with the values found in the GitHub Action event [payload][event-payload].
 
-### HTTPS proxy
+### Proxying HTTPS requests
 
 If you need to use a proxy to connect with Slack, you can use the `HTTPS_PROXY`
 or `https_proxy` environment variable. In this example we use the Slack App
