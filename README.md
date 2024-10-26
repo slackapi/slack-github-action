@@ -329,6 +329,28 @@ blocks:
 Not all of the above settings serve every customization of a workflow, so these
 options might be useful.
 
+### Exiting with errors
+
+Invalid API requests or unexpected webhook payloads cause a failing response
+that can be used to fail the GitHub Actions step with the `errors` option.
+
+The `errors` option defaults to `false` so failed requests do not cause the
+step to fail. This result can still be gathered from the `ok` output.
+
+```yaml
+- name: Send GitHub Action data to a Slack workflow
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    errors: true
+    method: chat.reverse
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      text: "palindrome"
+```
+
+Invalid inputs to the Action, such as not including a payload, will always cause
+the GitHub step to fail.
+
 ### Flattening nested payloads
 
 Variables and data provided in the payload might contain nested fields that need
