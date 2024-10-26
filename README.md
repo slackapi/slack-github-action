@@ -294,8 +294,7 @@ A similar approach to [Technique 1](#technique-1-slack-workflow-builder) is
 taken to create apps and setup the workflow, but webhooks are gathered from a
 different source:
 
-1. [Create a Slack app][apps] for your workspace (alternatively use an existing
-   app you have already created and installed).
+1. [Create a Slack app][apps] for your workspace or use an existing app.
 2. Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth &
    Permissions**.
 3. Install the app to your workspace (you will select a channel to notify).
