@@ -280,8 +280,8 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
 
 ### Technique 3: Slack incoming webhook
 
-This technique uses GitHub Actions to post messages to a channel or direct
-message using [incoming webhooks][incoming-webhook] from a Slack app.
+This technique uses GitHub Actions to post a message to a channel or direct
+message using [incoming webhooks][incoming-webhook] with a Slack app.
 
 Incoming Webhooks conform to the same rules and functionality as any of Slack's
 other messaging APIs. You can make your posted messages as simple as a single
