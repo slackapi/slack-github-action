@@ -297,7 +297,8 @@ different source:
 1. [Create a Slack app][apps] for your workspace or use an existing app.
 2. Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth
    & Permissions** page on app settings.
-3. Install the app to your workspace and select a channel to notify.
+3. Install the app to your workspace and select a channel to notify from the
+   **Install App** page.
 4. Activate and create a new webhook from the **Incoming Webhooks** page.
 5. Copy the Webhook URL from the Webhook you just generated
    [add it as a secret in your repo settings][repo-secret] named
