@@ -290,9 +290,7 @@ or be formatted with [Block Kit][block-kit] to build visual components.
 
 #### Setup
 
-A similar approach to [Technique 1](#technique-1-slack-workflow-builder) is
-taken to create apps and setup the workflow, but webhooks are gathered from a
-different source:
+Gather a Slack incoming webhook URL:
 
 1. [Create a Slack app][apps] for your workspace or use an existing app.
 2. Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth
@@ -301,7 +299,7 @@ different source:
    **Install App** page.
 4. Create additional webhooks from the **Incoming Webhooks** page.
 5. Add the generated incoming webhook URL as [a repository secret][repo-secret]
-   named something like `SLACK_WEBHOOK_URL`
+   called `SLACK_WEBHOOK_URL` or something similar.
 6. [Add this Action as a step][job-step] to your GitHub workflow and set the
    input payload to send.
 
