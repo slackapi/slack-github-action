@@ -161,9 +161,9 @@ but these snippets might be helpful when starting.
 
 ##### Posting a message with text
 
-Posting a message with the `chat.postMessage` method can be achieved by adding
-this step to a job in your GitHub workflow and inviting the bot associated with
-your app to the channel for posting:
+Posting a message with the [`chat.postMessage`][chat.postMessage] method can be
+achieved by adding this step to a job in your GitHub workflow and inviting the
+bot associated with your app to the channel for posting:
 
 ```yaml
 - name: Post to a Slack channel
