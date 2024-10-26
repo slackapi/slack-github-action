@@ -372,7 +372,7 @@ input payload with the `payload-templated` option:
 ```
 
 This replaces variables templated as `${{ github.payload.repository.html_url }}`
-with the values found in the Action context.
+with the values found in the GitHub Action event [payload][event-payload].
 
 ### HTTPS proxy
 
