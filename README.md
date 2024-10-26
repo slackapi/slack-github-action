@@ -146,7 +146,7 @@ The exact Slack API [method][methods] used will require setting various sets of
 
 Methods that require an app configuration token should gather this token from
 the [app configuration token][config-tokens] settings instead of from a specific
-app since this token is associated with the **workspace**.
+app since this token is associated with the workspace.
 
 #### Usage
 
@@ -236,7 +236,7 @@ outputs from past steps as inputs to current ones:
 ##### Replying to a message
 
 Posting threaded replies to a message from a past job can be done by including
-the `thread_ts` attribute of the **parent** message in the `payload`:
+the `thread_ts` attribute of the parent message in the `payload`:
 
 ```yaml
 - name: Initiate a deployment
@@ -295,7 +295,7 @@ A similar approach to [Technique 1](#technique-1-slack-workflow-builder) is
 taken to create apps and setup the workflow, but webhooks are gathered from a
 different source:
 
-- [Create a Slack App][apps] for your workspace (alternatively use an existing
+- [Create a Slack app][apps] for your workspace (alternatively use an existing
   app you have already created and installed).
 - Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth &
   Permissions**.
