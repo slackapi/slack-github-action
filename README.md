@@ -299,10 +299,11 @@ different source:
    & Permissions** page on app settings.
 3. Install the app to your workspace and select a channel to notify from the
    **Install App** page.
-4. Activate and create a new webhook from the **Incoming Webhooks** page.
-5. Copy the Webhook URL from the Webhook you just generated
-   [add it as a secret in your repo settings][repo-secret] named
-   `SLACK_WEBHOOK_URL`.
+4. Create additional webhooks from the **Incoming Webhooks** page.
+5. Add the generated incoming webhook URL as [a repository secret][repo-secret]
+   named something like `SLACK_WEBHOOK_URL`
+6. [Add this Action as a step][job-step] to your GitHub workflow and set the
+   input payload to send.
 
 #### Usage
 
