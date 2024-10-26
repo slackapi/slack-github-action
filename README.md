@@ -128,11 +128,6 @@ in JSON or YAML format:
 A bot token or user token or [token of some other kind][tokens] can be used to
 call one of [the Slack API methods][methods] with this technique.
 
-This includes the [`chat.postMessage`][chat.postMessage] method for posting
-messages or [uploading a file][files.upload] with the convenience of the
-[`@slack/web-api`][slack-web-api] implementation for the
-[`files.uploadV2`][files.uploadV2] method.
-
 #### Setup
 
 The exact Slack API [method][methods] used will require setting various sets of
@@ -266,9 +261,9 @@ the `thread_ts` attribute of the **parent** message in the `payload`:
 
 ##### Uploading a file
 
-Calling web API methods with [`@slack/web-api`][slack-web-api] makes uploading
-files just another API call, but with all of the advantages of
-[`files.uploadV2`][files.uploadV2]:
+Calling [a Slack API method][methods] with [`@slack/web-api`][slack-web-api]
+makes [uploading a file][files.upload] just another API call with all of the
+convenience of the [`files.uploadV2`][files.uploadV2] method:
 
 ```yaml
 - name: Share a file to that channel
