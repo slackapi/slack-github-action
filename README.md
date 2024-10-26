@@ -305,8 +305,8 @@ Gather a Slack incoming webhook URL:
 
 #### Usage
 
-Add the collected webhook from above to a workflow and configure the job using
-[`mrkdwn`][mrkdwn] formatting values for a message or [Block Kit][block-kit]
+Add the collected webhook from above to a GitHub workflow and configure the step
+using [`mrkdwn`][mrkdwn] formatting values for a message or [Block Kit][block-kit]
 blocks:
 
 ```yaml
