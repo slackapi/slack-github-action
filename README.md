@@ -294,15 +294,15 @@ A similar approach to [Technique 1](#technique-1-slack-workflow-builder) is
 taken to create apps and setup the workflow, but webhooks are gathered from a
 different source:
 
-- [Create a Slack app][apps] for your workspace (alternatively use an existing
-  app you have already created and installed).
-- Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth &
-  Permissions**.
-- Install the app to your workspace (you will select a channel to notify).
-- Activate and create a new webhook under **Incoming Webhooks**.
-- Copy the Webhook URL from the Webhook you just generated
-  [add it as a secret in your repo settings][repo-secret] named
-  `SLACK_WEBHOOK_URL`.
+1. [Create a Slack app][apps] for your workspace (alternatively use an existing
+   app you have already created and installed).
+2. Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth &
+   Permissions**.
+3. Install the app to your workspace (you will select a channel to notify).
+4. Activate and create a new webhook under **Incoming Webhooks**.
+5. Copy the Webhook URL from the Webhook you just generated
+   [add it as a secret in your repo settings][repo-secret] named
+   `SLACK_WEBHOOK_URL`.
 
 #### Usage
 
