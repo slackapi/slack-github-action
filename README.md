@@ -199,10 +199,9 @@ blocks, can also be sent with Slack API methods:
 
 ##### Updating a message
 
-Following up on a message after it's posted, such as using the
-[`chat.update`][chat.update] method to share updates for a build status, can be
-done by chaining multiple steps together using outputs from past steps as inputs
-to current ones:
+Updating a message after it's posted can be done with the
+[`chat.update`][chat.update] method and chaining multiple steps together using
+outputs from past steps as inputs to current ones:
 
 ```yaml
 - name: Initiate the deployment launch sequence
