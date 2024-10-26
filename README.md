@@ -178,8 +178,8 @@ bot associated with your app to the channel for posting:
 
 ##### Posting a message with blocks
 
-More complex message layouts, like messages made with [Block Kit][block-kit]
-blocks, can also be sent with Slack API methods:
+More complex message layouts, such as messages made with [Block Kit][block-kit]
+blocks, can also be sent with one of the Slack API methods:
 
 ```yaml
 - name: Post to a Slack channel
