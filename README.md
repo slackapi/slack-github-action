@@ -270,6 +270,7 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
   uses: slackapi/slack-github-action@v2-development
   with:
     method: files.uploadV2
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
       initial_comment: "the results are in!"
