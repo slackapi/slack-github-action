@@ -199,9 +199,10 @@ blocks, can also be sent with Slack API methods:
 
 ##### Updating a message
 
-Following up on a message after it's posted, such as updates for a build status,
-can be done by chaining multiple steps together using outputs from past steps as
-inputs to current ones:
+Following up on a message after it's posted, such as using the
+[`chat.update`][chat.update] method to share updates for a build status, can be
+done by chaining multiple steps together using outputs from past steps as inputs
+to current ones:
 
 ```yaml
 - name: Initiate the deployment launch sequence
@@ -404,6 +405,7 @@ All contributions are encouraged! Check out the
 [apps]: https://api.slack.com/apps
 [block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
+[chat.update]: https://api.slack.com/methods/chat.update
 [chat:write]: https://api.slack.com/scopes/chat:write
 [config-tokens]: https://api.slack.com/reference/manifests#config-tokens
 [contributing]: .github/contributing.md
