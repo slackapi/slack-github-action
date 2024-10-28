@@ -17,6 +17,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: "build: setup the node runtime"
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: package-lock.json
+          node-version-file: .nvmrc
+
       - name: "build: install the required dependencies"
         run: npm ci
 

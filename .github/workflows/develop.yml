@@ -11,6 +11,12 @@ jobs:
     steps:
       - name: Checkout action
         uses: actions/checkout@v4
+      - name: Setup the Node runtime for this project
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: package-lock.json
+          node-version-file: .nvmrc
       - name: Install dependencies
         run: npm install
       - name: Package the build
