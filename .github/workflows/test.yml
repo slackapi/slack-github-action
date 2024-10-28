@@ -224,3 +224,4 @@ jobs:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           extension: js
+          include: src
