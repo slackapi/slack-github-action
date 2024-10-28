@@ -405,7 +405,32 @@ technique, but configuring a proxy works the same way for all of them:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      message: "This message was sent through a proxy"
+      text: "This message was sent through a proxy"
+```
+
+### Retrying failed requests
+
+Sometimes outgoing requests fail due to [rate limits][rate-limits] or similar
+[HTTP responses][retry-after] and can be retried later.
+
+The `retries` option can be configured to the needs of your workflow with one
+of these values:
+
+- `0`: No retries, just hope that things go alright.
+- `5`: Five retries in five minutes. **Default**.
+- `10`: Ten retries in about thirty minutes.
+- `RAPID`: A burst of retries to keep things running fast.
+
+```yaml
+- name: Attempt a burst of requests
+  uses: slackapi/slack-github-action@v2-development
+  with:
+    method: chat.postMessage
+    retries: RAPID
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "status: all things are going good"
 ```
 
 ## License
