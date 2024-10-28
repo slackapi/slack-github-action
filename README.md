@@ -463,7 +463,9 @@ All contributions are encouraged! Check out the
 [methods]: https://api.slack.com/methods
 [mrkdwn]: https://api.slack.com/reference/surfaces/formatting
 [plans]: https://slack.com/pricing
+[rate-limits]: https://api.slack.com/apis/rate-limits
 [repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
+[retry-after]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://tools.slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
