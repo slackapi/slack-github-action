@@ -280,8 +280,8 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
 
 ### Technique 3: Slack incoming webhook
 
-This technique uses this Action to post a message to a channel or direct
-message with [incoming webhooks][incoming-webhook] and a Slack app.
+This technique uses this Action to post a message to a channel or direct message
+with [incoming webhooks][incoming-webhook] and a Slack app.
 
 Incoming webhooks follow the same [formatting][formatting] patterns as other
 Slack messaging APIs. Posted messages can be as short as a single line of text,
@@ -306,8 +306,8 @@ Gather a Slack incoming webhook URL:
 #### Usage
 
 Add the collected webhook from above to a GitHub workflow and configure the step
-using [`mrkdwn`][mrkdwn] formatting values for a message or [Block Kit][block-kit]
-blocks:
+using [`mrkdwn`][mrkdwn] formatting values for a message or
+[Block Kit][block-kit] blocks:
 
 ```yaml
 - name: Post a message in a channel
@@ -334,8 +334,8 @@ options might be useful.
 Invalid API requests or unexpected webhook payloads cause a failing response
 that can be used to fail the GitHub Actions step with the `errors` option.
 
-The `errors` option defaults to `false` so failed requests do not cause the
-step to fail. This result can still be gathered from the `ok` output.
+The `errors` option defaults to `false` so failed requests do not cause the step
+to fail. This result can still be gathered from the `ok` output.
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
@@ -416,8 +416,8 @@ The `proxy` option can also be provided with the `HTTPS_PROXY` or `https_proxy`
 Sometimes outgoing requests fail due to [rate limits][rate-limits] or similar
 [HTTP responses][retry-after] and can be retried later.
 
-The `retries` option can be configured to the needs of your workflow with one
-of these values:
+The `retries` option can be configured to the needs of your workflow with one of
+these values:
 
 - `0`: No retries, just hope that things go alright.
 - `5`: Five retries in five minutes. **Default**.
