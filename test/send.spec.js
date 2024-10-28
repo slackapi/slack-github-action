@@ -32,7 +32,7 @@ describe("send", () => {
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
       assert.equal(
         mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify({ status: 200, data: { ok: true } }),
+        JSON.stringify({ ok: true }),
       );
       assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
       assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);
@@ -68,7 +68,7 @@ describe("send", () => {
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
       assert.equal(
         mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify({ status: 200, data: "ok" }),
+        JSON.stringify("ok"),
       );
       assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
       assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);

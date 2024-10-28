@@ -28,8 +28,8 @@ export default class Webhook {
       options,
     );
     config.core.setOutput("ok", response.status === 200);
-    config.core.setOutput("response", JSON.stringify(response));
-    config.core.debug(JSON.stringify(response));
+    config.core.setOutput("response", JSON.stringify(response.data));
+    config.core.debug(JSON.stringify(response.data));
   }
 
   /**
