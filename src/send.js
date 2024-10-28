@@ -31,6 +31,6 @@ async function post(config) {
     case !!config.inputs.webhook:
       return await new Webhook().post(config);
     default:
-      throw new SlackError(config.core, "No method found to post content");
+      throw new SlackError(config.core, "No technique given to post content");
   }
 }
