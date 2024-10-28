@@ -17,12 +17,12 @@ describe("send", () => {
   });
 
   describe("techniques", async () => {
-    it("incoming webhook", async () => {
+    it("webhook trigger", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
+      mocks.core.getInput.withArgs("payload").returns('"greetings": "hello"');
       mocks.axios.post.returns(
         Promise.resolve({ status: 200, data: { ok: true } }),
       );
@@ -55,12 +55,12 @@ describe("send", () => {
       assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);
     });
 
-    it("webhook trigger", async () => {
+    it("incoming webhook", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns('"greetings": "hello"');
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
       mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
       await send(mocks.core);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
