@@ -392,9 +392,9 @@ with the values found in the GitHub Action event [payload][event-payload].
 
 ### Proxying HTTPS requests
 
-If you need to use a proxy to connect with Slack, you can use the `HTTPS_PROXY`
-or `https_proxy` environment variable. In this example we use the Slack App
-technique, but configuring a proxy works the same way for all of them:
+If you need to use a proxy to connect to Slack, you can use the `proxy` option.
+In this example we use the technique that calls a Slack API method, but
+configuring a proxy is the same for all techniques:
 
 ```yaml
 - name: Post to a Slack channel via a proxy
@@ -407,6 +407,9 @@ technique, but configuring a proxy works the same way for all of them:
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
       text: "This message was sent through a proxy"
 ```
+
+The `proxy` option can also be provided with the `HTTPS_PROXY` or `https_proxy`
+[environment variable][github-environment] from within the GitHub Actions step.
 
 ### Retrying failed requests
 
@@ -455,6 +458,7 @@ All contributions are encouraged! Check out the
 [files.upload]: https://api.slack.com/messaging/files#upload
 [files.uploadV2]: https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file
 [formatting]: https://api.slack.com/reference/surfaces/formatting
+[github-environment]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
