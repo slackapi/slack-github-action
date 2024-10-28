@@ -27,7 +27,9 @@ export default class Webhook {
       config.content.values,
       options,
     );
-    config.core.debug(JSON.stringify(response?.data));
+    config.core.setOutput("ok", response.status === 200);
+    config.core.setOutput("response", JSON.stringify(response));
+    config.core.debug(JSON.stringify(response));
   }
 
   /**
