@@ -7,7 +7,7 @@
   "scripts": {
     "build": "ncc build src/index.js --license licenses.txt --source-map",
     "check": "tsc --noemit --module es2022 --project ./jsconfig.json",
-    "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:20-buster",
+    "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:20-buster --container-architecture linux/amd64",
     "lint:fix": "biome check --write",
     "lint": "biome check",
     "test": "c8 mocha test/*.spec.js"
