@@ -1,5 +1,6 @@
 import core from "@actions/core";
 import webapi from "@slack/web-api";
+import errors from "@slack/web-api/dist/errors.js";
 import { assert } from "chai";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
@@ -141,10 +142,16 @@ describe("client", () => {
   });
 
   describe("failure", () => {
-    it("errors when the payload arguments are invalid for the api", async () => {
+    it("errors when the request to the api cannot be sent correct", async () => {
+      /**
+       * @type {webapi.WebAPICallError}
+       */
       const response = {
-        ok: false,
-        error: "missing_channel",
+        code: "slack_webapi_request_error",
+        data: {
+          error: "unexpected_request_failure",
+          message: "Something bad happened!",
+        },
       };
       try {
         mocks.core.getInput.reset();
@@ -152,7 +159,78 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.resolves(response);
+        mocks.api.rejects(errors.requestErrorWithOriginal(response, true));
+        await send(mocks.core);
+        assert.fail("Expected an error but none was found");
+      } catch (error) {
+        assert.isTrue(mocks.core.setFailed.called);
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.deepEqual(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify(response),
+        );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+      }
+    });
+
+    it("errors when the http portion of the request fails to send", async () => {
+      /**
+       * @type {import("axios").AxiosResponse}
+       */
+      const response = {
+        code: "slack_webapi_http_error",
+        headers: {
+          authorization: "none",
+        },
+        data: {
+          ok: false,
+          error: "unknown_http_method",
+        },
+      };
+      try {
+        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
+        mocks.api.rejects(errors.httpErrorFromResponse(response));
+        await send(mocks.core);
+        assert.fail("Expected an error but none was found");
+      } catch (error) {
+        assert.isFalse(mocks.core.setFailed.called);
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        response.body = response.data;
+        response.data = undefined;
+        assert.deepEqual(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify(response),
+        );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+      }
+    });
+
+    it("errors when the payload arguments are invalid for the api", async () => {
+      /**
+       * @type {webapi.WebAPICallError}
+       */
+      const response = {
+        code: "slack_webapi_platform_error",
+        data: {
+          ok: false,
+          error: "missing_channel",
+        },
+      };
+      try {
+        mocks.core.getInput.reset();
+        mocks.core.getBooleanInput.withArgs("errors").returns(true);
+        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
+        mocks.api.rejects(errors.platformErrorFromResult(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
@@ -171,16 +249,43 @@ describe("client", () => {
 
     it("returns the api error and details without a exit failing", async () => {
       const response = {
-        ok: false,
-        error: "missing_channel",
+        code: "slack_webapi_platform_error",
+        data: {
+          ok: false,
+          error: "missing_channel",
+        },
       };
       try {
-        mocks.core.getInput.reset();
-        mocks.core.getBooleanInput.withArgs("errors").returns(false);
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.resolves(response);
+        mocks.api.rejects(errors.platformErrorFromResult(response));
+        await send(mocks.core);
+        assert.fail("Expected an error but none was found");
+      } catch (error) {
+        assert.isFalse(mocks.core.setFailed.called);
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.deepEqual(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify(response),
+        );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+      }
+    });
+
+    it("errors if rate limit responses are returned after retries", async () => {
+      const response = {
+        code: "slack_webapi_rate_limited_error",
+        retryAfter: 12,
+      };
+      try {
+        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
+        mocks.api.rejects(errors.rateLimitedErrorWithDelay(12));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {

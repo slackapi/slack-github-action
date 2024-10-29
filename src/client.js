@@ -52,26 +52,43 @@ export default class Client {
         setName: (_name) => {},
       },
     });
-    /**
-     * @type {webapi.WebAPICallResult & MessageResult}
-     */
-    const response = await client.apiCall(
-      config.inputs.method,
-      config.content.values,
-    );
-    config.core.setOutput("ok", response.ok);
-    config.core.setOutput("response", JSON.stringify(response));
-    if (!response.ok) {
-      throw new Error(response.error);
-    }
-    if (response.channel) {
-      config.core.setOutput("channel_id", response.channel);
-    }
-    if (response.message?.thread_ts) {
-      config.core.setOutput("thread_ts", response.message.thread_ts);
-    }
-    if (response.ts) {
-      config.core.setOutput("ts", response.ts);
+    try {
+      /**
+       * @type {webapi.WebAPICallResult & MessageResult=}
+       */
+      const response = await client.apiCall(
+        config.inputs.method,
+        config.content.values,
+      );
+      config.core.setOutput("ok", response.ok);
+      config.core.setOutput("response", JSON.stringify(response));
+      if (response.channel) {
+        config.core.setOutput("channel_id", response.channel);
+      }
+      if (response.message?.thread_ts) {
+        config.core.setOutput("thread_ts", response.message.thread_ts);
+      }
+      if (response.ts) {
+        config.core.setOutput("ts", response.ts);
+      }
+    } catch (/** @type {any} */ err) {
+      const slackErr = /** @type {webapi.WebAPICallError} */ (err);
+      config.core.setOutput("ok", false);
+      switch (slackErr.code) {
+        case webapi.ErrorCode.RequestError:
+          config.core.setOutput("response", JSON.stringify(slackErr.original));
+          break;
+        case webapi.ErrorCode.HTTPError:
+          config.core.setOutput("response", JSON.stringify(slackErr));
+          break;
+        case webapi.ErrorCode.PlatformError:
+          config.core.setOutput("response", JSON.stringify(slackErr.data));
+          break;
+        case webapi.ErrorCode.RateLimitedError:
+          config.core.setOutput("response", JSON.stringify(slackErr));
+          break;
+      }
+      throw new Error(err);
     }
   }
 
