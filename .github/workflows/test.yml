@@ -177,7 +177,7 @@ jobs:
             timestamp: ${{ steps.blocks.outputs.ts }}
             name: "tada"
 
-      - name: "integration(incoming): confirm the thread ended"
+      - name: "integration(method): confirm the thread ended"
         run: test -n "${{ steps.done.outputs.time }}"
 
       - name: "integration(incoming): post a message via incoming webhook"
