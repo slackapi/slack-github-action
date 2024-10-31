@@ -1,4 +1,4 @@
-import { exponentialDelay, linearDelay } from "axios-retry";
+import axiosRetry, { exponentialDelay, linearDelay } from "axios-retry";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "./config.js";
 import SlackError from "./errors.js";
@@ -16,16 +16,17 @@ export default class Webhook {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
     /**
-     * @type {import("axios").AxiosRequestConfig & import("axios-retry").IAxiosRetryConfig}
+     * @type {import("axios-retry").IAxiosRetryConfig}
+     * @see {@link https://www.npmjs.com/package/axios-retry}
      */
-    const options = {
-      ...this.retries(config.inputs.retries),
-      ...this.proxies(config),
-    };
+    const retries = this.retries(config.inputs.retries);
+    axiosRetry(config.axios, retries);
     const response = await config.axios.post(
       config.inputs.webhook,
       config.content.values,
-      options,
+      {
+        ...this.proxies(config),
+      },
     );
     config.core.setOutput("ok", response.status === 200);
     config.core.setOutput("response", JSON.stringify(response.data));

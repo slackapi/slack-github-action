@@ -24,10 +24,9 @@ describe("webhook", () => {
         const [url, payload, options] = mocks.axios.post.getCall(0).args;
         assert.equal(url, "https://hooks.slack.com");
         assert.deepEqual(payload, { message: "hello" });
-        assert.equal(
-          /** @type {import("axios-retry").IAxiosRetryConfig} */ (options)
-            .retries,
-          5,
+        assert.deepEqual(
+          /** @type {import("axios").AxiosRequestConfig} */(options),
+          {},
         );
       } catch (err) {
         console.error(err);
