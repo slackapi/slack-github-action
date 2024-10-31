@@ -87,16 +87,29 @@ export default class Webhook {
       case "0":
         return { retries: 0 };
       case "5":
-        return { retries: 5, retryDelay: linearDelay(60 * 1000) }; // 5 minutes
+        return {
+          retryCondition: axiosRetry.isRetryableError,
+          retries: 5,
+          retryDelay: linearDelay(60 * 1000), // 5 minutes
+        };
       case "10":
         return {
+          retryCondition: axiosRetry.isRetryableError,
           retries: 10,
           retryDelay: (count, err) => exponentialDelay(count, err, 2 * 1000), // 34.12 minutes
         };
       case "RAPID":
-        return { retries: 12, retryDelay: linearDelay(1 * 1000) }; // 12 seconds
+        return {
+          retryCondition: axiosRetry.isRetryableError,
+          retries: 12,
+          retryDelay: linearDelay(1 * 1000), // 12 seconds
+        };
       default:
-        return { retries: 5, retryDelay: linearDelay(60 * 1000) }; // 5 minutes
+        return {
+          retryCondition: axiosRetry.isRetryableError,
+          retries: 5,
+          retryDelay: linearDelay(60 * 1000), // 5 minutes
+        };
     }
   }
 }
