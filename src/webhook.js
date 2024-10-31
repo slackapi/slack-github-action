@@ -21,16 +21,22 @@ export default class Webhook {
      */
     const retries = this.retries(config.inputs.retries);
     axiosRetry(config.axios, retries);
-    const response = await config.axios.post(
-      config.inputs.webhook,
-      config.content.values,
-      {
+    await config.axios
+      .post(config.inputs.webhook, config.content.values, {
         ...this.proxies(config),
-      },
-    );
-    config.core.setOutput("ok", response.status === 200);
-    config.core.setOutput("response", JSON.stringify(response.data));
-    config.core.debug(JSON.stringify(response.data));
+      })
+      .then((response) => {
+        config.core.setOutput("ok", response.status === 200);
+        config.core.setOutput("response", JSON.stringify(response.data));
+        config.core.debug(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        const response = error.toJSON();
+        config.core.setOutput("ok", response.status === 200);
+        config.core.setOutput("response", JSON.stringify(response.message));
+        config.core.debug(response);
+        throw new SlackError(config.core, response.message);
+      });
   }
 
   /**

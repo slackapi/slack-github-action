@@ -1,4 +1,5 @@
 import core from "@actions/core";
+import { AxiosError } from "axios";
 import { assert } from "chai";
 import Config from "../src/config.js";
 import send from "../src/send.js";
@@ -86,6 +87,64 @@ describe("webhook", () => {
           "No webhook was provided to post to",
         );
       }
+    });
+
+    it("returns the failures from a webhook trigger", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
+      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
+      const response = new AxiosError(
+        "Request failed with status code 400",
+        "ERR_BAD_REQUEST",
+        {},
+        {},
+        { status: 400 },
+      );
+      mocks.axios.post.resolves(Promise.reject(response));
+      await send(mocks.core);
+      assert.equal(mocks.axios.post.getCalls().length, 1);
+      const [url, payload, options] = mocks.axios.post.getCall(0).args;
+      assert.equal(url, "https://hooks.slack.com");
+      assert.deepEqual(payload, { drinks: "coffee" });
+      assert.deepEqual(options, {});
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(
+        mocks.core.setOutput.getCall(1).lastArg,
+        JSON.stringify("Request failed with status code 400"),
+      );
+    });
+
+    it("returns the failures from an incoming webhook", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("payload").returns("textt: oops");
+      const response = new AxiosError(
+        "Request failed with status code 400",
+        "ERR_BAD_REQUEST",
+        {},
+        {},
+        { status: 400 },
+      );
+      mocks.axios.post.resolves(Promise.reject(response));
+      await send(mocks.core);
+      assert.equal(mocks.axios.post.getCalls().length, 1);
+      const [url, payload, options] = mocks.axios.post.getCall(0).args;
+      assert.equal(url, "https://hooks.slack.com");
+      assert.deepEqual(payload, { textt: "oops" });
+      assert.deepEqual(options, {});
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(
+        mocks.core.setOutput.getCall(1).lastArg,
+        JSON.stringify("Request failed with status code 400"),
+      );
     });
   });
 
