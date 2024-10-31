@@ -11,22 +11,55 @@ describe("webhook", () => {
   });
 
   describe("success", () => {
-    it("sends the parsed payload to the provided webhook", async () => {
+    it("sends the parsed payload to the provided webhook trigger", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns('"message":"hello"');
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
+      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
+      mocks.axios.post.returns(
+        Promise.resolve({ status: 200, data: { ok: true } }),
+      );
       try {
         await send(mocks.core);
         assert.equal(mocks.axios.post.getCalls().length, 1);
         const [url, payload, options] = mocks.axios.post.getCall(0).args;
         assert.equal(url, "https://hooks.slack.com");
-        assert.deepEqual(payload, { message: "hello" });
-        assert.deepEqual(
-          /** @type {import("axios").AxiosRequestConfig} */(options),
-          {},
+        assert.deepEqual(payload, { drinks: "coffee" });
+        assert.deepEqual(options, {});
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify({ ok: true }),
+        );
+      } catch (err) {
+        console.error(err);
+        assert.fail("Failed to send the webhook");
+      }
+    });
+
+    it("sends the parsed payload to the provided incoming webhook", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("payload").returns("text: greetings");
+      mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
+      try {
+        await send(mocks.core);
+        assert.equal(mocks.axios.post.getCalls().length, 1);
+        const [url, payload, options] = mocks.axios.post.getCall(0).args;
+        assert.equal(url, "https://hooks.slack.com");
+        assert.deepEqual(payload, { text: "greetings" });
+        assert.deepEqual(options, {});
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify("ok"),
         );
       } catch (err) {
         console.error(err);
