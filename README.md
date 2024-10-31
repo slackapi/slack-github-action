@@ -235,8 +235,9 @@ outputs from past steps as inputs to current ones:
 
 ##### Replying to a message
 
-Posting threaded replies to a message from a past job can be done by including
-the `thread_ts` attribute of the parent message in the `payload`:
+Posting [threaded replies to a message][messaging-threads] from a past job can
+be done by including the `thread_ts` attribute of the parent message in the
+`payload`:
 
 ```yaml
 - name: Initiate a deployment
@@ -464,6 +465,7 @@ All contributions are encouraged! Check out the
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
 [interactivity]: https://api.slack.com/messaging/interactivity
 [job-step]: https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idsteps
+[messaging-threads]: https://api.slack.com/messaging/sending#threading
 [methods]: https://api.slack.com/methods
 [mrkdwn]: https://api.slack.com/reference/surfaces/formatting
 [plans]: https://slack.com/pricing
