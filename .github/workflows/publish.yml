@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: Build and tag a new version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the current code
@@ -29,7 +30,6 @@ jobs:
       - name: Distribute the latest tagged release
         uses: teunmooij/github-versioned-release@v1.2.1
         with:
-          exclude: LICENSE
           template: javascript-action
         env:
           GITHUB_TOKEN: ${{ github.token }}
