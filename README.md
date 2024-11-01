@@ -463,7 +463,7 @@ a Slack channel before posting a message:
 ```yaml
 - name: Create a new Slack channel for recent changes
   id: conversation
-  uses: ./
+  uses: slackapi/slack-github-action@v2-development
   with:
     method: conversations.create
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -472,7 +472,7 @@ a Slack channel before posting a message:
 
 - name: Send the pull request link into the Slack channel
   if: ${{ steps.conversation.outputs.ok }}
-  uses: ./
+  uses: slackapi/slack-github-action@v2-development
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
