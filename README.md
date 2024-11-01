@@ -455,6 +455,32 @@ While these outputs are returned with certain Slack API methods:
 - `ts`: `string`. The timestamp of the Slack event.
 - `thread_ts`: `string`. The timestamp of a Slack message.
 
+### Example responses
+
+The following snippet shows how multiple steps can be chained together to create
+a Slack channel before posting a message:
+
+```yaml
+- name: Create a new Slack channel for recent changes
+  id: conversation
+  uses: ./
+  with:
+    method: conversations.create
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      name: pull-request-review-${{ github.sha }}
+
+- name: Send the pull request link into the Slack channel
+  if: ${{ steps.conversation.outputs.ok }}
+  uses: ./
+  with:
+    method: chat.postMessage
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      channel: ${{ steps.conversation.outputs.channel_id }}
+      text: "A PR was created <!date^${{ steps.conversation.outputs.time }}^{date_num} {time_secs}|just now>: ${{ github.event.pull_request.html_url }}"
+```
+
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
