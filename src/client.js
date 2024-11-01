@@ -12,21 +12,6 @@ import SlackError from "./errors.js";
  */
 export default class Client {
   /**
-   * Known response values from messages that are included in outputs.
-   * @typedef MessageResultDetails
-   * @prop {string} [thread_ts] - timestamp of the top threaded message.
-   */
-
-  /**
-   * Possible response values related to messages from the API.
-   * @typedef MessageResult - Possible message values from API methods.
-   * @prop {MessageResultDetails} [message] - additional message details.
-   * @prop {string} [ts] - timestamp of the message.
-   * @prop {string} [channel] - ID of the channel.
-   * @see {@link https://api.slack.com/methods/chat.postMessage#examples}
-   */
-
-  /**
    * Perform the API call configured with the input payload.
    * @param {Config} config
    */
