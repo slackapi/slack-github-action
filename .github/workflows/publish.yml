@@ -14,8 +14,9 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
       - name: Install deps and build
         run: npm ci && npm run build
-      - uses: JasonEtco/build-and-tag-action@v2
+      - uses: teunmooij/github-versioned-release@v1.2.1
+        with:
+          exclude: LICENSE
+          template: javascript-action
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ github.event.release.tag_name }}
