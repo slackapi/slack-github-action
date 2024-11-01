@@ -478,7 +478,7 @@ a Slack channel before posting a message:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ steps.conversation.outputs.channel_id }}
-      text: "A PR was created <!date^${{ steps.conversation.outputs.time }}^{date_num} {time_secs}|just now>: ${{ github.event.pull_request.html_url }}"
+      text: "A PR was created <!date^${{ steps.conversation.outputs.time }}^{date_num} at {time_secs}|just now>: ${{ github.event.pull_request.html_url }}"
 ```
 
 ## License
