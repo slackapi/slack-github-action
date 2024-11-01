@@ -107,6 +107,44 @@ describe("client", () => {
       }
     });
 
+    it("calls 'conversations.create' with the given token and content", async () => {
+      try {
+        const args = {
+          name: "pull-request-review-010101",
+        };
+        const response = {
+          ok: true,
+          channel: {
+            id: "C0101010101",
+            name: "pull-request-review-010101",
+            is_channel: true,
+            created: 1730425428,
+          },
+        };
+        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
+        mocks.api.resolves(response);
+        await send(mocks.core);
+        assert.deepEqual(mocks.api.getCall(0).firstArg, "chat.postMessage");
+        assert.deepEqual(mocks.api.getCall(0).lastArg, args);
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify(response),
+        );
+        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "channel_id");
+        assert.equal(mocks.core.setOutput.getCall(2).lastArg, "C0101010101");
+        assert.equal(mocks.core.setOutput.getCall(3).firstArg, "time");
+        assert.equal(mocks.core.setOutput.getCalls().length, 4);
+      } catch (error) {
+        console.error(error);
+        assert.fail("Unexpected error when calling the method");
+      }
+    });
+
     it("calls 'files.uploadV2' with the provided token and content", async () => {
       try {
         const args = {

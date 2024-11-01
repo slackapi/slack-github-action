@@ -54,7 +54,7 @@ export default class Client {
     });
     try {
       /**
-       * @type {webapi.WebAPICallResult & MessageResult=}
+       * @type {webapi.WebAPICallResult & import("@slack/web-api").ChatPostMessageResponse & import("@slack/web-api").ConversationsCreateResponse}
        */
       const response = await client.apiCall(
         config.inputs.method,
@@ -62,8 +62,11 @@ export default class Client {
       );
       config.core.setOutput("ok", response.ok);
       config.core.setOutput("response", JSON.stringify(response));
-      if (response.channel) {
-        config.core.setOutput("channel_id", response.channel);
+      if (response.channel?.id ?? response.channel) {
+        config.core.setOutput(
+          "channel_id",
+          response.channel?.id ?? response.channel,
+        );
       }
       if (response.message?.thread_ts) {
         config.core.setOutput("thread_ts", response.message.thread_ts);
