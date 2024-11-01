@@ -469,7 +469,6 @@ a Slack channel before posting a message:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       name: pull-request-review-${{ github.sha }}
-
 - name: Send the pull request link into the Slack channel
   if: ${{ steps.conversation.outputs.ok }}
   uses: slackapi/slack-github-action@v2-development
