@@ -25,6 +25,7 @@ jobs:
         id: wfb
         uses: ./
         with:
+          errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_TRIGGER }}
           webhook-type: webhook-trigger
           payload: |
@@ -37,6 +38,7 @@ jobs:
         id: api
         uses: ./
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -46,6 +48,7 @@ jobs:
         id: slack
         uses: ./
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -61,6 +64,7 @@ jobs:
         id: stats
         uses: ./
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -73,6 +77,7 @@ jobs:
         id: finished
         uses: ./
         with:
+          errors: true
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -88,6 +93,7 @@ jobs:
       - name: Include ending statistics
         uses: ./
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -97,6 +103,7 @@ jobs:
       - name: Celebrate wins
         uses: ./
         with:
+          errors: true
           method: reactions.add
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -107,6 +114,7 @@ jobs:
         id: file
         uses: ./
         with:
+          errors: true
           method: files.uploadV2
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -117,6 +125,7 @@ jobs:
       - name: Write one final webhook
         uses: ./
         with:
+          errors: true
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK }}
           webhook-type: incoming-webhook
           payload: |
