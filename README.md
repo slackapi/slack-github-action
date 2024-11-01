@@ -437,6 +437,24 @@ these values:
       text: "status: all things are going good"
 ```
 
+## Expected outputs
+
+Each technique above [outputs values][github-outputs] that can be used as inputs
+in following steps of a GitHub workflow.
+
+The following outputs are returned with each of the techniques:
+
+- `time`: `number`. The Unix [epoch time][epoch] that the job completed.
+- `ok`: `boolean`. If the request completed with success.
+- `response`: `string`. The [response][response] from the request as stringified
+  JSON.
+
+While these outputs are returned with certain Slack API methods:
+
+- `channel_id`: `string`. The channel ID from the response.
+- `ts`: `string`. The timestamp of the Slack event.
+- `thread_ts`: `string`. The timestamp of a Slack message.
+
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
@@ -453,6 +471,7 @@ All contributions are encouraged! Check out the
 [chat:write]: https://api.slack.com/scopes/chat:write
 [config-tokens]: https://api.slack.com/reference/manifests#config-tokens
 [contributing]: .github/contributing.md
+[epoch]: https://en.wikipedia.org/wiki/Unix_time
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
@@ -460,6 +479,7 @@ All contributions are encouraged! Check out the
 [files.uploadV2]: https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file
 [formatting]: https://api.slack.com/reference/surfaces/formatting
 [github-environment]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
+[github-outputs]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs
 [github-variables]: https://docs.github.com/en/actions/learn-github-actions/variables
 [incoming-webhook]: https://api.slack.com/messaging/webhooks
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
@@ -471,6 +491,7 @@ All contributions are encouraged! Check out the
 [plans]: https://slack.com/pricing
 [rate-limits]: https://api.slack.com/apis/rate-limits
 [repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
+[response]: https://api.slack.com/web#responses
 [retry-after]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://tools.slack.dev/node-slack-sdk/web-api
