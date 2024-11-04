@@ -461,9 +461,9 @@ The following outputs are returned with each of the techniques:
 
 While these outputs are returned with certain Slack API methods:
 
-- `channel_id`: `string`. The channel ID from the response.
-- `ts`: `string`. The timestamp of the Slack event.
-- `thread_ts`: `string`. The timestamp of a Slack message.
+- `channel_id`: `string`. The [channel ID][conversation] included in the response.
+- `ts`: `string`. The [timestamp][messaging-timestamp] of the Slack event or message.
+- `thread_ts`: `string`. The [timestamp][messaging-timestamp] of a parent Slack message with [threaded replies][messaging-parents].
 
 ### Example responses
 
@@ -508,6 +508,7 @@ All contributions are encouraged! Check out the
 [chat:write]: https://api.slack.com/scopes/chat:write
 [config-tokens]: https://api.slack.com/reference/manifests#config-tokens
 [contributing]: .github/contributing.md
+[conversation]: https://api.slack.com/types/conversation
 [epoch]: https://en.wikipedia.org/wiki/Unix_time
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
@@ -523,7 +524,9 @@ All contributions are encouraged! Check out the
 [incoming-webhook-scope]: https://api.slack.com/scopes/incoming-webhook
 [interactivity]: https://api.slack.com/messaging/interactivity
 [job-step]: https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idsteps
+[messaging-parents]: https://api.slack.com/messaging/retrieving#finding_threads
 [messaging-threads]: https://api.slack.com/messaging/sending#threading
+[messaging-timestamp]: https://api.slack.com/messaging/retrieving#individual_messages
 [methods]: https://api.slack.com/methods
 [mrkdwn]: https://api.slack.com/reference/surfaces/formatting
 [plans]: https://slack.com/pricing
