@@ -374,6 +374,9 @@ delimiter and will also make values stringified:
     webhook-type: webhook-trigger
 ```
 
+Reference to the flattening implementation is available for exploration from
+within the [`flat`][flat] package.
+
 ### Parsing templated variables
 
 Additional variables provided in the Github event [context][event-context] and
@@ -440,6 +443,10 @@ these values:
       text: "status: all things are going good"
 ```
 
+Behind the scenes, [automatic retries][retries] are handled with the
+[`@slack/web-api`][slack-web-api] package for Slack API methods, and
+[`axios-retry`][axios-retry] when sending with a webhook.
+
 ## Expected outputs
 
 Each technique above [outputs values][github-outputs] that can be used as inputs
@@ -494,6 +501,7 @@ All contributions are encouraged! Check out the
 
 [apps]: https://api.slack.com/apps
 [apps-new]: https://api.slack.com/apps/new
+[axios-retry]: https://www.npmjs.com/package/axios-retry
 [block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
 [chat.update]: https://api.slack.com/methods/chat.update
@@ -506,6 +514,7 @@ All contributions are encouraged! Check out the
 [examples]: https://github.com/slackapi/slack-github-action/tree/main/example-workflows
 [files.upload]: https://api.slack.com/messaging/files#upload
 [files.uploadV2]: https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file
+[flat]: https://www.npmjs.com/package/flat
 [formatting]: https://api.slack.com/reference/surfaces/formatting
 [github-environment]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [github-outputs]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs
@@ -521,6 +530,7 @@ All contributions are encouraged! Check out the
 [rate-limits]: https://api.slack.com/apis/rate-limits
 [repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
 [response]: https://api.slack.com/web#responses
+[retries]: https://tools.slack.dev/node-slack-sdk/web-api/#automatic-retries
 [retry-after]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://tools.slack.dev/node-slack-sdk/web-api
