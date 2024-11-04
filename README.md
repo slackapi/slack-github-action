@@ -461,9 +461,12 @@ The following outputs are returned with each of the techniques:
 
 While these outputs are returned with certain Slack API methods:
 
-- `channel_id`: `string`. The [channel ID][conversation] included in the response.
-- `ts`: `string`. The [timestamp][messaging-timestamp] of the Slack event or message.
-- `thread_ts`: `string`. The [timestamp][messaging-timestamp] of a parent Slack message with [threaded replies][messaging-parents].
+- `channel_id`: `string`. The [channel ID][conversation] included in the
+  response.
+- `ts`: `string`. The [timestamp][messaging-timestamp] of the Slack event or
+  message.
+- `thread_ts`: `string`. The [timestamp][messaging-timestamp] of a parent Slack
+  message with [threaded replies][messaging-parents].
 
 ### Example responses
 
