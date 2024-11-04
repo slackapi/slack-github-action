@@ -38,9 +38,9 @@ inputs:
     required: false
 outputs:
   time:
-    description: "The Unix epoch time that the job completed"
+    description: "The Unix epoch time that the step completed"
   ok:
-    description: "If the requested completed without errors"
+    description: "If the request completed without errors"
   channel_id:
     description: "The channel ID of a message posted using a token"
   response:
