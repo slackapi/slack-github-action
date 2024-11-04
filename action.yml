@@ -10,13 +10,13 @@ inputs:
     description: "The Slack API method to call."
     required: false
   payload:
-    description: "Attributes that create the content of the request."
+    description: "Attributes that create the content of the request using JSON or YAML."
     required: false
   payload-delimiter:
     description: "Field seperator for nested attributes in the input payload."
     required: false
   payload-file-path:
-    description: "Path to a file containing a valid input payload."
+    description: "Path to a file containing a valid input payload made of JSON or YAML."
     required: false
   payload-templated:
     default: "false"
