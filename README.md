@@ -133,10 +133,10 @@ call one of [the Slack API methods][methods] with this technique.
 Different Slack API [methods][methods] require different [scopes][scopes], but
 setup should be similar for all methods:
 
-1. [Create a Slack app][apps] for your workspace or use an existing app.
-2. Depending on the [method][methods] you wish to call, add the required
-   **scopes** to your app under the **OAuth & Permissions** page on app
-   settings.
+1. [Create a Slack app][apps-new] for your workspace or use an existing app.
+2. Depending on the Slack API [method][methods] you wish to call, add the
+   required **scopes** to your app under the **OAuth & Permissions** page on
+   [app settings][apps].
 3. Install the app to your workspace using the **Install App** page.
 4. Once your app is installed to a workspace, a new [token][tokens] with your
    app's specified scopes will be minted for that workspace. It is worth noting
@@ -296,9 +296,9 @@ or be formatted with [Block Kit][block-kit] to build visual components.
 
 Gather a Slack incoming webhook URL:
 
-1. [Create a Slack app][apps] for your workspace or use an existing app.
+1. [Create a Slack app][apps-new] for your workspace or use an existing app.
 2. Add the [`incoming-webhook`][incoming-webhook-scope] bot scope under **OAuth
-   & Permissions** page on app settings.
+   & Permissions** page on [app settings][apps].
 3. Install the app to your workspace and select a channel to notify from the
    **Install App** page.
 4. Create additional webhooks from the **Incoming Webhooks** page.
@@ -493,6 +493,7 @@ All contributions are encouraged! Check out the
 [contributor's guide][contributing] to learn more.
 
 [apps]: https://api.slack.com/apps
+[apps-new]: https://api.slack.com/apps/new
 [block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
 [chat.postMessage]: https://api.slack.com/methods/chat.postMessage
 [chat.update]: https://api.slack.com/methods/chat.update
