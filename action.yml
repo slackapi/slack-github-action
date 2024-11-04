@@ -1,5 +1,6 @@
 name: "Slack: Send to Slack"
-description: "Post messages and make other API calls or start workflows with webhooks"
+author: "slackapi"
+description: "Send data to Slack to start a Slack workflow in Workflow Builder, call a Slack API method, or post a message into a channel"
 inputs:
   errors:
     default: "false"
