@@ -3,52 +3,52 @@ description: "Post messages and make other API calls or start workflows with web
 inputs:
   errors:
     default: "false"
-    description: "If the job exits with an error on errors or continues"
+    description: "If the step exits with an error on errors or continues."
     required: false
   method:
-    description: "The Slack API method to call"
+    description: "The Slack API method to call."
     required: false
   payload:
-    description: "Attributes that create the content of the request"
+    description: "Attributes that create the content of the request."
     required: false
   payload-delimiter:
-    description: "Field seperators for nested attributes in the payload"
+    description: "Field seperator for nested attributes in the input payload."
     required: false
   payload-file-path:
-    description: "Path to a file containing the valid JSON payload"
+    description: "Path to a file containing a valid input payload."
     required: false
   payload-templated:
     default: "false"
-    description: "If templated variables in the input payloads should be replaced"
+    description: "If templated variables in input payloads should be replaced."
     required: false
   proxy:
-    description: "An optional alternate proxied route to for HTTPS connections"
+    description: "An optional proxied route for HTTPS connections."
     required: false
   retries:
     default: "5"
-    description: "The method to use when performing retried requests"
+    description: "The strategy to use when performing retried requests."
   token:
-    description: "The authentication value used with the Slack API"
+    description: "The authentication value used with the Slack API."
     required: false
   webhook:
-    description: "A location for posting request payloads"
+    description: "A location for posting request payloads."
     required: false
   webhook-type:
-    description: "Posting with either an incoming webhook or webhook trigger"
+    description: "Option to use either an incoming webhook or webhook trigger."
     required: false
 outputs:
   time:
-    description: "The Unix epoch time that the step completed"
+    description: "The Unix epoch time that the step completed."
   ok:
-    description: "If the request completed without errors"
+    description: "If the request completed without errors."
   channel_id:
-    description: "The channel ID of a message posted using a token"
+    description: "The channel ID returned with some of the Slack API methods."
   response:
-    description: "A stringified version of the Slack API response"
+    description: "A JSON stringified version of the Slack API response."
   thread_ts:
-    description: "The threaded timestamp on a message posted using a token"
+    description: "The timestamp of a parent Slack message with threaded replies."
   ts:
-    description: "The timestamp on a message posted using a token"
+    description: "The timestamp of a Slack message or event in the response."
 runs:
   using: "node20"
   main: "dist/index.js"
