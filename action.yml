@@ -38,14 +38,14 @@ inputs:
     description: "Option to use either an incoming webhook or webhook trigger."
     required: false
 outputs:
-  time:
-    description: "The Unix epoch time that the step completed."
   ok:
-    description: "If the request completed without errors."
-  channel_id:
-    description: "The channel ID returned with some of the Slack API methods."
+    description: "If the request completed without returning errors."
   response:
     description: "A JSON stringified version of the Slack API response."
+  time:
+    description: "The Unix epoch time that the step completed."
+  channel_id:
+    description: "The channel ID returned with some of the Slack API methods."
   thread_ts:
     description: "The timestamp of a parent Slack message with threaded replies."
   ts:
