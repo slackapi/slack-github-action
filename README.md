@@ -304,7 +304,7 @@ Gather a Slack incoming webhook URL:
 4. Create additional webhooks from the **Incoming Webhooks** page.
 5. Add the generated incoming webhook URL as [a repository secret][repo-secret]
    called `SLACK_WEBHOOK_URL`.
-6. [Add this Action as a step][job-step] to your GitHub workflow and set an
+6. [Add this Action as a step][job-step] to your GitHub workflow and provide an
    input payload to send as a message.
 
 #### Usage
