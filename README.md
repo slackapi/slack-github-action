@@ -130,15 +130,18 @@ call one of [the Slack API methods][methods] with this technique.
 
 #### Setup
 
-Different Slack API [methods][methods] require different
-[scopes][scopes], but setup should be similar for all methods:
+Different Slack API [methods][methods] require different [scopes][scopes], but
+setup should be similar for all methods:
 
 1. [Create a Slack app][apps] for your workspace or use an existing app.
-2. Depending on the [method][methods] you wish to call, add the required **scopes** to your
-   app under the **OAuth & Permissions** page on app settings.
+2. Depending on the [method][methods] you wish to call, add the required
+   **scopes** to your app under the **OAuth & Permissions** page on app
+   settings.
 3. Install the app to your workspace using the **Install App** page.
-4. Once your app is installed to a workspace, a new [token][tokens] with your app's specified scopes will be minted for that workspace. It is worth noting that tokens are only valid for a single workspace! Find the token on
-   the **OAuth & Permissions** page.
+4. Once your app is installed to a workspace, a new [token][tokens] with your
+   app's specified scopes will be minted for that workspace. It is worth noting
+   that tokens are only valid for a single workspace! Find the token on the
+   **OAuth & Permissions** page.
 5. Add the token as [a repository secret][repo-secret] called `SLACK_BOT_TOKEN`
    or something similar and memorable.
 6. [Add this Action as a step][job-step] to your GitHub workflow and set the
