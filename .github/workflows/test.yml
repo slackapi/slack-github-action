@@ -27,13 +27,8 @@ jobs:
       - name: "build: install the required dependencies"
         run: npm ci
 
-      - name: "build: setup the linter for formatting checks"
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
-
       - name: "unit(test): perform lints and formatting checks"
-        run: biome ci .
+        run: npm run lint
 
       - name: "unit(test): perform check of typings"
         run: npm run check
