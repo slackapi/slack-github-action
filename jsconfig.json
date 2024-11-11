@@ -4,12 +4,16 @@
         "baseUrl": ".",
         "checkJs": true,
         "esModuleInterop": true,
-        "module": "es2022",
+        "lib": [
+            "ES2023"
+        ],
+        "module": "node16",
         "moduleResolution": "node",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true
+        "target": "ES2022"
     },
     "exclude": [
         "node_modules"
