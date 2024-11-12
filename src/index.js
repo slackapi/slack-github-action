@@ -10,6 +10,7 @@ try {
 } catch (error) {
   if (error instanceof Error) {
     core.error(error.message);
+    core.debug(`${error.name} cause: ${error.cause}`);
     core.debug(`${error.name} stack: ${error.stack}`);
   } else {
     core.error(`${error}`);

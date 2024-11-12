@@ -4,6 +4,7 @@ import errors from "@slack/web-api/dist/errors.js";
 import { assert } from "chai";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
+import SlackError from "../src/errors.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -26,11 +27,12 @@ describe("client", () => {
       try {
         await new Client().post(config);
         assert.fail("Failed to throw for missing input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "No API method was provided for use",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "No API method was provided for use");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -48,11 +50,12 @@ describe("client", () => {
       try {
         await new Client().post(config);
         assert.fail("Failed to throw for missing input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "No token was provided to post with",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "No token was provided to post with");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });
@@ -364,11 +367,12 @@ describe("client", () => {
         const client = new Client();
         client.proxies(config);
         assert.fail("An invalid proxy URL was not thrown as error!");
-      } catch {
-        assert.include(
-          mocks.core.warning.lastCall.firstArg,
-          "Failed to configure the HTTPS proxy agent so using default configurations.",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "Failed to configure the HTTPS proxy");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });

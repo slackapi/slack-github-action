@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import Config from "../src/config.js";
+import SlackError from "../src/errors.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -41,14 +42,18 @@ describe("config", () => {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Invalid input! Either the token or webhook is required - not both.",
-        );
-        assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
-        assert.isTrue(
-          mocks.core.setSecret.withArgs("https://example.com").called,
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Either the token or webhook is required - not both.",
+          );
+          assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
+          assert.isTrue(
+            mocks.core.setSecret.withArgs("https://example.com").called,
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -57,10 +62,14 @@ describe("config", () => {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! Either a token or webhook is required to take action.",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Missing input! Either a token or webhook is required to take action.",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -70,10 +79,14 @@ describe("config", () => {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -84,10 +97,14 @@ describe("config", () => {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });

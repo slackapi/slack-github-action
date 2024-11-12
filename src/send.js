@@ -14,9 +14,10 @@ export default async function send(core) {
   try {
     await post(config);
     config.core.setOutput("time", Math.floor(new Date().valueOf() / 1000));
-  } catch (error) {
+  } catch (/** @type {any} */ error) {
     config.core.setOutput("time", Math.floor(new Date().valueOf() / 1000));
     if (config.inputs.errors) {
+      core.setFailed(error);
       throw new SlackError(core, error);
     }
   }

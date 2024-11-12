@@ -49,16 +49,13 @@ export default class Webhook {
    */
   proxies(config) {
     const { webhook, proxy } = config.inputs;
+    if (!webhook) {
+      throw new SlackError(config.core, "No webhook was provided to proxy to");
+    }
+    if (!proxy) {
+      return undefined;
+    }
     try {
-      if (!webhook) {
-        throw new SlackError(
-          config.core,
-          "No webhook was provided to proxy to",
-        );
-      }
-      if (!proxy) {
-        return undefined;
-      }
       if (new URL(webhook).protocol !== "https:") {
         config.core.debug(
           "The webhook destination is not HTTPS so skipping the HTTPS proxy",
@@ -75,14 +72,17 @@ export default class Webhook {
             httpsAgent: new HttpsProxyAgent(proxy),
             proxy: false,
           };
+        default:
+          throw new SlackError(
+            config.core,
+            `Unsupported URL protocol: ${proxy}`,
+          );
       }
-    } catch (err) {
-      config.core.warning(
-        "Failed to configure the HTTPS proxy agent so using default configurations.",
-      );
-      console.error(err);
+    } catch (/** @type {any} */ err) {
+      throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
+        cause: err,
+      });
     }
-    return undefined;
   }
 
   /**

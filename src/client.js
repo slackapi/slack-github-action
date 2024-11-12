@@ -76,7 +76,7 @@ export default class Client {
           config.core.setOutput("response", JSON.stringify(slackErr));
           break;
       }
-      throw new Error(err);
+      throw new SlackError(config.core, err);
     }
   }
 
@@ -95,13 +95,11 @@ export default class Client {
       return {
         httpsAgent: new HttpsProxyAgent(proxy),
       };
-    } catch (err) {
-      config.core.warning(
-        "Failed to configure the HTTPS proxy agent so using default configurations.",
-      );
-      console.error(err);
+    } catch (/** @type {any} */ err) {
+      throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
+        cause: err,
+      });
     }
-    return undefined;
   }
 
   /**

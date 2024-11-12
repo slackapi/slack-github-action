@@ -58,7 +58,7 @@ export default class Content {
     if (!config.inputs.payload) {
       throw new SlackError(
         config.core,
-        "Invalid input! No payload content found",
+        "Invalid input! No payload content was provided",
       );
     }
     try {
@@ -89,14 +89,13 @@ export default class Content {
         return JSON.parse(wrap);
       }
       return JSON.parse(trimmed);
-    } catch (error) {
-      if (error instanceof Error) {
-        config.core.error(error);
-      }
-      console.error(error);
+    } catch (/** @type {any} */ error) {
       throw new SlackError(
         config.core,
         "Invalid input! Failed to parse contents of the provided payload",
+        {
+          cause: error,
+        },
       );
     }
   }
@@ -134,16 +133,15 @@ export default class Content {
       }
       throw new SlackError(
         config.core,
-        `Failed to parse file extension ${config.inputs.payloadFilePath}`,
+        `Invalid input! Failed to parse file extension ${config.inputs.payloadFilePath}`,
       );
-    } catch (error) {
-      if (error instanceof Error) {
-        config.core.error(error);
-      }
-      console.error(error);
+    } catch (/** @type {any} */ error) {
       throw new SlackError(
         config.core,
         "Invalid input! Failed to parse contents of the provided payload file",
+        {
+          cause: error,
+        },
       );
     }
   }

@@ -5,19 +5,24 @@ import core from "@actions/core";
  */
 export default class SlackError extends Error {
   /**
-   * @param {core} core - GitHub Actions core utilities.
-   * @param {any} error - The error message to throw.
-   * @param {boolean} fails - if the exit should be forced.
+   * @typedef Options
+   * @property {Error} [cause] - thrown exception of this error.
    */
-  constructor(core, error, fails = true) {
+
+  /**
+   * @param {core} _core - GitHub Actions core utilities.
+   * @param {any} error - The error message to throw.
+   * @param {Options} options - configurations of erroring.
+   */
+  constructor(_core, error, options = {}) {
     if (error instanceof Error) {
-      super(error.message);
+      super(error.message, { cause: options.cause });
     } else {
-      super(error);
+      super(error, { cause: options.cause });
     }
     this.name = "SlackError";
-    if (fails) {
-      core.setFailed(error);
+    if (error.stack) {
+      this.stack = error.stack;
     }
   }
 }

@@ -3,6 +3,7 @@ import core from "@actions/core";
 import { assert } from "chai";
 import Config from "../src/config.js";
 import Content from "../src/content.js";
+import SlackError from "../src/errors.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -41,11 +42,15 @@ describe("content", () => {
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Invalid input! Just the payload or payload file path is required.",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Just the payload or payload file path is required.",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });
@@ -163,10 +168,14 @@ describe("content", () => {
         new Content().getContentPayload(config);
         assert.fail("Failed to throw for missing payload content");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Invalid input! No payload content found",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! No payload content was provided",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -175,11 +184,15 @@ describe("content", () => {
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid JSON");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg.toString(),
-          "Invalid input! Failed to parse contents of the provided payload",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });
@@ -282,10 +295,14 @@ describe("content", () => {
         new Content().getContentPayloadFilePath(config);
         assert.fail("Failed to throw for the wrong payload type");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "Invalid input! No payload found for content",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! No payload found for content",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -295,10 +312,14 @@ describe("content", () => {
         await send(mocks.core);
         assert.fail("Failed to throw for nonexistent files");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg.toString(),
-          "Invalid input! Failed to parse contents of the provided payload file",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -308,10 +329,18 @@ describe("content", () => {
         await send(mocks.core);
         assert.fail("Failed to throw for an unknown extension");
       } catch (err) {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg.toString(),
-          "Invalid input! Failed to parse contents of the provided payload file",
-        );
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
+          );
+          assert.include(
+            err.cause.message,
+            "Invalid input! Failed to parse file extension unknown.md",
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });

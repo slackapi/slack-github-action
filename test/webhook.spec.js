@@ -2,6 +2,7 @@ import core from "@actions/core";
 import { AxiosError } from "axios";
 import { assert } from "chai";
 import Config from "../src/config.js";
+import SlackError from "../src/errors.js";
 import send from "../src/send.js";
 import Webhook from "../src/webhook.js";
 import { mocks } from "./index.spec.js";
@@ -81,11 +82,12 @@ describe("webhook", () => {
       try {
         await new Webhook().post(config);
         assert.fail("Failed to throw for missing input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "No webhook was provided to post to",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "No webhook was provided to post to");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -103,7 +105,15 @@ describe("webhook", () => {
         { status: 400 },
       );
       mocks.axios.post.resolves(Promise.reject(response));
-      await send(mocks.core);
+      try {
+        await send(mocks.core);
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "Request failed with status code 400");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
       assert.equal(mocks.axios.post.getCalls().length, 1);
       const [url, payload, options] = mocks.axios.post.getCall(0).args;
       assert.equal(url, "https://hooks.slack.com");
@@ -112,10 +122,6 @@ describe("webhook", () => {
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-      assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify("Request failed with status code 400"),
-      );
     });
 
     it("returns the failures from an incoming webhook", async () => {
@@ -132,7 +138,15 @@ describe("webhook", () => {
         { status: 400 },
       );
       mocks.axios.post.resolves(Promise.reject(response));
-      await send(mocks.core);
+      try {
+        await send(mocks.core);
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "Request failed with status code 400");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
       assert.equal(mocks.axios.post.getCalls().length, 1);
       const [url, payload, options] = mocks.axios.post.getCall(0).args;
       assert.equal(url, "https://hooks.slack.com");
@@ -141,10 +155,6 @@ describe("webhook", () => {
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-      assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify("Request failed with status code 400"),
-      );
     });
   });
 
@@ -160,11 +170,12 @@ describe("webhook", () => {
       try {
         new Webhook().proxies(config);
         assert.fail("Failed to throw for missing input");
-      } catch {
-        assert.include(
-          mocks.core.setFailed.lastCall.firstArg,
-          "No webhook was provided to proxy to",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "No webhook was provided to proxy to");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
 
@@ -218,11 +229,34 @@ describe("webhook", () => {
         const webhook = new Webhook();
         webhook.proxies(config);
         assert.fail("An invalid proxy URL was not thrown as error!");
-      } catch {
-        assert.include(
-          mocks.core.warning.lastCall.firstArg,
-          "Failed to configure the HTTPS proxy agent so using default configurations.",
-        );
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "Failed to configure the HTTPS proxy");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
+    });
+
+    it("fails to configure proxies with an unknown url protocol", async () => {
+      const proxy = "ssh://";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      try {
+        const config = new Config(mocks.core);
+        const webhook = new Webhook();
+        webhook.proxies(config);
+        assert.fail("An unknown URL protocol was not thrown as error!");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(err.message, "Failed to configure the HTTPS proxy");
+          assert.include(err.cause.message, "Unsupported URL protocol");
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
       }
     });
   });
