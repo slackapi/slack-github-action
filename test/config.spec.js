@@ -135,19 +135,25 @@ describe("config", () => {
   });
 
   describe("validate", () => {
-    it("warns if an invalid retries option is provided", async () => {
+    it("errors if an invalid retries option is provided", async () => {
       mocks.axios.post.returns(Promise.resolve("LGTM"));
       mocks.core.getInput.withArgs("retries").returns("FOREVER");
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      await send(mocks.core);
-      assert.isTrue(
-        mocks.core.warning.calledWith(
-          'Invalid input! An unknown "retries" value was used: FOREVER',
-        ),
-      );
+      try {
+        await send(mocks.core);
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            'Invalid input! An unknown "retries" value was used: FOREVER',
+          );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
     });
   });
 });

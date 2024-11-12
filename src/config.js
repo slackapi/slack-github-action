@@ -127,7 +127,8 @@ export default class Config {
       case this.Retries.RAPID:
         break;
       default:
-        core.warning(
+        throw new SlackError(
+          core,
           `Invalid input! An unknown "retries" value was used: ${this.inputs.retries}`,
         );
     }
