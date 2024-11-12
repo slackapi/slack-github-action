@@ -78,12 +78,15 @@ jobs:
         id: message
         uses: ./
         with:
-          errors: false
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            chanel: ${{ secrets.SLACK_CHANNEL_ID }}
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: ":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>"
+
+      - name: "integration(method): confirm a message was posted"
+        run: test -n "${{ steps.message.outputs.ts }}"
 
       - name: "integration(method): post a message with blocks"
         id: blocks
@@ -93,7 +96,6 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            ..{
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: ":eyes: Event received..."
             attachments:
