@@ -307,7 +307,21 @@ describe("webhook", () => {
       );
     });
 
-    it('attempts a "rapid" burst of "12" retries in seconds', async () => {
+    it('attempts a " rapid" burst of "12" retries in seconds', async () => {
+      const webhook = new Webhook();
+      const result = webhook.retries(" rapid");
+      assert.equal(result.retries, 12);
+      if (!result.retryDelay) {
+        assert.fail("No retry delay found!");
+      }
+      assert.equal(
+        result.retryDelay(12, mocks.errors.axios.network_failed),
+        12000,
+        "12th retry after 12 seconds",
+      );
+    });
+
+    it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
       const webhook = new Webhook();
       const result = webhook.retries("RAPID");
       assert.equal(result.retries, 12);

@@ -419,7 +419,17 @@ describe("client", () => {
       );
     });
 
-    it('attempts a "rapid" burst of "12" retries in seconds', async () => {
+    it('attempts a "rapid " burst of "12" retries in seconds', async () => {
+      const webhook = new Client();
+      const result = webhook.retries("rapid ");
+      assert.equal(
+        result.retries,
+        webapi.retryPolicies.rapidRetryPolicy.retries,
+      );
+      assert.equal(result.factor, webapi.retryPolicies.rapidRetryPolicy.factor);
+    });
+
+    it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
       const webhook = new Client();
       const result = webhook.retries("RAPID");
       assert.equal(
