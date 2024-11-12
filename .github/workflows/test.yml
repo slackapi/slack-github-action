@@ -135,7 +135,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            ts: ${{ steps.blocks.outputs.ts }}
+            ts: "${{ steps.blocks.outputs.ts }}"
             text: ":gear: Event processed!"
             attachments:
               - color: "28a745"
