@@ -306,7 +306,7 @@ describe("content", () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("unknown.md");
       try {
         await send(mocks.core);
-        assert.fail("Failed to throw for nonexistent files");
+        assert.fail("Failed to throw for an unknown extension");
       } catch (err) {
         assert.include(
           mocks.core.setFailed.lastCall.firstArg.toString(),
