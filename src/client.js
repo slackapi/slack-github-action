@@ -108,7 +108,7 @@ export default class Client {
    * @returns {import("@slack/web-api").RetryOptions}
    */
   retries(option) {
-    switch (option) {
+    switch (option?.trim().toUpperCase()) {
       case "0":
         return { retries: 0 };
       case "5":

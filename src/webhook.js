@@ -91,7 +91,7 @@ export default class Webhook {
    * @returns {import("axios-retry").IAxiosRetryConfig}
    */
   retries(option) {
-    switch (option) {
+    switch (option?.trim().toUpperCase()) {
       case "0":
         return { retries: 0 };
       case "5":

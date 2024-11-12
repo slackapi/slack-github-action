@@ -120,7 +120,7 @@ export default class Config {
    * Confirm the configurations are correct enough to continue.
    */
   validate() {
-    switch (this.inputs.retries) {
+    switch (this.inputs.retries.trim().toUpperCase()) {
       case this.Retries.ZERO:
       case this.Retries.FIVE:
       case this.Retries.TEN:
