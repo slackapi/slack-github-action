@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/chai": "^4.3.19",
+    "@types/chai": "^5.0.1",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
@@ -54,7 +54,7 @@
     "@types/sinon": "^17.0.3",
     "@vercel/ncc": "^0.38.1",
     "c8": "^10.1.2",
-    "chai": "^5.1.1",
+    "chai": "^5.1.2",
     "mocha": "^10.8.2",
     "mocha-suppress-logs": "^0.5.1",
     "sinon": "^19.0.2",
