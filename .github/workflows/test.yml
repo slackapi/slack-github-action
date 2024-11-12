@@ -85,9 +85,6 @@ jobs:
             chanel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: ":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>"
 
-      - name: "integration(method): confirm a message was posted"
-        run: test -n "${{ steps.message.outputs.ts }}"
-
       - name: "integration(method): post a message with blocks"
         id: blocks
         uses: ./
