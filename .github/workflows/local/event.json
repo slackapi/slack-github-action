@@ -1,9 +1,0 @@
-{
-  "pull_request": {
-    "user": {
-      "login": "dependabot"
-    },
-    "title": "Bump actions/checkout from 3 to 4",
-    "html_url": "https://github.com/slackapi/slack-github-action/pull/238"
-  }
-}
