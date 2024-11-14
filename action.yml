@@ -1,37 +1,55 @@
-name: 'slack-send'
-description: 'Publish a message in a channel or send a JSON payload to the Slack Workflow Builder'
+name: "Slack: Send to Slack"
+author: "slackapi"
+description: "Send data to Slack to start a Slack workflow in Workflow Builder, call a Slack API method, or post a message into a channel"
 inputs:
-  channel-id: # channel id to post message when using bot token
-    description: 'Slack channel ID where message will be posted. Needed if using bot token'
+  errors:
+    default: "false"
+    description: "If the step exits with an error on errors or continues."
     required: false
-  slack-message: # message to post when using bot token
-    description: 'Message to post into Slack. Needed if using bot token'
+  method:
+    description: "The Slack API method to call."
     required: false
-  payload: # JSON payload to send to Slack via webhook
-    description: 'JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead'
+  payload:
+    description: "Attributes that create the content of the request using JSON or YAML."
     required: false
-  payload-delimiter: # custom delimiter used to flatten nested values in the JSON payload
-    description: 'Custom delimiter used to flatten nested values in the JSON payload. If not supplied, defaults to a period (".").'
+  payload-delimiter:
+    description: "Field seperator for nested attributes in the input payload."
     required: false
-  payload-file-path: # path to JSON payload to send to Slack via webhook
-    description: 'path to JSON payload to send to Slack if webhook route. If not supplied, json from GitHub event will be sent instead. If payload is provided, it will take preference over this field'
+  payload-file-path:
+    description: "Path to a file containing a valid input payload made of JSON or YAML."
     required: false
-  payload-file-path-parsed:
-    description: 'Replace templated variables in the JSON payload file with values from the GitHub context and environment variables'
-    default: true
+  payload-templated:
+    default: "false"
+    description: "If templated variables in input payloads should be replaced."
     required: false
-  update-ts: # The timestamp of a previous message posted to update it instead of posting a new message
-    description: 'The timestamp of a previous message posted. It will update the existing message instead of posting a new message'
+  proxy:
+    description: "An optional proxied route for HTTPS connections."
+    required: false
+  retries:
+    default: "5"
+    description: "The strategy to use when performing retried requests."
+  token:
+    description: "The authentication value used with the Slack API."
+    required: false
+  webhook:
+    description: "A location for posting request payloads."
+    required: false
+  webhook-type:
+    description: "Option to use either an incoming webhook or webhook trigger."
     required: false
 outputs:
-  time: # id of output
-    description: 'The time'
-  thread_ts: # threaded timestamp on the message that was posted when using bot token
-    description: 'The timestamp on the message that was posted into Slack when using bot token'
-  ts: # timestamp of message posted
-    description: 'The timestamp on the message that was posted into Slack when using bot token'
-  channel_id: # Id of the channel. If channel name was used as input we can get ID from output for later use when updating message or posting to thread.
-    description: 'The channel id of the message that was posted into Slack when using bot token'
+  ok:
+    description: "If the request completed without returning errors."
+  response:
+    description: "A JSON stringified version of the Slack API response."
+  time:
+    description: "The Unix epoch time that the step completed."
+  channel_id:
+    description: "The channel ID returned with some of the Slack API methods."
+  thread_ts:
+    description: "The timestamp of a parent Slack message with threaded replies."
+  ts:
+    description: "The timestamp of a Slack message or event in the response."
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"

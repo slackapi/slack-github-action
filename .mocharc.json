@@ -1,3 +1,15 @@
 {
+  "require": [
+    "@actions/core",
+    "@actions/github",
+    "@slack/web-api",
+    "axios",
+    "axios-retry",
+    "flat",
+    "https-proxy-agent",
+    "markup-js",
+    "mocha-suppress-logs"
+  ],
+  "recursive": true,
   "timeout": 3000
 }
