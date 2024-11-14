@@ -79,7 +79,7 @@ workflow are sent to the provided webhook URL:
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-delimiter: "_"
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -100,7 +100,7 @@ the job is started:
 
 ```yaml
 - name: Send custom event details to a Slack workflow
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     webhook-type: webhook-trigger
@@ -116,7 +116,7 @@ in JSON or YAML format:
 
 ```yaml
 - name: Send a saved artifact to a Slack workflow
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-file-path: "./artifacts.json"
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -165,7 +165,7 @@ bot associated with your app to the channel for posting:
 
 ```yaml
 - name: Post to a Slack channel
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -181,7 +181,7 @@ blocks, can also be sent with one of the Slack API methods:
 
 ```yaml
 - name: Post to a Slack channel
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -204,7 +204,7 @@ outputs from past steps as inputs to current ones:
 ```yaml
 - name: Initiate the deployment launch sequence
   id: slack
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -220,7 +220,7 @@ outputs from past steps as inputs to current ones:
 - name: Countdown until launch
   run: sleep 10
 - name: Update the original message with success
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.update
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -244,7 +244,7 @@ be done by including the `thread_ts` attribute of the parent message in the
 
 ```yaml
 - name: Initiate a deployment
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   id: deployment_message
   with:
     method: chat.postMessage
@@ -253,7 +253,7 @@ be done by including the `thread_ts` attribute of the parent message in the
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
       text: "Deployment started :eyes:"
 - name: Conclude the deployment
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -271,7 +271,7 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
 
 ```yaml
 - name: Share a file to that channel
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: files.uploadV2
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -315,7 +315,7 @@ using [`mrkdwn`][mrkdwn] formatting values for a message or
 
 ```yaml
 - name: Post a message in a channel
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     webhook-type: incoming-webhook
@@ -343,7 +343,7 @@ to fail. This result can still be gathered from the `ok` output.
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     errors: true
     method: chat.reverse
@@ -367,7 +367,7 @@ delimiter and will also make values stringified:
 
 ```yaml
 - name: Send GitHub Action data to a Slack workflow
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-delimiter: "_"
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -386,7 +386,7 @@ input payload with the `payload-templated` option:
 ```yaml
 - name: Send custom JSON data to Slack workflow
   id: slack
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-file-path: "./payload-slack-content.json"
     payload-templated: true
@@ -405,7 +405,7 @@ configuring a proxy is the same for all techniques:
 
 ```yaml
 - name: Post to a Slack channel via a proxy
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     proxy: "http://proxy.example.org:8080" # Change this to a custom value
@@ -433,7 +433,7 @@ these values:
 
 ```yaml
 - name: Attempt a burst of requests
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     retries: RAPID
@@ -476,7 +476,7 @@ a Slack channel before posting a message:
 ```yaml
 - name: Create a new Slack channel for recent changes
   id: conversation
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: conversations.create
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -484,7 +484,7 @@ a Slack channel before posting a message:
       name: pull-request-review-${{ github.sha }}
 - name: Send the pull request link into the Slack channel
   if: ${{ steps.conversation.outputs.ok }}
-  uses: slackapi/slack-github-action@v2-development
+  uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}

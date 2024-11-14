@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Publish to slack channel via bot token
         id: slack
-        uses: slackapi/slack-github-action@v2-development
+        uses: slackapi/slack-github-action@v2.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
