@@ -1,6 +1,0 @@
-# Application values
-.env.*
-.env
-!.env.example
-.slack/apps.json
-.slack/apps.*.json
