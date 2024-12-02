@@ -276,7 +276,7 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
     method: files.uploadV2
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
-      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
       initial_comment: "the results are in!"
       file: "results.out"
       filename: "results-${{ github.sha }}.out"
