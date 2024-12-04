@@ -36,14 +36,14 @@ jobs:
       - name: "unit(test): perform unit test checks"
         run: npm test
 
-      - name: "build: package code for distribution"
-        run: npm run build
-
       - name: "unit(test): upload coverage to CodeCov"
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.7
         with:
           directory: ./coverage
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: "build: package code for distribution"
+        run: npm run build
 
       - name: "pretest(inputs): save the push event trigger commit URL"
         if: "contains(github.event_name, 'push')"
