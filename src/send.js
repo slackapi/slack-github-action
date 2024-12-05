@@ -29,7 +29,7 @@ export default async function send(core) {
  */
 async function post(config) {
   switch (true) {
-    case !!config.inputs.token:
+    case !!config.inputs.method:
       return await new Client().post(config);
     case !!config.inputs.webhook:
       return await new Webhook().post(config);
