@@ -110,10 +110,25 @@ export default class Config {
         core.getInput("webhook") || process.env.SLACK_WEBHOOK_URL || null,
       webhookType: core.getInput("webhook-type"),
     };
+    this.mask();
     this.validate();
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
     this.content = new Content().get(this);
     core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
+  }
+
+  /**
+   * Hide secret values provided in the inputs from appearing.
+   */
+  mask() {
+    if (this.inputs.token) {
+      core.debug("Setting the provided token as a secret variable.");
+      core.setSecret(this.inputs.token);
+    }
+    if (this.inputs.webhook) {
+      core.debug("Setting the provided webhook as a secret variable.");
+      core.setSecret(this.inputs.webhook);
+    }
   }
 
   /**
@@ -133,29 +148,20 @@ export default class Config {
         );
     }
     switch (true) {
-      case !!this.inputs.token && !!this.inputs.webhook:
-        core.debug(
-          "Setting the provided token and webhook as secret variables.",
-        );
-        core.setSecret(this.inputs.token);
-        core.setSecret(this.inputs.webhook);
+      case !!this.inputs.method && !!this.inputs.webhook:
         throw new SlackError(
           core,
-          "Invalid input! Either the token or webhook is required - not both.",
+          "Invalid input! Either the method or webhook is required - not both.",
         );
-      case !!this.inputs.token:
-        core.debug("Setting the provided token as a secret variable.");
-        core.setSecret(this.inputs.token);
-        if (!this.inputs.method) {
+      case !!this.inputs.method:
+        if (!this.inputs.token) {
           throw new SlackError(
             core,
-            "Missing input! A method must be decided to use the token provided.",
+            "Missing input! A token must be provided to use the method decided.",
           );
         }
         break;
       case !!this.inputs.webhook:
-        core.debug("Setting the provided webhook as a secret variable.");
-        core.setSecret(this.inputs.webhook);
         if (!this.inputs.webhookType) {
           throw new SlackError(
             core,
@@ -175,7 +181,7 @@ export default class Config {
       default:
         throw new SlackError(
           core,
-          "Missing input! Either a token or webhook is required to take action.",
+          "Missing input! Either a method or webhook is required to take action.",
         );
     }
   }
