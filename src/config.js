@@ -111,7 +111,7 @@ export default class Config {
       webhookType: core.getInput("webhook-type"),
     };
     this.mask();
-    this.validate();
+    this.validate(core);
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
     this.content = new Content().get(this);
     core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
@@ -133,8 +133,9 @@ export default class Config {
 
   /**
    * Confirm the configurations are correct enough to continue.
+   * @param {core} core - GitHub Actions core utilities.
    */
-  validate() {
+  validate(core) {
     switch (this.inputs.retries.trim().toUpperCase()) {
       case this.Retries.ZERO:
       case this.Retries.FIVE:
@@ -148,10 +149,10 @@ export default class Config {
         );
     }
     switch (true) {
-      case !!this.inputs.method && !!this.inputs.webhook:
+      case !!core.getInput("token") && !!core.getInput("webhook"):
         throw new SlackError(
           core,
-          "Invalid input! Either the method or webhook is required - not both.",
+          "Invalid input! Either the token or webhook is required - not both.",
         );
       case !!this.inputs.method:
         if (!this.inputs.token) {

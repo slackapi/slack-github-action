@@ -35,8 +35,8 @@ describe("config", () => {
       assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
     });
 
-    it("allows a token and webhook if no method is provided", async () => {
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+    it("allows token environment variables with a webhook", async () => {
+      process.env.SLACK_TOKEN = "xoxb-example";
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       const config = new Config(mocks.core);
@@ -49,10 +49,23 @@ describe("config", () => {
       );
     });
 
-    it("errors when both the method and webhook is provided", async () => {
+    it("allows webhook environment variables with a token", async () => {
+      process.env.SLACK_WEBHOOK_URL = "https://example.com";
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      const config = new Config(mocks.core);
+      assert.equal(config.inputs.method, "chat.postMessage");
+      assert.equal(config.inputs.token, "xoxb-example");
+      assert.equal(config.inputs.webhook, "https://example.com");
+      assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
+      assert.isTrue(
+        mocks.core.setSecret.withArgs("https://example.com").called,
+      );
+    });
+
+    it("errors when both the token and webhook is provided", async () => {
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       try {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
@@ -60,8 +73,9 @@ describe("config", () => {
         if (err instanceof SlackError) {
           assert.include(
             err.message,
-            "Invalid input! Either the method or webhook is required - not both.",
+            "Invalid input! Either the token or webhook is required - not both.",
           );
+          assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
           assert.isTrue(
             mocks.core.setSecret.withArgs("https://example.com").called,
           );
@@ -71,7 +85,7 @@ describe("config", () => {
       }
     });
 
-    it("errors if the method is provided without a token provided", async () => {
+    it("errors if the method is provided without a token", async () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       try {
         new Config(mocks.core);

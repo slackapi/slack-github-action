@@ -61,6 +61,8 @@ export class Mock {
     this.core.getInput.reset();
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
+    process.env.SLACK_TOKEN = "";
+    process.env.SLACK_WEBHOOK_URL = "";
   }
 }
 

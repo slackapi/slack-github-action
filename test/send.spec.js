@@ -56,7 +56,7 @@ describe("send", () => {
     });
 
     it("incoming webhook", async () => {
-      mocks.core.getInput.withArgs("token").returns("xoxb-example"); // https://github.com/slackapi/slack-github-action/issues/373
+      process.env.SLACK_TOKEN = "xoxb-example"; // https://github.com/slackapi/slack-github-action/issues/373
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
