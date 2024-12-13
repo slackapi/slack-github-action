@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     permissions:
-      contents: none
+      checks: write
     steps:
       - name: "build: checkout the latest changes"
         uses: actions/checkout@v4
