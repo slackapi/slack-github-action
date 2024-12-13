@@ -8,10 +8,13 @@ jobs:
   build:
     name: Build and tag a new version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout the current code
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           ref: ${{ github.event.release.tag_name }}
 
       - name: Configure the runtime node

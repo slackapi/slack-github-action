@@ -11,10 +11,13 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     environment: staging
+    permissions:
+      checks: write
     steps:
       - name: "build: checkout the latest changes"
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: "build: setup the node runtime"
@@ -226,7 +229,7 @@ jobs:
       - name: "chore(health): check up on recent changes to the health score"
         uses: slackapi/slack-health-score@v0.1.1
         with:
-          codecov_token: ${{ secrets.CODECOV_TOKEN }}
+          codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           extension: js
           include: src
