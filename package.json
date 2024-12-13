@@ -1,6 +1,6 @@
 {
   "name": "slack-github-action",
-  "version": "2.0.1-rc.1",
+  "version": "2.0.1-rc.2",
   "description": "The official Slack Github Action. Use this to send data into your Slack workspace",
   "main": "dist/index.js",
   "type": "module",
