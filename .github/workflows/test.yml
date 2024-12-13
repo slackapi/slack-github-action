@@ -229,7 +229,7 @@ jobs:
       - name: "chore(health): check up on recent changes to the health score"
         uses: slackapi/slack-health-score@v0.1.1
         with:
-          codecov_token: ${{ secrets.CODECOV_TOKEN }}
+          codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           extension: js
           include: src
