@@ -8,8 +8,6 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    permissions:
-      contents: none
     steps:
       - name: Checkout action
         uses: actions/checkout@v4
