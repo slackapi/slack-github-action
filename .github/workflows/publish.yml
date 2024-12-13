@@ -8,6 +8,8 @@ jobs:
   build:
     name: Build and tag a new version
     runs-on: ubuntu-latest
+    permissions:
+      contents: none
     steps:
       - name: Checkout the current code
         uses: actions/checkout@v4
