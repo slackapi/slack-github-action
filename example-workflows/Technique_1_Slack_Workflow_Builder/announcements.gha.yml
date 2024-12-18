@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Post release announcements
+on:
+  release:
+jobs:
+  run:
+    name: Share recent changes with a channel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Draft with these release notes details
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload: |
+            key: value
+            foo: bar
+            todo: update this....

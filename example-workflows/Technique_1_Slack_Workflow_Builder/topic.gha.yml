@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Update a channel topic
+on:
+  push:
+    branches:
+      - main
+      - example
+jobs:
+  run:
+    name: New push to repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update the channel topic
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          payload-delimiter: "_"
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger

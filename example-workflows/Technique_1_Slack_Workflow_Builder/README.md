@@ -1,0 +1,78 @@
+# Technique 1: Slack Workflow Builder
+
+> :memo: This technique requires [a Slack paid plan][plans] to use Workflow
+> Builder.
+
+This technique sends data to Slack using a webhook to start a workflow created
+using Slack [Workflow Builder][wfb].
+
+## Setup
+
+For details on how to setup this technique in GitHub Actions, read the
+[`README.md`][setup].
+
+## Example workflows
+
+1. [**Format generated files**](#format-structured-files): Message outputs from
+   prior steps.
+2. [**Post release announcements**](#post-release-announcements): Share releases
+   to a channel.
+3. [**Update a channel topic**](#update-a-channel-topic): Highlight the current
+   build status.
+
+### Format generated files
+
+Convert build outputs from earlier GitHub Action steps into a Slack message.
+
+This example uses data from a payload file to [send a message][send_message] to
+a channel.
+
+**Related files**:
+
+- [`format.data.json`](./format.data.json): Payload file being sent.
+- [`format.gha.yml`](./format.gha.yml): GitHub Actions workflow.
+- [`format.manifest.json`](./format.manifest.json): Slack app manifest.
+
+### Post release announcements
+
+Select a channel to post news about the most recent release to.
+
+This example uses [Slack functions][functions] and a
+[connector function][connector] to do the following:
+
+1. Open a form to select a channel.
+2. Gather a random gif from [giphy][giphy].
+3. Send a message to the selected channel.
+4. React with an excited emoji.
+
+The default GitHub event [context][event-context] and [payload][event-payload]
+are used as inputs.
+
+**Related files**:
+
+- [`announcements.gha.yml`](./announcements.gha.yml): GitHub Actions workflow.
+- [`announcements.manifest.json`](./announcements.manifest.json): Slack app
+  manifest.
+
+### Update a channel topic
+
+Show the current build status in the header of a channel.
+
+This example uses inputs provided inline to
+[update a channel topic][update_channel_topic].
+
+**Related files**:
+
+- [`topic.gha.yml`](./topic.gha.yml): GitHub Actions workflow.
+- [`topic.manifest.json`](./topic.manifest.json): Slack app manifest.
+
+[connector]: https://api.slack.com/automation/connectors
+[event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
+[event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
+[functions]: https://api.slack.com/automation/functions
+[giphy]: https://giphy.com
+[send_message]: https://api.slack.com/reference/functions/send_message
+[plans]: https://slack.com/pricing
+[setup]: https://github.com/slackapi/slack-github-action/blob/main/README.md#technique-1-slack-workflow-builder
+[update_channel_topic]: https://api.slack.com/reference/functions/update_channel_topic
+[wfb]: https://slack.com/features/workflow-automation

@@ -278,7 +278,7 @@ convenience of the [`files.uploadV2`][files.uploadV2] method:
     payload: |
       channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
       initial_comment: "the results are in!"
-      file: "results.out"
+      file: "./path/to/results.out"
       filename: "results-${{ github.sha }}.out"
 ```
 
@@ -385,7 +385,6 @@ input payload with the `payload-templated` option:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
-  id: slack
   uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-file-path: "./payload-slack-content.json"
