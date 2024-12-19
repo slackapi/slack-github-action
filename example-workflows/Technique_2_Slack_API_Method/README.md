@@ -1,11 +1,11 @@
 # Technique 2: Slack API method
 
-A bot token or user token or [token of some other kind][tokens] must be used to
+A [token][tokens], such as a bot or user token, must be used to
 call one of [the Slack API methods][methods] with this technique.
 
 ## Setup
 
-For details on how to setup this technique in GitHub Actions, read the
+For details on how to set up this technique in GitHub Actions, read the
 [`README.md`][setup].
 
 ## Example workflows

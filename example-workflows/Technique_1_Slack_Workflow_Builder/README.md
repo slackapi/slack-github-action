@@ -1,7 +1,6 @@
 # Technique 1: Slack Workflow Builder
 
-> :memo: This technique requires [a Slack paid plan][plans] to use Workflow
-> Builder.
+> :memo: This technique uses Workflow Builder, which requires [a Slack paid plan][plans].
 
 This technique sends data to Slack using a webhook to start a workflow created
 using Slack [Workflow Builder][wfb].
@@ -46,7 +45,7 @@ following:
 
 1. Open a form to select a channel.
 2. Send a message to the selected channel.
-3. React with an excited emoji.
+3. React with a `:tada:` emoji.
 
 **Related files**:
 
