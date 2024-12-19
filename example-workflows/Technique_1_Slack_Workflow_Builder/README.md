@@ -16,7 +16,7 @@ For details on how to setup this technique in GitHub Actions, read the
 
 ## Example workflows
 
-1. [**Format generated files**](#format-structured-files): Message outputs from
+1. [**Format generated files**](#format-generated-files): Message outputs from
    prior steps.
 2. [**Post release announcements**](#post-release-announcements): Share releases
    to a channel.
