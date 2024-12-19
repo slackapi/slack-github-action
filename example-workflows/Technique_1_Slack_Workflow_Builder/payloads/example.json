@@ -1,3 +1,0 @@
-{
-  "text": "${{ github.workflow }} workflow failed on ${{ env.DEFAULT_BRANCH }} branch in the ${{ github.event.repository.name }} repository!"
-}
