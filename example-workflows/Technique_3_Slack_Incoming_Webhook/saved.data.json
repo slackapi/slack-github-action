@@ -6,7 +6,7 @@
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "Slack notifications sound following ${{ github.sha }}"
+        "text": "Slack notifications sound following the most recent commit pushed `${{ github.sha }}`"
       },
       "accessory": {
         "type": "button",
@@ -16,7 +16,7 @@
           "emoji": true
         },
         "value": "actions",
-        "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.runId }}",
+        "url": "https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}",
         "action_id": "run"
       }
     },

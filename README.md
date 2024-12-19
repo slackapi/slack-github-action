@@ -164,7 +164,7 @@ achieved by adding this step to a job in your GitHub workflow and inviting the
 bot associated with your app to the channel for posting:
 
 ```yaml
-- name: Post to a Slack channel
+- name: Post text to a Slack channel
   uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
@@ -180,7 +180,7 @@ More complex message layouts, such as messages made with [Block Kit][block-kit]
 blocks, can also be sent with one of the Slack API methods:
 
 ```yaml
-- name: Post to a Slack channel
+- name: Post blocks to a Slack channel
   uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
@@ -203,7 +203,7 @@ outputs from past steps as inputs to current ones:
 
 ```yaml
 - name: Initiate the deployment launch sequence
-  id: slack
+  id: launch_sequence
   uses: slackapi/slack-github-action@v2.0.0
   with:
     method: chat.postMessage
@@ -226,7 +226,7 @@ outputs from past steps as inputs to current ones:
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      ts: "${{ steps.slack.outputs.ts }}"
+      ts: "${{ steps.launch_sequence.outputs.ts }}"
       text: "Deployment finished! :rocket:"
       attachments:
         - color: "28a745"
@@ -307,6 +307,12 @@ Gather a Slack incoming webhook URL:
 6. [Add this Action as a step][job-step] to your GitHub workflow and provide an
    input payload to send as a message.
 
+The webhook URL will resemble something like so:
+
+```txt
+https://hooks.slack.com/services/T0123456789/B1001010101/7IsoQTrixdUtE971O1xQTm4T
+```
+
 #### Usage
 
 Add the collected webhook from above to a GitHub workflow and configure the step
@@ -342,7 +348,7 @@ The `errors` option defaults to `false` so failed requests do not cause the step
 to fail. This result can still be gathered from the `ok` output.
 
 ```yaml
-- name: Send GitHub Action data to a Slack workflow
+- name: Attempt to call an unknown method
   uses: slackapi/slack-github-action@v2.0.0
   with:
     errors: true
@@ -366,7 +372,7 @@ The `payload-delimiter` option will flatten the input payload using the provided
 delimiter and will also make values stringified:
 
 ```yaml
-- name: Send GitHub Action data to a Slack workflow
+- name: Flatten the default GitHub payload
   uses: slackapi/slack-github-action@v2.0.0
   with:
     payload-delimiter: "_"

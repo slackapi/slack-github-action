@@ -3,6 +3,8 @@
 name: Format generated files
 on:
   push:
+    branches:
+      - main
 jobs:
   run:
     name: Write structured data as a message
@@ -16,7 +18,6 @@ jobs:
       - name: Start the Slack workflow
         uses: slackapi/slack-github-action@v2.0.0
         with:
-          payload-file-path: "./example-workflows/Technique_1_Slack_Workflow_Builder/format.data.json"
-          payload-templated: true
+          payload-file-path: "./example-workflows/Technique_1_Slack_Workflow_Builder/builds.data.json"
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: webhook-trigger

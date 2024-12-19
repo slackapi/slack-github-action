@@ -5,10 +5,9 @@ on:
   push:
     branches:
       - main
-      - example
 jobs:
   run:
-    name: New push to repo
+    name: Keep track of the main branch
     runs-on: ubuntu-latest
     steps:
       - name: Update the channel topic
