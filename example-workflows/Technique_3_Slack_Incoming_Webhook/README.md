@@ -21,7 +21,7 @@ For details on how to setup this technique in GitHub Actions, read the
 
 ### Post an inline text message
 
-Write a single world after a push event is received.
+Write a line of text after a push event is received.
 
 This example uses incoming webhooks to post a plain text message.
 
