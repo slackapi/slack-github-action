@@ -1,7 +1,7 @@
 # Technique 2: Slack API method
 
-A [token][tokens], such as a bot or user token, must be used to
-call one of [the Slack API methods][methods] with this technique.
+A [token][tokens], such as a bot or user token, must be used to call one of
+[the Slack API methods][methods] with this technique.
 
 ## Setup
 

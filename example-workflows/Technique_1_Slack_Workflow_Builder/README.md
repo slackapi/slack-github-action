@@ -1,6 +1,7 @@
 # Technique 1: Slack Workflow Builder
 
-> :memo: This technique uses Workflow Builder, which requires [a Slack paid plan][plans].
+> :memo: This technique uses Workflow Builder, which requires
+> [a Slack paid plan][plans].
 
 This technique sends data to Slack using a webhook to start a workflow created
 using Slack [Workflow Builder][wfb].
