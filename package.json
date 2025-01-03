@@ -50,7 +50,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.4",
     "@types/sinon": "^17.0.3",
     "@vercel/ncc": "^0.38.3",
     "c8": "^10.1.3",
