@@ -48,12 +48,10 @@ export class Mock {
     this.core = this.sandbox.stub(core);
     this.fs = this.sandbox.stub(fs);
     this.webapi = {
-      WebClient: function() {
-        this.apiCall = function() {
-          return {
-            ok: true,
-          }
-        }
+      WebClient: function () {
+        this.apiCall = () => ({
+          ok: true,
+        });
       },
     };
     this.core.getInput.withArgs("errors").returns("false");
