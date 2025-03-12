@@ -3,6 +3,7 @@ import webapi from "@slack/web-api";
 import axios from "axios";
 import Content from "./content.js";
 import SlackError from "./errors.js";
+import Logger from "./logger.js";
 
 /**
  * Options and settings set as inputs to this action.
@@ -74,6 +75,12 @@ export default class Config {
   core;
 
   /**
+   * The logger of outputs.
+   * @type {import("@slack/logger").Logger}
+   */
+  logger;
+
+  /**
    * @type {import("@slack/web-api")} - Slack API client.
    */
   webapi;
@@ -91,6 +98,7 @@ export default class Config {
   constructor(core) {
     this.axios = axios;
     this.core = core;
+    this.logger = new Logger(core).logger;
     this.webapi = webapi;
     this.inputs = {
       errors: core.getBooleanInput("errors"),

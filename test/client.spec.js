@@ -2,9 +2,11 @@ import core from "@actions/core";
 import webapi from "@slack/web-api";
 import errors from "@slack/web-api/dist/errors.js";
 import { assert } from "chai";
+import sinon from "sinon";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
+import Logger from "../src/logger.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -57,6 +59,35 @@ describe("client", () => {
           assert.fail("Failed to throw a SlackError", err);
         }
       }
+    });
+
+    it("uses input arguments when constructing the web api client", async () => {
+      const spy = sinon.spy(mocks.webapi, "WebClient");
+      /**
+       * @type {Config}
+       */
+      const config = {
+        content: {
+          values: {},
+        },
+        core: core,
+        logger: new Logger(core).logger,
+        inputs: {
+          method: "pins.add",
+          retries: "10",
+          token: "xoxb-example-002",
+        },
+        webapi: mocks.webapi,
+      };
+      await new Client().post(config);
+      assert.isTrue(spy.calledWithNew());
+      assert.isTrue(
+        spy.calledWith("xoxb-example-002", {
+          agent: undefined,
+          logger: config.logger,
+          retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
+        }),
+      );
     });
   });
 
