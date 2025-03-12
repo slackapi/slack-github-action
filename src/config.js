@@ -40,6 +40,7 @@ export default class Config {
 
   /**
    * @typedef Inputs - Values provided to this job.
+   * @property {string?} api - A custom API URL to send method requests to.
    * @property {boolean} errors - If the job should exit after errors or succeed.
    * @property {string?} method - The Slack API method to call.
    * @property {string?} payload - Request contents from the provided input.
@@ -101,6 +102,7 @@ export default class Config {
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
     this.inputs = {
+      api: core.getInput("api"),
       errors: core.getBooleanInput("errors"),
       method: core.getInput("method"),
       payload: core.getInput("payload"),

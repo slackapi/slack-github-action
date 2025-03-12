@@ -2,6 +2,9 @@ name: "Slack: Send to Slack"
 author: "slackapi"
 description: "Send data to Slack to start a Slack workflow in Workflow Builder, call a Slack API method, or post a message into a channel"
 inputs:
+  api:
+    description: "A custom API URL to send Slack API method requests to."
+    required: false
   errors:
     default: "false"
     description: "If the step exits with an error on errors or continues."

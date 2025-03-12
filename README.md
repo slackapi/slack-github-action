@@ -452,6 +452,26 @@ Behind the scenes, [automatic retries][retries] are handled with the
 [`@slack/web-api`][slack-web-api] package for Slack API methods, and
 [`axios-retry`][axios-retry] when sending with a webhook.
 
+### Sending to a custom API URL
+
+In certain circumstances, such as testing the sent payload, a
+[custom API URL][custom-api-url] can be used to change where `method` requests
+are sent:
+
+```yaml
+- name: Send to a custom API URL
+  uses: slackapi/slack-github-action@v2.0.0
+  with:
+    api: http://localhost:8080
+    method: chat.postMessage
+    token: ${{ secrets.SLACK_BOT_TOKEN }}
+    payload: |
+      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+      text: "What's happening on localhost?"
+```
+
+The default value of `api` is "https://slack.com/api/" for steps using `method`.
+
 ## Expected outputs
 
 Each technique above [outputs values][github-outputs] that can be used as inputs
@@ -517,6 +537,7 @@ All contributions are encouraged! Check out the
 [config-tokens]: https://api.slack.com/reference/manifests#config-tokens
 [contributing]: .github/contributing.md
 [conversation]: https://api.slack.com/types/conversation
+[custom-api-url]: https://tools.slack.dev/node-slack-sdk/web-api/#custom-api-url
 [epoch]: https://en.wikipedia.org/wiki/Unix_time
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
