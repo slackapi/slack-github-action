@@ -47,6 +47,15 @@ export class Mock {
     this.axios = this.sandbox.stub(axios);
     this.core = this.sandbox.stub(core);
     this.fs = this.sandbox.stub(fs);
+    this.webapi = {
+      WebClient: function() {
+        this.apiCall = function() {
+          return {
+            ok: true,
+          }
+        }
+      },
+    };
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
   }
