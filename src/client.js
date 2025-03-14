@@ -26,6 +26,7 @@ export default class Client {
       agent: this.proxies(config)?.httpsAgent,
       logger: config.logger,
       retryConfig: this.retries(config.inputs.retries),
+      slackApiUrl: config.inputs.api || undefined,
     });
     try {
       /**

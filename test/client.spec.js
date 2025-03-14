@@ -73,6 +73,7 @@ describe("client", () => {
         core: core,
         logger: new Logger(core).logger,
         inputs: {
+          api: "http://localhost:8080/api",
           method: "pins.add",
           retries: "10",
           token: "xoxb-example-002",
@@ -86,6 +87,7 @@ describe("client", () => {
           agent: undefined,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
+          slackApiUrl: "http://localhost:8080/api",
         }),
       );
     });
@@ -110,10 +112,10 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.api.resolves(response);
+        mocks.calls.resolves(response);
         await send(mocks.core);
-        assert.deepEqual(mocks.api.getCall(0).firstArg, "chat.postMessage");
-        assert.deepEqual(mocks.api.getCall(0).lastArg, args);
+        assert.deepEqual(mocks.calls.getCall(0).firstArg, "chat.postMessage");
+        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -158,10 +160,10 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.api.resolves(response);
+        mocks.calls.resolves(response);
         await send(mocks.core);
-        assert.deepEqual(mocks.api.getCall(0).firstArg, "chat.postMessage");
-        assert.deepEqual(mocks.api.getCall(0).lastArg, args);
+        assert.deepEqual(mocks.calls.getCall(0).firstArg, "chat.postMessage");
+        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -194,9 +196,9 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("files.uploadV2");
         mocks.core.getInput.withArgs("token").returns("xoxp-example");
         mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.api.resolves(response);
+        mocks.calls.resolves(response);
         await send(mocks.core);
-        assert.deepEqual(mocks.api.getCall(0).lastArg, args);
+        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -231,7 +233,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.rejects(errors.requestErrorWithOriginal(response, true));
+        mocks.calls.rejects(errors.requestErrorWithOriginal(response, true));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
@@ -266,7 +268,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.rejects(errors.httpErrorFromResponse(response));
+        mocks.calls.rejects(errors.httpErrorFromResponse(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
@@ -302,7 +304,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.rejects(errors.platformErrorFromResult(response));
+        mocks.calls.rejects(errors.platformErrorFromResult(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
@@ -331,7 +333,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.rejects(errors.platformErrorFromResult(response));
+        mocks.calls.rejects(errors.platformErrorFromResult(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
@@ -357,7 +359,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.api.rejects(errors.rateLimitedErrorWithDelay(12));
+        mocks.calls.rejects(errors.rateLimitedErrorWithDelay(12));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (error) {
