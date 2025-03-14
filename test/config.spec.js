@@ -19,6 +19,7 @@ describe("config", () => {
 
   describe("inputs", () => {
     it("valid values are collected from the action inputs", async () => {
+      mocks.core.getInput.withArgs("api").returns("http://localhost:8080");
       mocks.core.getBooleanInput.withArgs("errors").returns(true);
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("payload").returns('"hello": "world"');
@@ -26,6 +27,7 @@ describe("config", () => {
       mocks.core.getInput.withArgs("retries").returns("0");
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
+      assert.equal(config.inputs.api, "http://localhost:8080");
       assert.equal(config.inputs.errors, true);
       assert.equal(config.inputs.method, "chat.postMessage");
       assert.equal(config.inputs.payload, '"hello": "world"');

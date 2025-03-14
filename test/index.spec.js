@@ -43,8 +43,8 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
-    this.api = sinon.stub(webapi.WebClient.prototype, "apiCall");
     this.axios = this.sandbox.stub(axios);
+    this.calls = sinon.stub(webapi.WebClient.prototype, "apiCall");
     this.core = this.sandbox.stub(core);
     this.fs = this.sandbox.stub(fs);
     this.webapi = {
@@ -63,8 +63,8 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
-    this.api.resetHistory();
     this.axios.post.resetHistory();
+    this.calls.resetHistory();
     this.core.getInput.reset();
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
