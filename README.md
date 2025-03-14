@@ -4,6 +4,16 @@
 
 [![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
 
+Table of contents:
+
+- [**Example workflows**](#example-workflows): Find inspiration in steps.
+- [**Sending variables**](#sending-variables): Provide inputs to be sent.
+- [**Sending techniques**](#sending-techniques): Choose how to send inputs.
+- [**Additional configurations**](#additional-configurations): Customize
+  options.
+- [**Expected outputs**](#expected-outputs): Retrieve response values.
+- [**Project details**](#project-details): Information on the codebase.
+
 ## Example workflows
 
 For examples on how to leverage this Action in workflows, check out
@@ -518,11 +528,24 @@ a Slack channel before posting a message:
       text: "A PR was created <!date^${{ steps.conversation.outputs.time }}^{date_num} at {time_secs}|just now>: ${{ github.event.pull_request.html_url }}"
 ```
 
-## License
+## Project details
+
+### Versioning
+
+We recommend using the latest version of this Action for the most recent updates
+and fixes.
+
+Migration guides are available in the [release notes][releases] with breaking
+changes noted between versions.
+
+Changes required when upgrading from `@v1` to `@v2` are included in this
+[migration guide][v2.0.0].
+
+### License
 
 This project is licensed under the [MIT license](LICENSE).
 
-## Contributing
+### Contributing
 
 All contributions are encouraged! Check out the
 [contributor's guide][contributing] to learn more.
@@ -560,6 +583,7 @@ All contributions are encouraged! Check out the
 [mrkdwn]: https://api.slack.com/reference/surfaces/formatting
 [plans]: https://slack.com/pricing
 [rate-limits]: https://api.slack.com/apis/rate-limits
+[releases]: https://github.com/slackapi/slack-github-action/releases
 [repo-secret]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
 [response]: https://api.slack.com/web#responses
 [retries]: https://tools.slack.dev/node-slack-sdk/web-api/#automatic-retries
@@ -567,6 +591,7 @@ All contributions are encouraged! Check out the
 [scopes]: https://api.slack.com/scopes
 [slack-web-api]: https://tools.slack.dev/node-slack-sdk/web-api
 [tokens]: https://api.slack.com/concepts/token-types
+[v2.0.0]: https://github.com/slackapi/slack-github-action/releases/tag/v2.0.0
 [variables]: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables
 [wfb]: https://slack.com/features/workflow-automation
 [wfb-create]: https://slack.com/help/articles/360041352714-Build-a-workflow--Create-a-workflow-that-starts-outside-of-Slack
