@@ -24,6 +24,7 @@ export default class Client {
     }
     const client = new config.webapi.WebClient(config.inputs.token, {
       agent: this.proxies(config)?.httpsAgent,
+      allowAbsoluteUrls: false,
       logger: config.logger,
       retryConfig: this.retries(config.inputs.retries),
       slackApiUrl: config.inputs.api || undefined,

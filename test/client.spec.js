@@ -85,6 +85,7 @@ describe("client", () => {
       assert.isTrue(
         spy.calledWith("xoxb-example-002", {
           agent: undefined,
+          allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
           slackApiUrl: "http://localhost:8080/api",
