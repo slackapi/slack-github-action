@@ -1,0 +1,72 @@
+name: Sync docs to docs site repo
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+
+jobs:
+  config-sync:
+    name: Synchronize docs to docs site repo
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        source_repo:
+          [
+            "slack-github-action",
+          ]
+
+    steps:
+      - name: Generate a GitHub token
+        id: ghtoken
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          owner: slackapi
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - name: Checkout the tool repo (source)
+        uses: actions/checkout@v4
+        with:
+          repository: slackapi/${{ matrix.source_repo }}
+          path: "tool_repo"
+          token: ${{ steps.ghtoken.outputs.token }}
+          persist-credentials: false
+
+      - name: Checkout the docs site repo (destination)
+        uses: actions/checkout@v4
+        with:
+          repository: slackapi/slackapi.github.io
+          path: "docs_repo"
+          token: ${{ steps.ghtoken.outputs.token }}
+          persist-credentials: false
+
+      - name: Update docs in docs site repo
+        run: |
+            rsync -av --delete ./tool_repo/docs/ ./docs_repo/content/${{ matrix.source_repo }}/
+  
+      - name: Create a pull request
+        id: site-pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.ghtoken.outputs.token }}
+          title: "From ${{ matrix.source_repo }}: {{ github.event.pull_request.title }}"
+          body: "${{ github.event.pull_request.body }}"
+          author: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
+          committer: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
+          commit-message: "Sync docs from ${{ mtrix.source_repo }} to docs site repo"
+          base: "main"
+          branch: "docs-sync-${{ matrix.source_repo }}-${{ github.sha }}"
+          delete-branch: true
+          labels: docs
+          path: "./docs_repo"
+
+      - name: Output the pull request link
+        if: ${{ steps.site-pr.outputs.pull-request-url }}
+        run: |
+          echo "Pull request created: ${{ steps.site-pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
