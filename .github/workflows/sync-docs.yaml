@@ -59,7 +59,7 @@ jobs:
           body: "${{ github.event.pull_request.body }}"
           author: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
           committer: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
-          commit-message: "Sync docs from ${{ mtrix.source_repo }} to docs site repo"
+          commit-message: "Sync docs from ${{ matrix.source_repo }} to docs site repo"
           base: "main"
           branch: "docs-sync-${{ matrix.source_repo }}-${{ github.sha }}"
           delete-branch: true
