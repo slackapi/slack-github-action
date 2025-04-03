@@ -4,15 +4,12 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - closed
   workflow_dispatch:
 
 jobs:
   config-sync:
     name: Sync docs to docs site repo
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Generate a GitHub token
@@ -37,8 +34,19 @@ jobs:
       - name: Update docs in docs site repo
         run: |
             rsync -av --delete ./docs/ ./docs_repo/content/${{ github.event.repository.name }}/
-  
+
+      - name: Install dependencies
+        run: |
+          cd docs_repo
+          npm ci
+
+      - name: Build Docusaurus site
+        run: |
+          cd docs_repo
+          npm run build
+
       - name: Create a pull request
+        if: ${{ github.event.pull_request.merged || github.event_name == 'workflow_dispatch' }}
         id: site-pr
         uses: peter-evans/create-pull-request@v7
         with:
