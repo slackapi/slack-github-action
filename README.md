@@ -4,7 +4,7 @@
 
 [![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
 
-Full documentation available at [tools.slack.dev/slack-github-action](https://tools.slack.dev/slack-github-action).
+Comprehensive documentation is available at [tools.slack.dev/slack-github-action](https://tools.slack.dev/slack-github-action).
 
 Use this GitHub Action to:
 * [Send data with a webhook to start a workflow in Workflow Builder](https://tools.slack.dev/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow).
