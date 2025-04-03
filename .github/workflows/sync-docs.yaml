@@ -10,16 +10,9 @@ on:
 
 jobs:
   config-sync:
-    name: Synchronize docs to docs site repo
+    name: Sync docs to docs site repo
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged }}
-    strategy:
-      max-parallel: 1
-      matrix:
-        source_repo:
-          [
-            "slack-github-action",
-          ]
+    if: ${{ github.event.pull_request.merged || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Generate a GitHub token
@@ -32,11 +25,6 @@ jobs:
 
       - name: Checkout the tool repo (source)
         uses: actions/checkout@v4
-        with:
-          repository: slackapi/${{ matrix.source_repo }}
-          path: "tool_repo"
-          token: ${{ steps.ghtoken.outputs.token }}
-          persist-credentials: false
 
       - name: Checkout the docs site repo (destination)
         uses: actions/checkout@v4
@@ -48,21 +36,20 @@ jobs:
 
       - name: Update docs in docs site repo
         run: |
-            rsync -av --delete ./tool_repo/docs/ ./docs_repo/content/${{ matrix.source_repo }}/
+            rsync -av --delete ./docs/ ./docs_repo/content/${{ github.event.repository.name }}/
   
       - name: Create a pull request
         id: site-pr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.ghtoken.outputs.token }}
-          title: "From ${{ matrix.source_repo }}: {{ github.event.pull_request.title }}"
+          title: "From ${{ github.event.repository.name }}: ${{ github.event.pull_request.title || 'manual docs sync' }}"
           body: "${{ github.event.pull_request.body }}"
           author: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
           committer: "slackapi[bot] <186980925+slackapi[bot]@users.noreply.github.com>"
-          commit-message: "Sync docs from ${{ matrix.source_repo }} to docs site repo"
+          commit-message: "Sync docs from ${{ github.event.repository.name }} to docs site repo"
           base: "main"
-          branch: "docs-sync-${{ matrix.source_repo }}-${{ github.sha }}"
-          delete-branch: true
+          branch: "docs-sync-${{ github.event.repository.name }}-${{ github.sha }}"
           labels: docs
           path: "./docs_repo"
 
