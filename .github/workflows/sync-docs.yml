@@ -1,23 +1,23 @@
-name: Sync docs to docs site repo
+name: Sync tools docs to site repo
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "docs/**"
   push:
     branches:
       - main
     paths:
-      - "docs/**"
+      - "docs/**" 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "docs/**" 
   workflow_dispatch:
 
 jobs:
-  sync-docs:
+
+  get-token:
     runs-on: ubuntu-latest
     steps:
-
       - name: Generate a GitHub token
         id: ghtoken
         uses: actions/create-github-app-token@v1
@@ -26,13 +26,8 @@ jobs:
           owner: slackapi
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
-      - name: Checkout private actions repo
-        uses: actions/checkout@v4
-        with:
-          repository: slackapi/slackapi.github.io
-          token: ${{ steps.ghtoken.outputs.token }}
-          persist-credentials: false
-          path: docs_repo
-
-      - name: Run sync-docs action
-        uses: ./docs_repo/.github/actions/sync-from-tools-docs
+  call-sync-from-tools-docs-workflow:
+    needs: get-token
+    uses: slackapi/another-repo/.github/workflows/sync-from-tools-docs.yml@main
+    secrets:
+      token: ${{ needs.get-token.outputs.token }}
