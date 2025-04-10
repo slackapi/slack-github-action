@@ -74,7 +74,7 @@ The `proxy` option can also be provided with the `HTTPS_PROXY` or `https_proxy` 
 
 ## Retrying failed requests
 
-Sometimes outgoing requests fail due to [rate limits](https://api.slack.com/apis/rate-limits) or similar [HTTP responses](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After) and can be retried later.
+Sometimes outgoing requests fail due to [rate limits](https://docs.slack.dev/apis/web-api/rate-limits) or similar [HTTP responses](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After) and can be retried later.
 
 The `retries` option can be configured to the needs of your workflow with one of these values:
 
