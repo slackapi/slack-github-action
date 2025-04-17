@@ -40,7 +40,7 @@ Reference to the flattening implementation is available for exploration from wit
 
 ## Parsing templated variables
 
-Additional variables provided in the Github event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and event [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) can be used to replace templated variables in the input payload with the `payload-templated` option:
+Additional variables provided in the GitHub event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and event [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) can be used to replace templated variables in the input payload with the `payload-templated` option:
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
