@@ -9,7 +9,6 @@ try {
   await send(core);
 } catch (error) {
   if (error instanceof Error) {
-    core.startGroup("Error");
     core.error(error.message);
     /** @type {import('./errors.js').Cause} */
     const causes = /** @type {any} */ (error.cause);
@@ -20,7 +19,6 @@ try {
     } else {
       core.info(`${error.stack}`);
     }
-    core.endGroup();
   } else {
     core.error(`${error}`);
   }
