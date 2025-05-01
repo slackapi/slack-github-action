@@ -55,7 +55,6 @@ export default class Content {
    * @returns {Content} - the parsed JSON payload to use in requests.
    */
   getContentPayload(config) {
-    const errors = [];
     if (!config.inputs.payload) {
       throw new SlackError(
         config.core,
@@ -72,7 +71,8 @@ export default class Content {
       return /** @type {Content} */ (content);
     } catch (error) {
       if (error instanceof Error) {
-        errors.push(error);
+        config.core.debug("Failed to parse input payload as YAML");
+        config.core.debug(error.message);
       }
     }
     try {
@@ -95,7 +95,7 @@ export default class Content {
         config.core,
         "Invalid input! Failed to parse contents of the provided payload",
         {
-          cause: { values: errors },
+          cause: error,
         },
       );
     }
