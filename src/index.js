@@ -6,21 +6,13 @@ import send from "./send.js";
  * from the send.js file for testing purposes.
  */
 try {
-  await send(core);
+  send(core);
 } catch (error) {
   if (error instanceof Error) {
     core.error(error.message);
-    /** @type {import('./errors.js').Cause} */
-    const causes = /** @type {any} */ (error.cause);
-    if (causes?.values) {
-      for (const cause of causes.values) {
-        core.info(`${cause.stack}`);
-      }
-    } else {
-      core.info(`${error.stack}`);
-    }
+    core.debug(`${error.name} cause: ${error.cause}`);
+    core.debug(`${error.name} stack: ${error.stack}`);
   } else {
     core.error(`${error}`);
   }
-  throw error;
 }
