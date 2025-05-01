@@ -1,6 +1,7 @@
 import path from "node:path";
 import core from "@actions/core";
 import { assert } from "chai";
+import { YAMLException } from "js-yaml";
 import Config from "../src/config.js";
 import Content from "../src/content.js";
 import SlackError from "../src/errors.js";
@@ -190,6 +191,11 @@ describe("content", () => {
             err.message,
             "Invalid input! Failed to parse contents of the provided payload",
           );
+          assert.isDefined(err.cause?.values);
+          assert.equal(err.cause.values.length, 2);
+          const [jsonError, yamlError] = err.cause.values;
+          assert.isTrue(jsonError instanceof SyntaxError);
+          assert.isTrue(yamlError instanceof YAMLException);
         } else {
           assert.fail("Failed to throw a SlackError", err);
         }
