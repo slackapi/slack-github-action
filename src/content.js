@@ -141,7 +141,7 @@ export default class Content {
         config.core,
         "Invalid input! Failed to parse contents of the provided payload file",
         {
-          cause: error,
+          cause: { values: [error] },
         },
       );
     }

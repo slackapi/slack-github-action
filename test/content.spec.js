@@ -340,10 +340,59 @@ describe("content", () => {
             err.message,
             "Invalid input! Failed to parse contents of the provided payload file",
           );
+          assert.isDefined(err.cause?.values);
+          assert.equal(err.cause.values.length, 1);
           assert.include(
-            err.cause.message,
+            err.cause.values[0].message,
             "Invalid input! Failed to parse file extension unknown.md",
           );
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
+    });
+
+    it("fails if invalid JSON exists in the input payload", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+            "message": "a truncated file without an end`);
+      try {
+        await send(mocks.core);
+        assert.fail("Failed to throw for invalid JSON");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
+          );
+          assert.isDefined(err.cause?.values);
+          assert.equal(err.cause.values.length, 1);
+          assert.isTrue(err.cause.values[0] instanceof SyntaxError);
+        } else {
+          assert.fail("Failed to throw a SlackError", err);
+        }
+      }
+    });
+
+    it("fails if invalid YAML exists in the input payload", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.yaml"), "utf-8")
+        .returns(`- "message": "assigned": "values"`);
+      try {
+        await send(mocks.core);
+        assert.fail("Failed to throw for invalid YAML");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.include(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
+          );
+          assert.isDefined(err.cause?.values);
+          assert.equal(err.cause.values.length, 1);
+          assert.isTrue(err.cause.values[0] instanceof YAMLException);
         } else {
           assert.fail("Failed to throw a SlackError", err);
         }
