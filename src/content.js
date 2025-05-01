@@ -90,7 +90,6 @@ export default class Content {
       }
       return JSON.parse(trimmed);
     } catch (/** @type {any} */ error) {
-      errors.unshift(error);
       throw new SlackError(
         config.core,
         "Invalid input! Failed to parse contents of the provided payload",
