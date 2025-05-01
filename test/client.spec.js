@@ -60,36 +60,104 @@ describe("client", () => {
         }
       }
     });
+  });
 
-    it("uses input arguments when constructing the web api client", async () => {
-      const spy = sinon.spy(mocks.webapi, "WebClient");
+  describe("api", async () => {
+    it("uses arguments to send to a slack api method", async () => {
+      const apis = sinon.stub().resolves({ ok: true });
+      const constructors = sinon
+        .stub(mocks.webapi, "WebClient")
+        .returns({ apiCall: apis });
       /**
        * @type {Config}
        */
       const config = {
         content: {
-          values: {},
+          values: {
+            channel: "CHANNELHERE",
+            timestamp: "1234567890.000000",
+          },
         },
         core: core,
         logger: new Logger(core).logger,
         inputs: {
-          api: "http://localhost:8080/api",
           method: "pins.add",
-          retries: "10",
           token: "xoxb-example-002",
         },
         webapi: mocks.webapi,
       };
       await new Client().post(config);
-      assert.isTrue(spy.calledWithNew());
+      assert.isTrue(constructors.calledWithNew());
       assert.isTrue(
-        spy.calledWith("xoxb-example-002", {
+        constructors.calledWith("xoxb-example-002", {
+          agent: undefined,
+          allowAbsoluteUrls: false,
+          logger: config.logger,
+          retryConfig: webapi.retryPolicies.fiveRetriesInFiveMinutes,
+          slackApiUrl: undefined,
+        }),
+      );
+      assert.isTrue(apis.calledOnce);
+      assert.isTrue(
+        apis.calledWith("pins.add", {
+          channel: "CHANNELHERE",
+          timestamp: "1234567890.000000",
+        }),
+      );
+      assert.isTrue(config.core.setOutput.calledWith("ok", true));
+    });
+
+    it("uses arguments to send to a custom api method", async () => {
+      const apis = sinon.stub().resolves({ done: true, response: "Infinite" });
+      const constructors = sinon
+        .stub(mocks.webapi, "WebClient")
+        .returns({ apiCall: apis });
+      /**
+       * @type {Config}
+       */
+      const config = {
+        content: {
+          values: {
+            model: "llama3.2",
+            prompt: "How many sides does a circle have?",
+            stream: false,
+          },
+        },
+        core: core,
+        logger: new Logger(core).logger,
+        inputs: {
+          api: "http://localhost:11434/api/",
+          method: "generate",
+          retries: "10",
+          token: "ollamapassword",
+        },
+        webapi: mocks.webapi,
+      };
+      await new Client().post(config);
+      assert.isTrue(constructors.calledWithNew());
+      assert.isTrue(
+        constructors.calledWith("ollamapassword", {
           agent: undefined,
           allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
-          slackApiUrl: "http://localhost:8080/api",
+          slackApiUrl: "http://localhost:11434/api/",
         }),
+      );
+      assert.isTrue(apis.calledOnce);
+      assert.isTrue(
+        apis.calledWith("generate", {
+          model: "llama3.2",
+          prompt: "How many sides does a circle have?",
+          stream: false,
+        }),
+      );
+      assert.isTrue(config.core.setOutput.calledWith("ok", undefined));
+      assert.isTrue(
+        config.core.setOutput.calledWith(
+          "response",
+          JSON.stringify({ done: true, response: "Infinite" }),
+        ),
       );
     });
   });
