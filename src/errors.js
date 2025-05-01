@@ -1,12 +1,17 @@
 import core from "@actions/core";
 
 /**
+ * @typedef Cause
+ * @property {Error[]} [values] - Caught exceptions.
+ */
+
+/**
  * SlackError is a custom error wrapper for known errors of Slack GitHub Action.
  */
 export default class SlackError extends Error {
   /**
    * @typedef Options
-   * @property {Error} [cause] - thrown exception of this error.
+   * @property {Cause} [cause] - Reason for an error.
    */
 
   /**
