@@ -59,6 +59,6 @@
     "mocha": "^11.1.0",
     "mocha-suppress-logs": "^0.5.1",
     "sinon": "^20.0.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
