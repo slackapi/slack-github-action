@@ -30,19 +30,44 @@ avoid accidently leaking tokens!
 
 ### Releasing
 
-* Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
-  -  If all issues have been closed, continue with the release.
-  -  If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
-  -  Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
-* Update the version in `package.json`.
-* Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release.
-* Run all tests using `npm test` to make sure the tests pass.
-* Commit the changes on your `main` branch.
-* Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`.
-* Push changes up to GitHub `git push origin main --tags`.
-* Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
-  GitHub workflow.
-* Once released, make sure to close the relevant GitHub Milestone for the version you released.
+- Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
+  - If all issues have been closed, continue with the release.
+  - If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
+  - Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
+- Checkout a branch for the release:
+
+```sh
+$ git checkout -b v1.2.3
+```
+
+- Update the version in `package.json` and `package-lock.json`:
+
+```sh
+$ npm version <major|minor|patch> --no-git-tag-version
+```
+
+- Update all references to versions in documentation and the workflow files in `example-workflows/` to the latest version:
+
+```sh
+$ grep -rl 'slackapi/slack-github-action@v1.2.2' ./docs ./example-workflows | xargs sed -i 's|slackapi/slack-github-action@v1.2.2|slackapi/slack-github-action@v1.2.3|g'
+```
+
+- Run all tests with the latest dependencies to make sure tests pass:
+
+```sh
+$ npm ci
+$ npm test
+```
+
+- Commit the changes on your release branch and open a pull request with relevant labels:
+
+```sh
+$ git commit -m "chore(release): tag version v1.2.3"
+$ git push -u origin v1.2.3
+```
+
+- After merging these changes into `main` create a new [release](https://github.com/slackapi/slack-github-action/releases/new) with a new tag - `v1.2.3` - on publish. Include relevant changes in the release notes!
+- Once released, make sure to close the relevant GitHub Milestone for the version you released.
 
 ## Workflow
 
