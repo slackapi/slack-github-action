@@ -62,7 +62,7 @@ $ npm test
 6. Commit the changes on your release branch and open a pull request with relevant labels:
 
 ```sh
-$ git commit -m "chore(release): tag version v1.2.3"
+$ git commit -m "chore(release): tag version 1.2.3"
 $ git push -u origin v1.2.3
 ```
 
