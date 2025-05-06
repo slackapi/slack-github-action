@@ -30,7 +30,7 @@ avoid accidently leaking tokens!
 
 ### Releasing
 
-1. Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
+1. Check the status of this project's GitHub [Milestone](https://github.com/slackapi/slack-github-action/milestones) to be released for issues that should be shipped with the release.
    - If all issues have been closed, continue with the release.
    - If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
    - Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
