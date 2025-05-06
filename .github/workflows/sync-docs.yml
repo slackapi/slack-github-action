@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Generate a GitHub token
         id: ghtoken
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GH_APP_ID }}
           owner: slackapi
