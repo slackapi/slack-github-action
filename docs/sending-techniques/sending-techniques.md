@@ -37,7 +37,7 @@ The following snippet shows how multiple steps can be chained together to create
 ```yaml
 - name: Create a new Slack channel for recent changes
   id: conversation
-  uses: slackapi/slack-github-action@v2.0.0
+  uses: slackapi/slack-github-action@v2.1.0
   with:
     method: conversations.create
     token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -45,7 +45,7 @@ The following snippet shows how multiple steps can be chained together to create
       name: pull-request-review-${{ github.sha }}
 - name: Send the pull request link into the Slack channel
   if: ${{ steps.conversation.outputs.ok }}
-  uses: slackapi/slack-github-action@v2.0.0
+  uses: slackapi/slack-github-action@v2.1.0
   with:
     method: chat.postMessage
     token: ${{ secrets.SLACK_BOT_TOKEN }}

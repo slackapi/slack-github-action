@@ -15,7 +15,7 @@ jobs:
 
       - name: Find correspondences
         id: email
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2.1.0
         with:
           method: users.lookupByEmail # https://api.slack.com/methods/users.lookupByEmail
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -30,7 +30,7 @@ jobs:
 
       - name: Send a direct message
         if: ${{ steps.email.outputs.ok }}
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2.1.0
         with:
           errors: true
           method: chat.postMessage # https://api.slack.com/methods/chat.postMessage
