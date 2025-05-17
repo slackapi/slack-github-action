@@ -1,6 +1,6 @@
 name: Tests
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
   push:
     branches:
       - main
@@ -15,13 +15,13 @@ jobs:
       checks: write
     steps:
       - name: "build: checkout the latest changes"
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: "build: setup the node runtime"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           cache: npm
           cache-dependency-path: package-lock.json
@@ -40,7 +40,7 @@ jobs:
         run: npm test
 
       - name: "unit(test): upload coverage to CodeCov"
-        uses: codecov/codecov-action@v5.4.2
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           directory: ./coverage
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -50,15 +50,19 @@ jobs:
 
       - name: "pretest(inputs): save the push event trigger commit URL"
         if: "contains(github.event_name, 'push')"
+        id: push
         run: |
-          url=${{ github.event.head_commit.url }}
-          echo "EVENT_URL=$url" >> "$GITHUB_ENV"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+        env:
+          URL: ${{ github.event.head_commit.url }}
 
       - name: "pretest(inputs): save the pull request event trigger commit URL"
         if: "contains(github.event_name, 'pull_request')"
+        id: pull_request
         run: |
-          url=${{ github.event.pull_request.html_url }}
-          echo "EVENT_URL=$url" >> "$GITHUB_ENV"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+        env:
+          URL: ${{ github.event.pull_request.html_url }}
 
       - name: "integration(wfb): send a payload to workflow builder via webhook trigger"
         id: wfb
@@ -70,12 +74,14 @@ jobs:
           payload: |
             author: ${{ github.event.sender.login }}
             channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-            event_url: ${{ env.EVENT_URL}}
+            event_url: ${{ steps.push.outputs.url || steps.pull_request.outputs.url }}
             repo_name: ${{ github.event.repository.full_name }}
             status: ${{ job.status }}
 
       - name: "integration(wfb): confirm a payload was sent"
-        run: test -n "${{ steps.wfb.outputs.time }}"
+        run: test -n "$WFB_OUTPUT_TIME"
+        env:
+          WFB_OUTPUT_TIME: ${{ steps.wfb.outputs.time }}
 
       - name: "integration(botToken): post a message to channel"
         id: message
@@ -89,7 +95,9 @@ jobs:
             text: ":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>"
 
       - name: "integration(method): confirm a message was posted"
-        run: test -n "${{ steps.message.outputs.ts }}"
+        run: test -n "$MESSAGE_OUTPUT_TS"
+        env:
+          MESSAGE_OUTPUT_TS: ${{ steps.message.outputs.ts }}
 
       - name: "integration(method): post a message with blocks"
         id: blocks
@@ -109,7 +117,9 @@ jobs:
                     value: "Processing"
 
       - name: "integration(method): confirm the blocks were posted"
-        run: test -n "${{ steps.blocks.outputs.ts }}"
+        run: test -n "$BLOCKS_OUTPUT_TS"
+        env:
+          BLOCKS_OUTPUT_TS: ${{ steps.blocks.outputs.ts }}
 
       - name: "integration(method): post a threaded message"
         id: timer
@@ -124,7 +134,9 @@ jobs:
             thread_ts: "${{ steps.blocks.outputs.ts }}"
 
       - name: "integration(incoming): confirm the thread started"
-        run: test -n "${{ steps.timer.outputs.time }}"
+        run: test -n "$TIMER_OUTPUT_TIME"
+        env:
+          TIMER_OUTPUT_TIME: ${{ steps.timer.outputs.time }}
 
       - name: "integration(method): wait to mock event processing"
         run: sleep 3
@@ -184,7 +196,9 @@ jobs:
             name: "tada"
 
       - name: "integration(method): confirm the thread ended"
-        run: test -n "${{ steps.done.outputs.time }}"
+        run: test -n "$DONE_OUTPUT_TIME"
+        env:
+          DONE_OUTPUT_TIME: ${{ steps.done.outputs.time }}
 
       - name: "integration(incoming): post a message via incoming webhook"
         id: incoming
@@ -203,10 +217,12 @@ jobs:
                   emoji: true
 
       - name: "integration(incoming): confirm a webhook was posted"
-        run: test -n "${{ steps.incoming.outputs.time }}"
+        run: test -n "$INCOMING_WEBHOOK_OUTPUT_TIME"
+        env:
+          INCOMING_WEBHOOK_OUTPUT_TIME: ${{ steps.incoming.outputs.time }}
 
       - name: "integration(incoming): reveal contents of the github payload"
-        run: echo $JSON
+        run: echo "$JSON"
         env:
           JSON: ${{ toJSON(github) }}
 
@@ -224,10 +240,12 @@ jobs:
           ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}
 
       - name: "integration(incoming): confirm a payload file was posted"
-        run: test -n "${{ steps.payload_file.outputs.time }}"
+        run: test -n "$PAYLOAD_FILE_OUTPUT_TIME"
+        env:
+          PAYLOAD_FILE_OUTPUT_TIME: ${{ steps.payload_file.outputs.time }}
 
       - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@v0.1.1
+        uses: slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7 # v0.1.1
         with:
           codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
