@@ -9,3 +9,5 @@ node_modules
 
 # Testing remnants
 coverage
+
+.docusaurus-preview/
