@@ -87,13 +87,53 @@ describe("content", () => {
     it("templatizes variables with matching variables", async () => {
       mocks.core.getInput
         .withArgs("payload")
-        .returns("message: Served ${{ env.NUMBER }} from ${{ github.apiUrl }}");
+        .returns(`
+          channel: C0123456789
+          reply_broadcast: false
+          message: Served \${{ env.NUMBER }} from \${{ github.apiUrl }}
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: "Served \${{ env.NUMBER }} on: \${{ env.DETAILS }}"
+            - type: divider
+            - type: section
+              text:
+                type: mrkdwn
+                text: "> From \${{ github.apiUrl }}"
+        `);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.DETAILS = `
+-fri
+-sat
+-sun`
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
+      process.env.DETAILS = undefined;
       process.env.NUMBER = undefined;
       const expected = {
+        channel: "C0123456789",
+        reply_broadcast: false,
         message: "Served 12 from https://api.github.com",
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "Served 12 on: \n-fri\n-sat\n-sun"
+            }
+          },
+          {
+            type: "divider"
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "> From https://api.github.com"
+            }
+          }
+        ]
       };
       assert.deepEqual(config.content.values, expected);
     });
@@ -257,14 +297,61 @@ describe("content", () => {
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
         .returns(`{
-            "message": "Served $\{\{ env.NUMBER }} from $\{\{ github.apiUrl }}"
+            "channel": "C0123456789",
+            "reply_broadcast": false,
+            "message": "Served \${{ env.NUMBER }} from \${{ github.apiUrl }}",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Served \${{ env.NUMBER }} on: \${{ env.DETAILS }}"
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "> From \${{ github.apiUrl }}"
+                }
+              }
+            ]
           }`);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.DETAILS = `
+-fri
+-sat
+-sun`
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
+      process.env.DETAILS = undefined;
       process.env.NUMBER = undefined;
       const expected = {
+        channel: "C0123456789",
+        reply_broadcast: false,
         message: "Served 12 from https://api.github.com",
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "Served 12 on: \n-fri\n-sat\n-sun"
+            }
+          },
+          {
+            type: "divider"
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "> From https://api.github.com"
+            }
+          }
+        ]
       };
       assert.deepEqual(config.content.values, expected);
     });

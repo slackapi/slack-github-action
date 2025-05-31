@@ -37,6 +37,9 @@ export default class Content {
         this.values = github.context;
         break;
     }
+    if (config.inputs.payloadTemplated) {
+      this.values = this.templatize(this.values);
+    }
     if (config.inputs.payloadDelimiter) {
       this.values = flatten(this.values, {
         delimiter: config.inputs.payloadDelimiter,
@@ -63,9 +66,8 @@ export default class Content {
       );
     }
     try {
-      const input = this.templatize(config, config.inputs.payload);
       const content = /** @type {Content} */ (
-        yaml.load(input, {
+        yaml.load(config.inputs.payload, {
           schema: yaml.JSON_SCHEMA,
         })
       );
@@ -119,18 +121,17 @@ export default class Content {
         path.resolve(config.inputs.payloadFilePath),
         "utf-8",
       );
-      const content = this.templatize(config, input);
       if (
         config.inputs.payloadFilePath.endsWith("yaml") ||
         config.inputs.payloadFilePath.endsWith("yml")
       ) {
-        const load = yaml.load(content, {
+        const load = yaml.load(input, {
           schema: yaml.JSON_SCHEMA,
         });
         return /** @type {Content} */ (load);
       }
       if (config.inputs.payloadFilePath.endsWith("json")) {
-        return JSON.parse(content);
+        return JSON.parse(input);
       }
       throw new SlackError(
         config.core,
@@ -148,20 +149,32 @@ export default class Content {
   }
 
   /**
-   * Replace templated variables in the provided content if requested.
-   * @param {Config} config
-   * @param {string} input - The initial value of the content.
-   * @returns {string} Content with templatized variables replaced.
+   * Replace templated variables in the provided content as requested.
+   * @param {unknown} input - The initial value of the content.
+   * @returns {unknown} Content with templatized variables replaced.
    */
-  templatize(config, input) {
-    if (!config.inputs.payloadTemplated) {
-      return input;
+  templatize(input) {
+    if (Array.isArray(input)) {
+      return input.map((v) => this.templatize(v));
     }
-    const template = input.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
-    const context = {
-      env: process.env,
-      github: github.context,
-    };
-    return markup.up(template, context);
+    if (input && typeof input === "object") {
+      /**
+       * @type {any}
+       */
+      const out = {};
+      for (const [k, v] of Object.entries(input)) {
+        out[k] = this.templatize(v);
+      }
+      return out;
+    }
+    if (typeof input === "string") {
+      const template = input.replace(/\$\{\{/g, "{{"); // swap ${{ for {{
+      const context = {
+        env: process.env,
+        github: github.context,
+      };
+      return markup.up(template, context);
+    }
+    return input;
   }
 }
