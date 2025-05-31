@@ -85,9 +85,7 @@ describe("content", () => {
     });
 
     it("templatizes variables with matching variables", async () => {
-      mocks.core.getInput
-        .withArgs("payload")
-        .returns(`
+      mocks.core.getInput.withArgs("payload").returns(`
           channel: C0123456789
           reply_broadcast: false
           message: Served \${{ env.NUMBER }} from \${{ github.apiUrl }}
@@ -106,7 +104,7 @@ describe("content", () => {
       process.env.DETAILS = `
 -fri
 -sat
--sun`
+-sun`;
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
       process.env.DETAILS = undefined;
@@ -120,20 +118,20 @@ describe("content", () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "Served 12 on: \n-fri\n-sat\n-sun"
-            }
+              text: "Served 12 on: \n-fri\n-sat\n-sun",
+            },
           },
           {
-            type: "divider"
+            type: "divider",
           },
           {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "> From https://api.github.com"
-            }
-          }
-        ]
+              text: "> From https://api.github.com",
+            },
+          },
+        ],
       };
       assert.deepEqual(config.content.values, expected);
     });
@@ -324,7 +322,7 @@ describe("content", () => {
       process.env.DETAILS = `
 -fri
 -sat
--sun`
+-sun`;
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
       process.env.DETAILS = undefined;
@@ -338,20 +336,20 @@ describe("content", () => {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "Served 12 on: \n-fri\n-sat\n-sun"
-            }
+              text: "Served 12 on: \n-fri\n-sat\n-sun",
+            },
           },
           {
-            type: "divider"
+            type: "divider",
           },
           {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "> From https://api.github.com"
-            }
-          }
-        ]
+              text: "> From https://api.github.com",
+            },
+          },
+        ],
       };
       assert.deepEqual(config.content.values, expected);
     });
