@@ -88,17 +88,37 @@ describe("content", () => {
       mocks.core.getInput.withArgs("payload").returns(`
           channel: C0123456789
           reply_broadcast: false
-          message: Served \${{ env.NUMBER }} from \${{ github.apiUrl }}
+          message: Served \${{ env.NUMBER }} items
           blocks:
             - type: section
               text:
                 type: mrkdwn
-                text: "Served \${{ env.NUMBER }} on: \${{ env.DETAILS }}"
+                text: "Served \${{ env.NUMBER }} items on: \${{ env.DETAILS }}"
             - type: divider
             - type: section
+              block_id: selector
               text:
                 type: mrkdwn
-                text: "> From \${{ github.apiUrl }}"
+                text: Send feedback
+              accessory:
+                action_id: response
+                type: multi_static_select
+                placeholder:
+                  type: plain_text
+                  text: Select URL
+                options:
+                - text:
+                    type: plain_text
+                    text: "\${{ github.apiUrl }}"
+                  value: api
+                - text:
+                    type: plain_text
+                    text: "\${{ github.serverUrl }}"
+                  value: server
+                - text:
+                    type: plain_text
+                    text: "\${{ github.graphqlUrl }}"
+                  value: graphql
         `);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
       process.env.DETAILS = `
@@ -112,13 +132,13 @@ describe("content", () => {
       const expected = {
         channel: "C0123456789",
         reply_broadcast: false,
-        message: "Served 12 from https://api.github.com",
+        message: "Served 12 items",
         blocks: [
           {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "Served 12 on: \n-fri\n-sat\n-sun",
+              text: "Served 12 items on: \n-fri\n-sat\n-sun",
             },
           },
           {
@@ -126,11 +146,43 @@ describe("content", () => {
           },
           {
             type: "section",
+            block_id: "selector",
             text: {
               type: "mrkdwn",
-              text: "> From https://api.github.com",
+              text: "Send feedback"
             },
-          },
+            accessory: {
+              action_id: "response",
+              type: "multi_static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Select URL"
+              },
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com"
+                  },
+                  value: "api"
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://github.com"
+                  },
+                  value: "server"
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com/graphql"
+                  },
+                  value: "graphql"
+                }
+              ]
+            }
+          }
         ],
       };
       assert.deepEqual(config.content.values, expected);
@@ -297,13 +349,13 @@ describe("content", () => {
         .returns(`{
             "channel": "C0123456789",
             "reply_broadcast": false,
-            "message": "Served \${{ env.NUMBER }} from \${{ github.apiUrl }}",
+            "message": "Served \${{ env.NUMBER }} items",
             "blocks": [
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "Served \${{ env.NUMBER }} on: \${{ env.DETAILS }}"
+                  "text": "Served \${{ env.NUMBER }} items on: \${{ env.DETAILS }}"
                 }
               },
               {
@@ -311,9 +363,41 @@ describe("content", () => {
               },
               {
                 "type": "section",
+                "block_id": "selector",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "> From \${{ github.apiUrl }}"
+                  "text": "Send feedback"
+                },
+                "accessory": {
+                  "action_id": "response",
+                  "type": "multi_static_select",
+                  "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select URL"
+                  },
+                  "options": [
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.apiUrl }}"
+                      },
+                      "value": "api"
+                    },
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.serverUrl }}"
+                      },
+                      "value": "server"
+                    },
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.graphqlUrl }}"
+                      },
+                      "value": "graphql"
+                    }
+                  ]
                 }
               }
             ]
@@ -330,13 +414,13 @@ describe("content", () => {
       const expected = {
         channel: "C0123456789",
         reply_broadcast: false,
-        message: "Served 12 from https://api.github.com",
+        message: "Served 12 items",
         blocks: [
           {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: "Served 12 on: \n-fri\n-sat\n-sun",
+              text: "Served 12 items on: \n-fri\n-sat\n-sun",
             },
           },
           {
@@ -344,11 +428,43 @@ describe("content", () => {
           },
           {
             type: "section",
+            block_id: "selector",
             text: {
               type: "mrkdwn",
-              text: "> From https://api.github.com",
+              text: "Send feedback"
             },
-          },
+            accessory: {
+              action_id: "response",
+              type: "multi_static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Select URL"
+              },
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com"
+                  },
+                  value: "api"
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://github.com"
+                  },
+                  value: "server"
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com/graphql"
+                  },
+                  value: "graphql"
+                }
+              ]
+            }
+          }
         ],
       };
       assert.deepEqual(config.content.values, expected);
