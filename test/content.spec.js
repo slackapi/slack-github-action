@@ -163,40 +163,40 @@ describe("content", () => {
             block_id: "selector",
             text: {
               type: "mrkdwn",
-              text: "Send feedback"
+              text: "Send feedback",
             },
             accessory: {
               action_id: "response",
               type: "multi_static_select",
               placeholder: {
                 type: "plain_text",
-                text: "Select URL"
+                text: "Select URL",
               },
               options: [
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://api.github.com"
+                    text: "https://api.github.com",
                   },
-                  value: "api"
+                  value: "api",
                 },
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://github.com"
+                    text: "https://github.com",
                   },
-                  value: "server"
+                  value: "server",
                 },
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://api.github.com/graphql"
+                    text: "https://api.github.com/graphql",
                   },
-                  value: "graphql"
-                }
-              ]
-            }
-          }
+                  value: "graphql",
+                },
+              ],
+            },
+          },
         ],
       };
       assert.deepEqual(config.content.values, expected);
@@ -373,7 +373,6 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
-
     it("templatizes variables with matching variables", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       mocks.fs.readFileSync
@@ -463,40 +462,40 @@ describe("content", () => {
             block_id: "selector",
             text: {
               type: "mrkdwn",
-              text: "Send feedback"
+              text: "Send feedback",
             },
             accessory: {
               action_id: "response",
               type: "multi_static_select",
               placeholder: {
                 type: "plain_text",
-                text: "Select URL"
+                text: "Select URL",
               },
               options: [
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://api.github.com"
+                    text: "https://api.github.com",
                   },
-                  value: "api"
+                  value: "api",
                 },
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://github.com"
+                    text: "https://github.com",
                   },
-                  value: "server"
+                  value: "server",
                 },
                 {
                   text: {
                     type: "plain_text",
-                    text: "https://api.github.com/graphql"
+                    text: "https://api.github.com/graphql",
                   },
-                  value: "graphql"
-                }
-              ]
-            }
-          }
+                  value: "graphql",
+                },
+              ],
+            },
+          },
         ],
       };
       assert.deepEqual(config.content.values, expected);
