@@ -159,7 +159,7 @@ export default class Content {
     }
     if (input && typeof input === "object") {
       /**
-       * @type {any}
+       * @type {Record<string, unknown>}
        */
       const out = {};
       for (const [k, v] of Object.entries(input)) {
