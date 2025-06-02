@@ -84,6 +84,20 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
+    it("templatizes variables requires configuration", async () => {
+      mocks.core.getInput.withArgs("payload").returns(`{
+          "message": "this matches an existing variable: \${{ github.apiUrl }}",
+          "channel": "C0123456789"
+        }
+      `);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "this matches an existing variable: ${{ github.apiUrl }}",
+        channel: "C0123456789",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
     it("templatizes variables with matching variables", async () => {
       mocks.core.getInput.withArgs("payload").returns(`
           channel: C0123456789
@@ -341,6 +355,24 @@ describe("content", () => {
       };
       assert.deepEqual(config.content.values, expected);
     });
+
+    it("templatizes variables requires configuration", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+          "message": "this matches an existing variable: \${{ github.apiUrl }}",
+          "channel": "C0123456789"
+        }
+      `);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "this matches an existing variable: ${{ github.apiUrl }}",
+        channel: "C0123456789",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
 
     it("templatizes variables with matching variables", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
