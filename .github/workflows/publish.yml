@@ -40,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Create a branch for tagged release
-        run:
+        run: |
           git fetch origin "$SHA"
           git checkout -b "release/$TAG" "$SHA"
           git push origin "release/$TAG"
