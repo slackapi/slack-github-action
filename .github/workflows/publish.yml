@@ -41,6 +41,7 @@ jobs:
 
       - name: Create a branch for tagged release
         run:
+          git fetch origin "$SHA"
           git checkout -b "release/$TAG" "$SHA"
           git push origin "release/$TAG"
         env:
