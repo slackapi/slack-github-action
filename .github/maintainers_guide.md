@@ -46,28 +46,22 @@ $ git checkout -b v1.2.3
 $ npm version <major|minor|patch> --no-git-tag-version
 ```
 
-4. Update all references to versions in documentation and the workflow files in `example-workflows/` to the latest version:
-
-```sh
-$ grep -rl 'slackapi/slack-github-action@v1.2.2' ./docs ./example-workflows | xargs sed -i 's|slackapi/slack-github-action@v1.2.2|slackapi/slack-github-action@v1.2.3|g'
-```
-
-5. Run all tests with the latest dependencies to make sure tests pass:
+4. Run all tests with the latest dependencies to make sure tests pass:
 
 ```sh
 $ npm ci
 $ npm test
 ```
 
-6. Commit the changes on your release branch and open a pull request with relevant labels:
+5. Commit the changes on your release branch and open a pull request with relevant labels:
 
 ```sh
 $ git commit -m "chore(release): tag version 1.2.3"
 $ git push -u origin v1.2.3
 ```
 
-7. After merging these changes into `main` create a new [release](https://github.com/slackapi/slack-github-action/releases/new) with a new tag - `v1.2.3` - on publish. Include relevant changes in the release notes!
-8. Once released, make sure to close the relevant GitHub Milestone for the version you released.
+6. After merging these changes into `main` create a new [release](https://github.com/slackapi/slack-github-action/releases/new) with a new tag - `v1.2.3` - on publish. Include relevant changes in the release notes!
+7. Once released, make sure to close the relevant GitHub Milestone for the version you released.
 
 ## Workflow
 

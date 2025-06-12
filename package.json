@@ -10,7 +10,8 @@
     "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:20-buster --container-architecture linux/amd64",
     "lint:fix": "biome check --write",
     "lint": "biome check",
-    "test": "c8 mocha test/*.spec.js"
+    "test": "c8 mocha test/*.spec.js",
+    "version": "TAG=\"v$(npm pkg get version | jq -r)\" && grep -rl 'slackapi/slack-github-action@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action@v.*|slackapi/slack-github-action@${TAG}|g\""
   },
   "repository": {
     "type": "git",
