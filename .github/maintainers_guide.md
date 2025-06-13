@@ -40,7 +40,7 @@ avoid accidently leaking tokens!
 $ git checkout -b v1.2.3
 ```
 
-3. Update the version in `package.json` and `package-lock.json`:
+3. Update the version in `package.json` and `package-lock.json` and examples:
 
 ```sh
 $ npm version <major|minor|patch> --no-git-tag-version
