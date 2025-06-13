@@ -60,6 +60,8 @@ As a maintainer, the development you do will be almost entirely off of your fork
 
 `main` is where active development occurs.
 
+`release/vX.Y.Z` has the packaged distribution of a particular version based from the changes on `main`. This is created using a workflow when new releases are published.
+
 When developing, branches should be created off of your fork and not directly off of this repository. If working on a long-running feature and in collaboration with others, a corresponding branch of the same name is permitted. This makes collaboration on a single branch possible, as contributors working on the same feature cannot push commits to others' open Pull Requests.
 
 After a major version increment, there also may be maintenance branches created specifically for supporting older major versions.
