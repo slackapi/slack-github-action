@@ -84,16 +84,120 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
+    it("templatizes variables requires configuration", async () => {
+      mocks.core.getInput.withArgs("payload").returns(`{
+          "message": "this matches an existing variable: \${{ github.apiUrl }}",
+          "channel": "C0123456789"
+        }
+      `);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "this matches an existing variable: ${{ github.apiUrl }}",
+        channel: "C0123456789",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
     it("templatizes variables with matching variables", async () => {
-      mocks.core.getInput
-        .withArgs("payload")
-        .returns("message: Served ${{ env.NUMBER }} from ${{ github.apiUrl }}");
+      mocks.core.getInput.withArgs("payload").returns(`
+          channel: C0123456789
+          reply_broadcast: false
+          message: Served \${{ env.NUMBER }} items
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: "Served \${{ env.NUMBER }} items on: \${{ env.DETAILS }}"
+            - type: divider
+            - type: section
+              block_id: selector
+              text:
+                type: mrkdwn
+                text: Send feedback
+              accessory:
+                action_id: response
+                type: multi_static_select
+                placeholder:
+                  type: plain_text
+                  text: Select URL
+                options:
+                - text:
+                    type: plain_text
+                    text: "\${{ github.apiUrl }}"
+                  value: api
+                - text:
+                    type: plain_text
+                    text: "\${{ github.serverUrl }}"
+                  value: server
+                - text:
+                    type: plain_text
+                    text: "\${{ github.graphqlUrl }}"
+                  value: graphql
+        `);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.DETAILS = `
+-fri
+-sat
+-sun`;
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
+      process.env.DETAILS = undefined;
       process.env.NUMBER = undefined;
       const expected = {
-        message: "Served 12 from https://api.github.com",
+        channel: "C0123456789",
+        reply_broadcast: false,
+        message: "Served 12 items",
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "Served 12 items on: \n-fri\n-sat\n-sun",
+            },
+          },
+          {
+            type: "divider",
+          },
+          {
+            type: "section",
+            block_id: "selector",
+            text: {
+              type: "mrkdwn",
+              text: "Send feedback",
+            },
+            accessory: {
+              action_id: "response",
+              type: "multi_static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Select URL",
+              },
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com",
+                  },
+                  value: "api",
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://github.com",
+                  },
+                  value: "server",
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com/graphql",
+                  },
+                  value: "graphql",
+                },
+              ],
+            },
+          },
+        ],
       };
       assert.deepEqual(config.content.values, expected);
     });
@@ -252,19 +356,147 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
+    it("templatizes variables requires configuration", async () => {
+      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.fs.readFileSync
+        .withArgs(path.resolve("example.json"), "utf-8")
+        .returns(`{
+          "message": "this matches an existing variable: \${{ github.apiUrl }}",
+          "channel": "C0123456789"
+        }
+      `);
+      const config = new Config(mocks.core);
+      const expected = {
+        message: "this matches an existing variable: ${{ github.apiUrl }}",
+        channel: "C0123456789",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
     it("templatizes variables with matching variables", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
         .returns(`{
-            "message": "Served $\{\{ env.NUMBER }} from $\{\{ github.apiUrl }}"
+            "channel": "C0123456789",
+            "reply_broadcast": false,
+            "message": "Served \${{ env.NUMBER }} items",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Served \${{ env.NUMBER }} items on: \${{ env.DETAILS }}"
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "block_id": "selector",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Send feedback"
+                },
+                "accessory": {
+                  "action_id": "response",
+                  "type": "multi_static_select",
+                  "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select URL"
+                  },
+                  "options": [
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.apiUrl }}"
+                      },
+                      "value": "api"
+                    },
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.serverUrl }}"
+                      },
+                      "value": "server"
+                    },
+                    {
+                      "text": {
+                        "type": "plain_text",
+                        "text": "\${{ github.graphqlUrl }}"
+                      },
+                      "value": "graphql"
+                    }
+                  ]
+                }
+              }
+            ]
           }`);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      process.env.DETAILS = `
+-fri
+-sat
+-sun`;
       process.env.NUMBER = 12;
       const config = new Config(mocks.core);
+      process.env.DETAILS = undefined;
       process.env.NUMBER = undefined;
       const expected = {
-        message: "Served 12 from https://api.github.com",
+        channel: "C0123456789",
+        reply_broadcast: false,
+        message: "Served 12 items",
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "Served 12 items on: \n-fri\n-sat\n-sun",
+            },
+          },
+          {
+            type: "divider",
+          },
+          {
+            type: "section",
+            block_id: "selector",
+            text: {
+              type: "mrkdwn",
+              text: "Send feedback",
+            },
+            accessory: {
+              action_id: "response",
+              type: "multi_static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Select URL",
+              },
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com",
+                  },
+                  value: "api",
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://github.com",
+                  },
+                  value: "server",
+                },
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "https://api.github.com/graphql",
+                  },
+                  value: "graphql",
+                },
+              ],
+            },
+          },
+        ],
       };
       assert.deepEqual(config.content.values, expected);
     });

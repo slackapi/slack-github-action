@@ -35,7 +35,7 @@ Posting a message with the [`chat.postMessage`](https://docs.slack.dev/reference
     token: ${{ secrets.SLACK_BOT_TOKEN }}
     payload: |
       channel: ${{ secrets.SLACK_CHANNEL_ID }}
-      text: "howdy <@channel>!"
+      text: "howdy <!channel>!"
 ```
 
 ### Posting a message with blocks
