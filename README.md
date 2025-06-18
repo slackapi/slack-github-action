@@ -16,14 +16,11 @@ Use this GitHub Action to:
 
 ### Versioning
 
-We recommend using the latest version of this Action for the most recent updates
-and fixes.
+We recommend using the latest version of this Action for the most recent updates and fixes.
 
-Migration guides are available in the [release notes][releases] with breaking
-changes noted between versions.
+Migration guides are available in the [release notes](https://github.com/slackapi/slack-github-action/releases) with breaking changes noted between versions.
 
-Changes required when upgrading from `@v1` to `@v2` are included in this
-[migration guide][v2.0.0].
+Changes required when upgrading from `@v1` to `@v2` are included in this [migration guide](https://github.com/slackapi/slack-github-action/releases/tag/v2.0.0).
 
 ### License
 
@@ -31,9 +28,4 @@ This project is licensed under the [MIT license](LICENSE).
 
 ### Contributing
 
-All contributions are encouraged! Check out the
-[contributor's guide][contributing] to learn more.
-
-[contributing]: .github/contributing.md
-[releases]: https://github.com/slackapi/slack-github-action/releases
-[v2.0.0]: https://github.com/slackapi/slack-github-action/releases/tag/v2.0.0
+All contributions are encouraged! Check out the [contributor's guide](.github/contributing.md) to learn more.
