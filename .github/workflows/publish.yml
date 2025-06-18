@@ -2,7 +2,7 @@ name: Publish
 
 on:
   release:
-    types:
+    types: 
       - published
       - edited
 
