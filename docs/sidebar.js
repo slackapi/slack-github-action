@@ -1,3 +1,15 @@
+/**
+ * this script sets the slack github action docs sidebar 
+ * 
+ * sidebar values take the form of "slack-github-action/path-within-docs/"
+ * in other words - full path but remove "docs"
+ *
+ * for info on syntax see https://docusaurus.io/docs/sidebar
+ *
+ * this file is copied into slackapi.gibhub.io/slack-github-action/sidebar.js 
+ * it is then called in slackapi.github.io/sidebars.js
+ */
+
 export default [
   {
     type: 'doc',
