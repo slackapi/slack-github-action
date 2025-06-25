@@ -119,7 +119,7 @@ or, in other words - full path but remove "docs"
 
 for info on syntax see https://docusaurus.io/docs/sidebar
 
-this file is copied into slackapi.gibhub.io/slack-github-action/sidebar.js it is then called in slackapi.github.io/sidebars.js
+this file is copied into slackapi.github.io/slack-github-action/sidebar.js it is then called in slackapi.github.io/sidebars.js
 
 ## Everything else
 
