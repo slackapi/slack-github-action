@@ -115,7 +115,9 @@ We appreciate markdown edits from anyone!!!
 
 sidebar values take the form of "slack-github-action/path-within-docs/"
 
-or, in other words - full path but remove "docs"
+or, in other words - full path but remove "docs":
+path: slack-github-action/docs/sending-variables.md
+value: slack-github-action/sending-variables
 
 for info on syntax see https://docusaurus.io/docs/sidebar
 
