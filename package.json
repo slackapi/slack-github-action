@@ -58,7 +58,7 @@
     "chai": "^5.1.2",
     "mocha": "^11.7.1",
     "mocha-suppress-logs": "^0.6.0",
-    "sinon": "^20.0.0",
+    "sinon": "^21.0.0",
     "typescript": "^5.8.3"
   }
 }
