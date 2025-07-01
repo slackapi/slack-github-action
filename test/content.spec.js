@@ -91,10 +91,12 @@ describe("content", () => {
         }
       `);
       const config = new Config(mocks.core);
+      // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
       const expected = {
         message: "this matches an existing variable: ${{ github.apiUrl }}",
         channel: "C0123456789",
       };
+      // biome-ignore-end lint/suspicious/noTemplateCurlyInString: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#using-contexts-to-access-variable-values
       assert.deepEqual(config.content.values, expected);
     });
 
@@ -206,9 +208,11 @@ describe("content", () => {
      * @see {@link https://github.com/slackapi/slack-github-action/issues/203}
      */
     it("templatizes variables with missing variables", async () => {
+      // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
       mocks.core.getInput
         .withArgs("payload")
         .returns("message: What makes ${{ env.TREASURE }} a secret");
+      // biome-ignore-end lint/suspicious/noTemplateCurlyInString: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#using-contexts-to-access-variable-values
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
       const config = new Config(mocks.core);
       const expected = {
@@ -366,10 +370,12 @@ describe("content", () => {
         }
       `);
       const config = new Config(mocks.core);
+      // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
       const expected = {
         message: "this matches an existing variable: ${{ github.apiUrl }}",
         channel: "C0123456789",
       };
+      // biome-ignore-end lint/suspicious/noTemplateCurlyInString: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#using-contexts-to-access-variable-values
       assert.deepEqual(config.content.values, expected);
     });
 

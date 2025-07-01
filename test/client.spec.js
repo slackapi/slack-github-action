@@ -206,8 +206,8 @@ describe("client", () => {
         );
         assert.equal(mocks.core.setOutput.getCall(5).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 6);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         assert.fail("Unexpected error when calling the method");
       }
     });
@@ -244,8 +244,8 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(2).lastArg, "C0101010101");
         assert.equal(mocks.core.setOutput.getCall(3).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 4);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         assert.fail("Unexpected error when calling the method");
       }
     });
@@ -277,8 +277,8 @@ describe("client", () => {
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         assert.fail("Unexpected error when calling the method");
       }
     });
@@ -305,7 +305,7 @@ describe("client", () => {
         mocks.calls.rejects(errors.requestErrorWithOriginal(response, true));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
-      } catch (error) {
+      } catch (_err) {
         assert.isTrue(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
@@ -340,7 +340,7 @@ describe("client", () => {
         mocks.calls.rejects(errors.httpErrorFromResponse(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
-      } catch (error) {
+      } catch (_err) {
         assert.isFalse(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
@@ -376,7 +376,7 @@ describe("client", () => {
         mocks.calls.rejects(errors.platformErrorFromResult(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
-      } catch (error) {
+      } catch (_err) {
         assert.isTrue(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
@@ -405,7 +405,7 @@ describe("client", () => {
         mocks.calls.rejects(errors.platformErrorFromResult(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
-      } catch (error) {
+      } catch (_err) {
         assert.isFalse(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
@@ -431,7 +431,7 @@ describe("client", () => {
         mocks.calls.rejects(errors.rateLimitedErrorWithDelay(12));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
-      } catch (error) {
+      } catch (_err) {
         assert.isFalse(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
