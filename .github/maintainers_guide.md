@@ -109,6 +109,39 @@ level of information with labels. An issue should have **one** of the following 
 Issues are closed when a resolution has been reached. If for any reason a closed issue seems
 relevant once again, reopening is great and better than creating a duplicate issue.
 
+## Docs
+
+This repo contains two types of docs files:
+
+* markdown files
+* sidebar.json
+
+The private repo containing the tools.slack.dev site pulls these in at build time.
+
+Maintainers need to use the `run workflow` button associated with the `deploy` workflow in that private repo  to update the docs with changes from here. 
+
+### Markdown Files
+
+The markdown files here are secretly mdx files in disguise.
+
+If you'd like to add images to pages, add the image files to the same folder the md file is in.
+
+We appreciate markdown edits from anyone!!! 
+
+### Sidebar
+
+`_sidebar.json` sets the slack github action docs sidebar 
+
+sidebar values take the form of "slack-github-action/path-within-docs/"
+
+or, in other words - full path but remove "docs":
+path: slack-github-action/docs/sending-variables.md
+value: slack-github-action/sending-variables
+
+for info on syntax see https://docusaurus.io/docs/sidebar
+
+this file is copied into slackapi.github.io/slack-github-action/sidebar.js it is then called in slackapi.github.io/sidebars.js
+
 ## Everything else
 
 When in doubt, find the other maintainers and ask.
