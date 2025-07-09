@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Create a new Slack channel for communications
         id: conversation
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
           method: conversations.create # https://api.slack.com/methods/conversations.create
@@ -22,7 +22,7 @@ jobs:
             name: issue-${{ github.event.issue.number }}
 
       - name: Send the issue link into the Slack channel
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage # https://api.slack.com/methods/chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -32,7 +32,7 @@ jobs:
 
       - name: Gather information of those to add
         id: members
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
           method: usergroups.users.list # https://api.slack.com/methods/usergroups.users.list
@@ -46,7 +46,7 @@ jobs:
           echo "SLACK_USERGROUP_USER_IDS=$SLACK_USERGROUP_USER_IDS" >> $GITHUB_ENV
 
       - name: Add the usergroup to the channel
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
           method: conversations.invite # https://api.slack.com/methods/conversations.invite
