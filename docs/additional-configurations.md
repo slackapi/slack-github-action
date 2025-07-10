@@ -10,7 +10,7 @@ The `errors` option defaults to `false` so failed requests do not cause the step
 
 ```yaml
 - name: Attempt to call an unknown method
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     errors: true
     method: chat.reverse
@@ -29,7 +29,7 @@ The `payload-delimiter` option will flatten the input payload using the provided
 
 ```yaml
 - name: Flatten the default GitHub payload
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     payload-delimiter: "_"
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -44,7 +44,7 @@ Additional variables provided in the GitHub event [context](https://github.com/a
 
 ```yaml
 - name: Send custom JSON data to Slack workflow
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     payload-file-path: "./payload-slack-content.json"
     payload-templated: true
@@ -60,7 +60,7 @@ If you need to use a proxy to connect to Slack, you can use the `proxy` option. 
 
 ```yaml
 - name: Post to a Slack channel via a proxy
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     method: chat.postMessage
     proxy: "http://proxy.example.org:8080" # Change this to a custom value
@@ -85,7 +85,7 @@ The `retries` option can be configured to the needs of your workflow with one of
 
 ```yaml
 - name: Attempt a burst of requests
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     method: chat.postMessage
     retries: RAPID
@@ -103,7 +103,7 @@ In certain circumstances, such as testing the sent payload, a [custom API URL](h
 
 ```yaml
 - name: Send to a custom API URL
-  uses: slackapi/slack-github-action@v2.1.0
+  uses: slackapi/slack-github-action@v2.1.1
   with:
     api: http://localhost:8080
     method: chat.postMessage
