@@ -30,19 +30,39 @@ avoid accidently leaking tokens!
 
 ### Releasing
 
-* Check the status of this project's GitHub Milestone to be released for issues that should be shipped with the release.
-  -  If all issues have been closed, continue with the release.
-  -  If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
-  -  Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
-* Update the version in `package.json`.
-* Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release.
-* Run all tests using `npm test` to make sure the tests pass.
-* Commit the changes on your `main` branch.
-* Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`.
-* Push changes up to GitHub `git push origin main --tags`.
-* Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
-  GitHub workflow.
-* Once released, make sure to close the relevant GitHub Milestone for the version you released.
+1. Check the status of this project's GitHub [Milestone](https://github.com/slackapi/slack-github-action/milestones) to be released for issues that should be shipped with the release.
+   - If all issues have been closed, continue with the release.
+   - If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
+   - Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
+2. Checkout a branch for the release:
+
+```sh
+$ git checkout -b v1.2.3
+```
+
+3. Update the version in `package.json` and `package-lock.json` and examples:
+
+```sh
+$ npm version <major|minor|patch> --no-git-tag-version
+```
+
+4. Run all tests with the latest dependencies to make sure tests pass:
+
+```sh
+$ npm ci
+$ npm test
+```
+
+5. Commit the changes on your release branch and open a pull request with relevant labels:
+
+```sh
+$ git commit -m "chore(release): tag version 1.2.3"
+$ git push -u origin v1.2.3
+```
+
+6. After merging these changes into `main` create a new [release](https://github.com/slackapi/slack-github-action/releases/new) with a new tag - `v1.2.3` - on publish. Include relevant changes in the release notes!
+7. Rebuild [documentation](#docs) with the latest versions.
+8. Once released, make sure to close the relevant GitHub Milestone for the version you released.
 
 ## Workflow
 
@@ -99,7 +119,7 @@ This repo contains two types of docs files:
 
 The private repo containing the tools.slack.dev site pulls these in at build time.
 
-Maintainers need to use the `run workflow` button associated with the `deploy` workflow in that private repo  to update the docs with changes from here. 
+Maintainers need to use the `run workflow` button associated with the `deploy` workflow in that private repo to update the docs with changes from here.
 
 ### Markdown Files
 
@@ -107,11 +127,11 @@ The markdown files here are secretly mdx files in disguise.
 
 If you'd like to add images to pages, add the image files to the same folder the md file is in.
 
-We appreciate markdown edits from anyone!!! 
+We appreciate markdown edits from anyone!!!
 
 ### Sidebar
 
-`_sidebar.json` sets the slack github action docs sidebar 
+`_sidebar.json` sets the slack github action docs sidebar
 
 sidebar values take the form of "slack-github-action/path-within-docs/"
 
