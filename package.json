@@ -46,13 +46,13 @@
     "markup-js": "^1.5.21"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
+    "@biomejs/biome": "^2.1.3",
     "@types/chai": "^5.0.1",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.0.8",
+    "@types/node": "^24.1.0",
     "@types/sinon": "^17.0.4",
     "@vercel/ncc": "^0.38.3",
     "c8": "^10.1.3",
@@ -60,6 +60,6 @@
     "mocha": "^11.7.1",
     "mocha-suppress-logs": "^0.6.0",
     "sinon": "^21.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
