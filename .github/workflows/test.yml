@@ -1,6 +1,6 @@
 name: Tests
 on:
-  pull_request_target: # zizmor: ignore[dangerous-triggers]
+  pull_request:
   push:
     branches:
       - main
@@ -245,7 +245,7 @@ jobs:
           PAYLOAD_FILE_OUTPUT_TIME: ${{ steps.payload_file.outputs.time }}
 
       - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7 # v0.1.1
+        uses: slackapi/slack-health-score@c91046376017c5feaf0578e62cbc1a89a82d3ab6 # v0.2.0-rc.1
         with:
           codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
