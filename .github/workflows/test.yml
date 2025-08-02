@@ -245,7 +245,7 @@ jobs:
           PAYLOAD_FILE_OUTPUT_TIME: ${{ steps.payload_file.outputs.time }}
 
       - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@0706d9f5b3047abdc549d380cb1587177c0bdbc7 # v0.2.0-rc.2
+        uses: slackapi/slack-health-score@7ef97f525b05e302318caf5a2a7f1ac661f54933 # v0.2.0-rc.3
         with:
           codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
