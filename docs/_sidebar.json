@@ -1,7 +1,7 @@
 [
     {
       "type": "doc",
-      "id": "tools/slack-github-action/tools/slack-github-action",
+      "id": "tools/slack-github-action/slack-github-action",
       "label": "Slack GitHub Action",
       "className": "sidebar-title"
     },
