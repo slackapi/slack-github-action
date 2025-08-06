@@ -141,5 +141,5 @@ Calling [a Slack API method](https://docs.slack.dev/reference/methods) with [`@s
 
 ## Example workflows
 
-* [**Direct message the author**](/slack-github-action/sending-techniques/sending-data-slack-api-method/direct-message-author): Write to the Slack user with a matching email.
-* [**Invite a usergroup to channel**](/slack-github-action/sending-techniques/sending-data-slack-api-method/invite-usergroup-to-channel): Create a channel and invite members.
+* [**Direct message the author**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/direct-message-author): Write to the Slack user with a matching email.
+* [**Invite a usergroup to channel**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/invite-usergroup-to-channel): Create a channel and invite members.

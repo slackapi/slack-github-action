@@ -23,7 +23,7 @@ Invalid inputs to the GitHub Action, such as not including a payload, will alway
 
 ## Flattening nested payloads
 
-Variables and data provided in the payload might contain nested fields that need to be flattened before being sent with a [webhook trigger](/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow) to match the expected input format of [Workflow Builder](https://slack.com/features/workflow-automation).
+Variables and data provided in the payload might contain nested fields that need to be flattened before being sent with a [webhook trigger](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow) to match the expected input format of [Workflow Builder](https://slack.com/features/workflow-automation).
 
 The `payload-delimiter` option will flatten the input payload using the provided delimiter and will also make values stringified:
 

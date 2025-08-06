@@ -46,6 +46,6 @@ Add the collected webhook from above to a GitHub workflow and configure the step
 
 ## Example workflows
 
-* [**Post an inline text message**](/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-text-message)
-* [**Post an inline block message**](/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-block-message)
-* [**Post blocks found in a file**](/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-blocks-found-in-file)
+* [**Post an inline text message**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-text-message)
+* [**Post an inline block message**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-block-message)
+* [**Post blocks found in a file**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-blocks-found-in-file)

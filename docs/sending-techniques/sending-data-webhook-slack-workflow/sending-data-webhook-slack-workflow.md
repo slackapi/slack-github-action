@@ -41,7 +41,7 @@ In the example below, the default GitHub event [context](https://github.com/acti
     webhook-type: webhook-trigger
 ```
 
-Accessing variables sent to [Workflow Builder](https://slack.com/features/workflow-automation) with a webhook require that the payload variables are flattened with stringified values. Nested variables in the provided payload can be both flattened and also stringified with the `payload-delimiter` option or changed with other [configurations](/slack-github-action/additional-configurations) to match this format expected from Workflow Builder.
+Accessing variables sent to [Workflow Builder](https://slack.com/features/workflow-automation) with a webhook require that the payload variables are flattened with stringified values. Nested variables in the provided payload can be both flattened and also stringified with the `payload-delimiter` option or changed with other [configurations](/tools/slack-github-action/additional-configurations) to match this format expected from Workflow Builder.
 
 ### Providing parsed payload information as strings
 
@@ -73,6 +73,6 @@ Input values for the payload to be sent can also be provided in a file, either i
 
 ## Example workflows
 
-* [**Format generated files**](/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/format-generated-files): Message outputs from prior steps.
-* [**Post release announcements**](/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/post-release-announcements): Share releases to a channel.
-* [**Update a channel topic**](/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/update-a-channel-topic): Highlight the current build status.
+* [**Format generated files**](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/format-generated-files): Message outputs from prior steps.
+* [**Post release announcements**](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/post-release-announcements): Share releases to a channel.
+* [**Update a channel topic**](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/update-a-channel-topic): Highlight the current build status.

@@ -6,9 +6,9 @@ sidebar_label: Overview
 
 This GitHub Action offers three different techniques to send data to Slack:
 
-* [Send data with a webhook to start a workflow in Workflow Builder](/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow).
-* [Send data using a Slack API method and a secret token with required scopes](/slack-github-action/sending-techniques/sending-data-slack-api-method/).
-* [Send data as a message with a Slack incoming webhook URL](/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/). 
+* [Send data with a webhook to start a workflow in Workflow Builder](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow).
+* [Send data using a Slack API method and a secret token with required scopes](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/).
+* [Send data as a message with a Slack incoming webhook URL](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/). 
 
 ## Expected outputs
 

@@ -1,6 +1,6 @@
 # Sending variables
 
-There are different [techniques to send data](/slack-github-action/sending-techniques) into Slack and whichever one is chosen will require a certain set of customized inputs, as described later.
+There are different [techniques to send data](/tools/slack-github-action/sending-techniques) into Slack and whichever one is chosen will require a certain set of customized inputs, as described later.
 
 You can provide data to send to Slack from this GitHub Action and either source:
 
@@ -9,4 +9,4 @@ You can provide data to send to Slack from this GitHub Action and either source:
 
 These input options are valid for all techniques, but some techniques require specific constraints with certain requirements for valid inputs.
 
-Additional [configurations](/slack-github-action/additional-configurations) and other details are also available for more customizations to the provided payload.
+Additional [configurations](/tools/slack-github-action/additional-configurations) and other details are also available for more customizations to the provided payload.
