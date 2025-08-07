@@ -1,0 +1,43 @@
+name: Slack CLI Command Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Slack CLI command to run'
+        required: true
+
+jobs:
+  deploy:
+    name: "Run Slack CLI command"
+    runs-on: ubuntu-latest
+    env: 
+      SLACK_CLI_VERSION: "3.5.2"
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Slack CLI
+        uses: ./.github/resources/.actions/slack-cli-installer
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install shell-quote
+
+      - name: Execute command via script
+        run: | 
+            echo "Running command: ${{ github.event.inputs.command }}"
+            node src/parse-command.js ${{ github.event.inputs.command }}
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }} 
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
