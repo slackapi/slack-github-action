@@ -1,0 +1,130 @@
+name: Slack CLI Installation and Command Runner 
+description: Download and cache the Slack CLI and run the input command 
+
+inputs:
+  command:
+    description: "Slack CLI command to run"
+    type: string
+    default: ""
+    required: true
+  verbose:
+    description: "Verbose flag"
+    type: boolean
+    default: false
+    required: false
+  cli_version:
+    description: "CLI Version"
+    type: string
+    default: "latest"
+    required: false
+  app_id: 
+    description: "App ID"
+    type: string
+    default: ""
+    required: false
+
+outputs:
+  success:
+    description: "Whether the command ran successfully"
+    value: ${{ steps.run-slack-cli-command.outputs.success }}
+  exit_code:
+    description: "Exit code"
+    value: ${{ steps.run-slack-cli-command.outputs.exit_code }}
+  command_executed:
+    description: "Command ran"
+    value: ${{ steps.run-slack-cli-command.outputs.command_executed }}
+  stdout:
+    description: "Command output"
+    value: ${{ steps.run-slack-cli-command.outputs.stdout }}
+
+runs:
+  using: composite
+  steps:
+    - name: Cache Slack CLI 
+      id: cache-cli
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ runner.os == 'Windows' && format('{0}/AppData/Local/slack-cli', env.USERPROFILE) || '~/.slack/bin' }}
+        key: slack-cli-${{ runner.os }}-${{ runner.arch }}-${{ inputs.cli_version }}
+
+    - name: Add Slack CLI to PATH (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: echo "$HOME/.slack/bin" >> "$GITHUB_PATH"
+
+    - name: Add Slack CLI to PATH (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\.slack\bin"
+
+    - name: Install Slack CLI (Linux/macOS)
+      if:
+        (runner.os == 'Linux' || runner.os == 'macOS') && 
+        (steps.cache-cli.outputs.cache-hit != 'true')
+      shell: bash
+      run: |
+        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v ${{ inputs.cli_version }} --skip-update
+
+    - name: Install Slack CLI (Windows)
+      if: 
+        runner.os == 'Windows' && 
+        (steps.cache-cli.outputs.cache-hit != 'true')
+      shell: pwsh 
+      run: |
+        irm https://downloads.slack-edge.com/slack-cli/install-windows-dev.ps1 | iex -- -v ${{ inputs.cli_version }}
+  
+    - name: Run Slack CLI Command (Linux/macOS)
+      if: runner.os != 'Windows'
+      id: run-slack-cli-command
+      shell: bash
+      env:
+        SLACK_SERVICE_TOKEN: $SLACK_SERVICE_TOKEN
+        VERBOSE: ${{ inputs.verbose }}
+      run: |
+        cmd="slack ${{ inputs.command }}"
+        if [ "${{ inputs.verbose }}" == "true" ]; then
+          cmd="$cmd --verbose"
+        fi
+        cmd="$cmd --skip-update"
+          
+        output=$(eval $cmd 2>&1)
+        exit_code=$?  
+        
+        echo "Command output: $output"
+        echo "Exit code: $exit_code"
+ 
+        echo "success=$([ $exit_code -eq 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+        echo "exit_code=$exit_code" >> $GITHUB_OUTPUT 
+        echo "command_executed=slack ${{ inputs.command }} --skip-update" >> $GITHUB_OUTPUT
+
+        echo "stdout<<EOF" >> $GITHUB_OUTPUT
+        echo "$output" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Run Slack CLI Command (Windows)
+      if: runner.os == 'Windows'
+      id: run-slack-cli-command-windows
+      shell: pwsh
+      env:
+        SLACK_SERVICE_TOKEN: $SLACK_SERVICE_TOKEN
+        VERBOSE: ${{ inputs.verbose }}
+      run: |
+        $cmd = "slack ${{ inputs.command }}"
+        if ("${{ inputs.verbose }}" -eq "true") { $cmd += " --verbose" }
+        $cmd += " --skip-update"
+
+        $output = & $cmd 2>&1
+        $exit_code = $LASTEXITCODE
+
+        Write-Host "Command output: $output"
+        Write-Host "Exit code: $exit_code"
+
+        "success=$($exit_code -eq 0)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "exit_code=$exit_code" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "command_executed=$cmd" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+        "stdout<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        $output | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        

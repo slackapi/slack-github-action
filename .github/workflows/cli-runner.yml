@@ -1,0 +1,53 @@
+name: Slack CLI Command Runner
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: 'Slack CLI command to run'
+        type: string
+        default: ""
+        required: true
+      verbose:
+        description: 'Verbose flag'
+        type: boolean
+        default: false
+        required: false
+      cli_version:
+        description: 'CLI version'
+        type: string
+        default: "latest"
+        required: false
+      app_id: 
+        description: "App ID"
+        type: string
+        default: ""
+        required: false
+
+env:
+  SLACK_DISABLE_TELEMETRY: "true"
+
+jobs:
+  run-slack-cli:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.run-slack-cli-command.outputs.success }}
+      command_executed: ${{ steps.run-slack-cli-command.outputs.command_executed }}
+      stdout: ${{ steps.run-slack-cli-command.outputs.stdout }}
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Slack CLI and Run Command
+        id: run-slack-cli-command
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: ${{ github.event.inputs.command }}
+          verbose: ${{ github.event.inputs.verbose == 'true' || github.run_attempt > 1 }}
+          cli_version: ${{ github.event.inputs.cli_version }}
+          app_id: ${{ github.event.inputs.app_id }}
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
