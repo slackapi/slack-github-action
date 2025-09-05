@@ -10,7 +10,12 @@ Setting up a CI/CD pipeline [requires](https://docs.slack.dev/tools/slack-cli/gu
 
 ## Setup
 
-1. Add your service token as a [repository secret](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#creating-secrets-for-a-repository) called SLACK_SERVICE_TOKEN.
+1. Add your service token as a [repository secret](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#creating-secrets-for-a-repository). Settings > Security > Secrets and variables > Actions and click the "New repository secret" button.
+
+  Name: SLACK_SERVICE_TOKEN
+  
+  Secret: the xoxp- service token   
+
 2. Add this workflow to your repository. GitHub Actions workflow files must be stored in the .github/workflows directory
 
 ```yaml

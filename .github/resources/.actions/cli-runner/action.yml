@@ -1,9 +1,9 @@
-name: Slack CLI Installation and Command Runner 
-description: Download and cache the Slack CLI and run the input command 
+name: "Slack: Run a CLI command"
+description: "Install the Slack CLI to run a command"
 
 inputs:
   command:
-    description: "Slack CLI command to run"
+    description: "Slack CLI command to run. Should not include the 'slack' prefix."
     type: string
     default: ""
     required: true
@@ -12,10 +12,10 @@ inputs:
     type: boolean
     default: false
     required: false
-  cli_version:
+  cli-version:
     description: "CLI Version"
     type: string
-    default: "latest"
+    default: "3.6.1"
     required: false
   app_id: 
     description: "App ID"
@@ -24,29 +24,29 @@ inputs:
     required: false
 
 outputs:
-  success:
-    description: "Whether the command ran successfully"
-    value: ${{ steps.run-slack-cli-command.outputs.success }}
+  ok:
+    description: "If the command completed without an error."
+    value: ${{ steps.run-slack-cli-command.outputs.ok || steps.run-slack-cli-command-windows.outputs.ok }}
   exit_code:
     description: "Exit code"
-    value: ${{ steps.run-slack-cli-command.outputs.exit_code }}
+    value: ${{ steps.run-slack-cli-command.outputs.exit_code || steps.run-slack-cli-command-windows.outputs.exit_code }}
   command_executed:
     description: "Command ran"
-    value: ${{ steps.run-slack-cli-command.outputs.command_executed }}
-  stdout:
+    value: ${{ steps.run-slack-cli-command.outputs.command_executed || steps.run-slack-cli-command-windows.outputs.command_executed }}
+  output:
     description: "Command output"
-    value: ${{ steps.run-slack-cli-command.outputs.stdout }}
+    value: ${{ steps.run-slack-cli-command.outputs.output || steps.run-slack-cli-command-windows.outputs.output }}
 
 runs:
   using: composite
   steps:
     - name: Cache Slack CLI 
       id: cache-cli
-      uses: actions/cache@v4
+      uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
       with:
         path: |
           ${{ runner.os == 'Windows' && format('{0}/AppData/Local/slack-cli', env.USERPROFILE) || '~/.slack/bin' }}
-        key: slack-cli-${{ runner.os }}-${{ runner.arch }}-${{ inputs.cli_version }}
+        key: slack-cli-${{ runner.os }}-${{ runner.arch }}-${{ inputs.cli-version }}
 
     - name: Add Slack CLI to PATH (Linux/macOS)
       if: runner.os != 'Windows'
@@ -64,7 +64,7 @@ runs:
         (steps.cache-cli.outputs.cache-hit != 'true')
       shell: bash
       run: |
-        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v ${{ inputs.cli_version }} --skip-update
+        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v ${{ inputs.cli_version }}
 
     - name: Install Slack CLI (Windows)
       if: 
@@ -94,11 +94,11 @@ runs:
         echo "Command output: $output"
         echo "Exit code: $exit_code"
  
-        echo "success=$([ $exit_code -eq 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+        echo "ok=$([ $exit_code -eq 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
         echo "exit_code=$exit_code" >> $GITHUB_OUTPUT 
         echo "command_executed=slack ${{ inputs.command }} --skip-update" >> $GITHUB_OUTPUT
 
-        echo "stdout<<EOF" >> $GITHUB_OUTPUT
+        echo "output<<EOF" >> $GITHUB_OUTPUT
         echo "$output" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
@@ -120,11 +120,11 @@ runs:
         Write-Host "Command output: $output"
         Write-Host "Exit code: $exit_code"
 
-        "success=$($exit_code -eq 0)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "ok=$($exit_code -eq 0)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         "exit_code=$exit_code" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         "command_executed=$cmd" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-        "stdout<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        "output<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         $output | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         
