@@ -82,7 +82,7 @@ runs:
         SLACK_SERVICE_TOKEN: $SLACK_SERVICE_TOKEN
         VERBOSE: ${{ inputs.verbose }}
       run: |
-        cmd="slack ${{ inputs.command }}"
+        cmd="slack --skip-update ${{ inputs.command }}"
         if [ "${{ inputs.verbose }}" == "true" ]; then
           cmd="$cmd --verbose"
         fi
