@@ -1,0 +1,161 @@
+name: Slack CLI Runner Tests 
+
+on:
+  pull_request:
+
+jobs:
+  test-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the current code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Run slack version
+        id: version
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "version"
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Debug outputs
+        run: |
+          echo "output: '${{ steps.version.outputs.output }}'"
+          echo "ok: '${{ steps.version.outputs.ok }}'"
+          echo "command executed: '${{ steps.version.outputs.command_executed }}'"
+
+      - name: Verify CLI version
+        if: steps.version.outputs.ok != 'true'
+        run: |
+            echo "CLI version command failure"
+            echo "output: ${{ steps.version.outputs.output }}"
+            exit 1
+
+      - name: Empty command
+        id: empty-command
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: ""
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Command with whitespace
+        id: command-with-whitespace
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "  version"
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Long command with flags 
+        id: long-command
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: 'doctor --help --experiment string'
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Ensure empty command works 
+        if: steps.empty-command.outputs.ok != 'true'
+        run: |
+          echo "Empty command failure"
+          echo "ok: '${{ steps.empty-command.outputs.ok }}'"
+          echo "output: '${{ steps.empty-command.outputs.output }}'"
+          exit 1
+
+      - name: Ensure command with whitespace  
+        if: steps.command-with-whitespace.outputs.ok != 'true'
+        run: |
+          echo "Command with whitespace failure"
+          echo "ok: '${{ steps.command-with-whitespace.outputs.ok }}'"
+          echo "output: '${{ steps.command-with-whitespace.outputs.output }}'"
+          exit 1
+
+      - name: Ensure long command works 
+        if: steps.long-command.outputs.ok != 'true'
+        run: |
+          echo "Long command failure"
+          echo "ok: '${{ steps.long-command.outputs.ok }}'"
+          echo "output: '${{ steps.long-command.outputs.output }}'"
+          exit 1
+
+      - name: Run with verbose
+        id: with-verbose
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "help"
+          cli-version: "3.6.1"
+          verbose: "true"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+          
+      - name: Ensure verbose flag worked
+        if: steps.with-verbose.outputs.ok != 'true'
+        run: |
+          echo "Verbose flag failure"
+          echo "ok: '${{ steps.with-verbose.outputs.ok }}'"
+          echo "output: '${{ steps.with-verbose.outputs.output }}'"
+          exit 1
+
+      - name: First run (install if missing)
+        id: no-cache
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "version"
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Second run (cache hit)
+        id: cache-hit
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "version"
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Ensure cache worked
+        if: github.run_attempt > 1 && steps.cache-hit.outputs.ok != 'true'
+        run: |
+          echo "cache failure"
+          exit 1
+
+      - name: Run with invalid command
+        id: invalid-command
+        continue-on-error: true
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "invalid-command"
+          cli-version: "3.6.1"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Expect failure
+        if: steps.invalid-command.outputs.ok == 'true'
+        run: |
+          echo "Expected failure with invalid command"
+          echo "output: '${{ steps.invalid-command.outputs.output }}'"
+          echo "ok: '${{ steps.invalid-command.outputs.ok }}'"
+          exit 1
+
+      - name: Test specific version
+        id: specific-version
+        uses: ./.github/resources/.actions/cli-runner
+        with:
+          command: "version"
+          cli-version: "3.5.0"
+        env:
+          SLACK_SERVICE_TOKEN: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: Ensure specific version 
+        if: ${{ !contains(steps.specific-version.outputs.output, '3.5.0') }}
+        run: |
+          echo "Specific version failure"
+          echo "output: '${{ steps.specific-version.outputs.output }}'"
+          exit 1
