@@ -42,7 +42,7 @@
     "axios-retry": "^4.5.0",
     "flat": "^6.0.1",
     "https-proxy-agent": "^7.0.6",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "markup-js": "^1.5.21"
   },
   "devDependencies": {
