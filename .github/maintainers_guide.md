@@ -26,7 +26,7 @@ Actions jobs that execute what are effectively integration tests for this GitHub
 
 Actions that run the integration tests on PRs from a fork will require approval before running.
 These checks use stored secrets so the changes should be reviewed before approving the workflow to
-avoid accidently leaking tokens!
+avoid accidentally leaking tokens!
 
 ### Releasing
 
