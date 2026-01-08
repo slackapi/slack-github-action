@@ -16,7 +16,7 @@ inputs:
     description: "Attributes that create the content of the request using JSON or YAML."
     required: false
   payload-delimiter:
-    description: "Field seperator for nested attributes in the input payload."
+    description: "Field separator for nested attributes in the input payload."
     required: false
   payload-file-path:
     description: "Path to a file containing a valid input payload made of JSON or YAML."
