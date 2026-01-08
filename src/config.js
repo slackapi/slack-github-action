@@ -44,7 +44,7 @@ export default class Config {
    * @property {boolean} errors - If the job should exit after errors or succeed.
    * @property {string?} method - The Slack API method to call.
    * @property {string?} payload - Request contents from the provided input.
-   * @property {string?} payloadDelimiter - Seperators of nested attributes.
+   * @property {string?} payloadDelimiter - Separators of nested attributes.
    * @property {string?} payloadFilePath - Location of a JSON request payload.
    * @property {boolean} payloadTemplated - If templated values are replaced.
    * @property {string?} proxy - An optional proxied connection for requests.
