@@ -124,7 +124,7 @@ Posting [threaded replies to a message](https://docs.slack.dev/messaging/#thread
 
 ### Uploading a file
 
-Calling [a Slack API method](https://docs.slack.dev/reference/methods) with [`@slack/web-api`](https://tools.slack.dev/node-slack-sdk/web-api) makes [uploading a file](https://docs.slack.dev/messaging/working-with-files#uploading_files) just another API call with all of the convenience of the [`files.uploadV2`](https://tools.slack.dev/node-slack-sdk/web-api/#upload-a-file) method:
+Calling [a Slack API method](https://docs.slack.dev/reference/methods) with [`@slack/web-api`](https://docs.slack.dev/tools/node-slack-sdk/web-api/) makes [uploading a file](https://docs.slack.dev/messaging/working-with-files#uploading_files) just another API call with all of the convenience of the [`files.uploadV2`](https://docs.slack.dev/tools/node-slack-sdk/web-api/#upload-a-file) method:
 
 ```yaml
 - name: Share a file to that channel
@@ -141,5 +141,5 @@ Calling [a Slack API method](https://docs.slack.dev/reference/methods) with [`@s
 
 ## Example workflows
 
-* [**Direct message the author**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/direct-message-author): Write to the Slack user with a matching email.
-* [**Invite a usergroup to channel**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/invite-usergroup-to-channel): Create a channel and invite members.
+- [**Direct message the author**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/direct-message-author): Write to the Slack user with a matching email.
+- [**Invite a usergroup to channel**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/invite-usergroup-to-channel): Create a channel and invite members.

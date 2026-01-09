@@ -10,8 +10,7 @@ or be formatted with [Block Kit][block-kit] to build visual components.
 
 ## Setup
 
-For details on how to setup this technique in GitHub Actions, read the
-[`README.md`][setup].
+For details on how to setup this technique in GitHub Actions, read the [setup][setup] section of the docs.
 
 ## Example workflows
 
@@ -50,8 +49,8 @@ This example uses file data when posting to an incoming webhook.
 - [`saved.data.json`](./saved.data.json): Payload file being sent.
 - [`saved.gha.yml`](./saved.gha.yml): GitHub Actions workflow.
 
-[block-kit]: https://api.slack.com/surfaces/messages#complex_layouts
-[formatting]: https://api.slack.com/reference/surfaces/formatting
-[incoming-webhook]: https://api.slack.com/messaging/webhooks
-[interactivity]: https://api.slack.com/messaging/interactivity
-[setup]: https://github.com/slackapi/slack-github-action?tab=readme-ov-file#technique-3-slack-incoming-webhook
+[block-kit]: https://docs.slack.dev/messaging/#complex_layouts
+[formatting]: https://docs.slack.dev/messaging/formatting-message-text/
+[incoming-webhook]: https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/
+[interactivity]: https://docs.slack.dev/messaging/creating-interactive-messages/
+[setup]: https://docs.slack.dev/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/

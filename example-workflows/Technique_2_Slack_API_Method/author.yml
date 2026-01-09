@@ -17,7 +17,7 @@ jobs:
         id: email
         uses: slackapi/slack-github-action@v2.1.1
         with:
-          method: users.lookupByEmail # https://api.slack.com/methods/users.lookupByEmail
+          method: users.lookupByEmail # https://docs.slack.dev/reference/methods/users.lookupByEmail/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             email: ${{ github.event.pusher.email }}
@@ -33,7 +33,7 @@ jobs:
         uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
-          method: chat.postMessage # https://api.slack.com/methods/chat.postMessage
+          method: chat.postMessage # https://docs.slack.dev/reference/methods/chat.postMessage/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             "channel": "${{ env.SLACK_USER_ID }}",

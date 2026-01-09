@@ -7,8 +7,8 @@ import SlackError from "./errors.js";
  * The Client class creates a WebClient from @slack/web-api for use when calling
  * various Slack API methods.
  *
- * @see {@link https://tools.slack.dev/node-slack-sdk/web-api/}
- * @see {@link https://api.slack.com/methods/}
+ * @see {@link https://docs.slack.dev/tools/node-slack-sdk/web-api/}
+ * @see {@link https://docs.slack.dev/reference/methods/}
  */
 export default class Client {
   /**

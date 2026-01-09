@@ -11,8 +11,7 @@ using Slack [Workflow Builder][wfb].
 The Slack app manifest included with each example showcases steps of a workflow
 in [Workflow Builder][wfb] along with the [webhook trigger][triggers] inputs.
 
-For details on how to setup this technique in GitHub Actions, read the
-[`README.md`][setup].
+For details on how to setup this technique in GitHub Actions, read the [setup][setup] section of the docs.
 
 ## Example workflows
 
@@ -71,11 +70,11 @@ This example uses the default GitHub event [context][event-context] and
 
 [event-context]: https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6
 [event-payload]: https://docs.github.com/en/webhooks/webhook-events-and-payloads
-[functions]: https://api.slack.com/automation/functions
+[functions]: https://docs.slack.dev/tools/deno-slack-sdk/guides/creating-slack-functions/
 [giphy]: https://giphy.com
-[send_message]: https://api.slack.com/reference/functions/send_message
+[send_message]: https://docs.slack.dev/tools/deno-slack-sdk/reference/slack-functions/send_message
 [plans]: https://slack.com/pricing
-[setup]: https://github.com/slackapi/slack-github-action/blob/main/README.md#technique-1-slack-workflow-builder
-[triggers]: https://api.slack.com/automation/triggers/webhook
-[update_channel_topic]: https://api.slack.com/reference/functions/update_channel_topic
+[setup]: https://docs.slack.dev/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow/
+[triggers]: https://docs.slack.dev/tools/deno-slack-sdk/guides/creating-webhook-triggers/
+[update_channel_topic]: https://docs.slack.dev/tools/deno-slack-sdk/reference/slack-functions/update_channel_topic
 [wfb]: https://slack.com/features/workflow-automation
