@@ -1,11 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'monthly'
-
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+      interval: "monthly"
+    ignore:
+      - dependency-name: "@types/node"
+        versions:
+          - "21.x"
+          - "22.x"
+          - "23.x"
+          - "24.x"
+          - "25.x"
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'monthly'
+      interval: "monthly"
