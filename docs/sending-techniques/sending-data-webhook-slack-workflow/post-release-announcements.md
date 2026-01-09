@@ -2,7 +2,7 @@
 
 This workflow allows you to select a channel to post news about the most recent release to.
 
-This example uses [Slack functions](https://docs.slack.dev/tools/deno-slack-sdk/guides/creating-slack-functions/) and inline inputs to do the
+This example uses [Slack functions](/tools/deno-slack-sdk/guides/creating-slack-functions/) and inline inputs to do the
 following:
 
 1. Open a form to select a channel.

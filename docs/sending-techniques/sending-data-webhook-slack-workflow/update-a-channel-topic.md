@@ -2,7 +2,7 @@
 
 This workflow shows the latest commit status in the header of a channel.
 
-This example uses the default GitHub event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) to [update a channel topic](https://docs.slack.dev/tools/deno-slack-sdk/reference/slack-functions/update_channel_topic/).
+This example uses the default GitHub event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) to [update a channel topic](/tools/deno-slack-sdk/reference/slack-functions/update_channel_topic/).
 
 ## Related files
 

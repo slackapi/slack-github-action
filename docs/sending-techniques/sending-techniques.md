@@ -20,15 +20,15 @@ The following outputs are returned with each of the techniques:
 |---|---|---|
 |`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
 | `ok` | `boolean` | If the request completed with success.
-| `response` | `string` | The [response](https://docs.slack.dev/apis/web-api/#responses) from the request as stringified JSON.
+| `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
 
 While these outputs are returned with certain Slack API methods:
 
 | Output | Type  | Description|
 |---|---|---|
-|`channel_id` | `string` | The [channel ID](https://docs.slack.dev/reference/objects/conversation-object) included in the response.
-| `ts`| `string` | The [timestamp](https://docs.slack.dev/messaging/retrieving-messages#individual_messages) of the Slack event or message.
-| `thread_ts` | `string` | The [timestamp](https://docs.slack.dev/messaging/retrieving-messages#individual_messages) of a parent Slack message with [threaded replies](https://docs.slack.dev/messaging/retrieving-messages#pulling_threads).
+|`channel_id` | `string` | The [channel ID](/reference/objects/conversation-object) included in the response.
+| `ts`| `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of the Slack event or message.
+| `thread_ts` | `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of a parent Slack message with [threaded replies](/messaging/retrieving-messages#pulling_threads).
 
 ## Example responses
 
