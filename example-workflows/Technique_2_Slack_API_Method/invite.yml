@@ -16,7 +16,7 @@ jobs:
         uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
-          method: conversations.create # https://api.slack.com/methods/conversations.create
+          method: conversations.create # https://docs.slack.dev/reference/methods/conversations.create/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             name: issue-${{ github.event.issue.number }}
@@ -24,7 +24,7 @@ jobs:
       - name: Send the issue link into the Slack channel
         uses: slackapi/slack-github-action@v2.1.1
         with:
-          method: chat.postMessage # https://api.slack.com/methods/chat.postMessage
+          method: chat.postMessage # https://docs.slack.dev/reference/methods/chat.postMessage/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ steps.conversation.outputs.channel_id }}
@@ -35,7 +35,7 @@ jobs:
         uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
-          method: usergroups.users.list # https://api.slack.com/methods/usergroups.users.list
+          method: usergroups.users.list # https://docs.slack.dev/reference/methods/usergroups.users.list/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             usergroup: ${{ secrets.SLACK_USERGROUP_ID }}
@@ -49,7 +49,7 @@ jobs:
         uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
-          method: conversations.invite # https://api.slack.com/methods/conversations.invite
+          method: conversations.invite # https://docs.slack.dev/reference/methods/conversations.invite/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ steps.conversation.outputs.channel_id }}

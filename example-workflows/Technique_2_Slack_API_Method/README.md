@@ -5,8 +5,7 @@ A [token][tokens], such as a bot or user token, must be used to call one of
 
 ## Setup
 
-For details on how to set up this technique in GitHub Actions, read the
-[`README.md`][setup].
+For details on how to setup this technique in GitHub Actions, read the [setup][setup] section of the docs.
 
 ## Example workflows
 
@@ -35,6 +34,6 @@ This example chains multiple Slack API methods together to help fix bugs fast.
 
 - [`invite.yml`](./invite.yml): GitHub Actions workflow.
 
-[methods]: https://api.slack.com/methods
-[setup]: https://github.com/slackapi/slack-github-action?tab=readme-ov-file#technique-2-slack-api-method
-[tokens]: https://api.slack.com/concepts/token-types
+[methods]: https://docs.slack.dev/reference/methods/
+[setup]: https://docs.slack.dev/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/
+[tokens]: https://docs.slack.dev/authentication/tokens/

@@ -3,7 +3,7 @@ import { LogLevel } from "@slack/logger";
 /**
  * The Logger class creates a Logger to output debug messages and errors.
  *
- * @see {@link https://tools.slack.dev/node-slack-sdk/web-api/#logging}
+ * @see {@link https://docs.slack.dev/tools/node-slack-sdk/web-api/#logging}
  */
 export default class Logger {
   /**

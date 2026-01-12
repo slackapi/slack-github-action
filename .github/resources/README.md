@@ -134,8 +134,8 @@ of the `.github/resources/.actions/event.json` file.
 
 Reference: https://docs.github.com/en/webhooks/webhook-events-and-payloads
 
-[cli]: https://api.slack.com/automation/cli/commands
+[cli]: https://docs.slack.dev/tools/slack-cli/
 [develop]: ../workflows/develop.yml
-[manifest]: https://api.slack.com/concepts/manifests
+[manifest]: https://docs.slack.dev/app-manifests/
 [secrets]: https://github.com/slackapi/slack-github-action/settings/secrets/actions
 [slacktion]: ./.slack/manifest.json
