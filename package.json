@@ -57,7 +57,7 @@
     "@vercel/ncc": "^0.38.4",
     "c8": "^10.1.3",
     "chai": "^6.2.0",
-    "mocha": "^11.7.4",
+    "mocha": "^11.7.5",
     "mocha-suppress-logs": "^0.6.0",
     "sinon": "^21.0.1",
     "typescript": "^5.9.3"
