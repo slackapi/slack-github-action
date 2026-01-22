@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert";
+import { beforeEach, describe, it } from "node:test";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -35,7 +36,7 @@ describe("send", () => {
         JSON.stringify({ ok: true }),
       );
       assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);
+      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
     });
 
     it("token", async () => {
@@ -53,7 +54,7 @@ describe("send", () => {
         JSON.stringify({ ok: true }),
       );
       assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);
+      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
     });
 
     it("incoming webhook", async () => {
@@ -73,7 +74,7 @@ describe("send", () => {
         JSON.stringify("ok"),
       );
       assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.isAtLeast(mocks.core.setOutput.getCall(2).lastArg, 0);
+      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
     });
   });
 });
