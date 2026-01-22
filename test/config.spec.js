@@ -47,9 +47,7 @@ describe("config", () => {
       assert.equal(config.inputs.webhook, "https://example.com");
       assert.equal(config.inputs.webhookType, "incoming-webhook");
       assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.ok(
-        mocks.core.setSecret.withArgs("https://example.com").called,
-      );
+      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
     });
 
     it("allows webhook environment variables with a token", async () => {
@@ -61,9 +59,7 @@ describe("config", () => {
       assert.equal(config.inputs.token, "xoxb-example");
       assert.equal(config.inputs.webhook, "https://example.com");
       assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.ok(
-        mocks.core.setSecret.withArgs("https://example.com").called,
-      );
+      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
     });
 
     it("errors when both the token and webhook is provided", async () => {
@@ -75,7 +71,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Either the token or webhook is required - not both."),
+            err.message.includes(
+              "Invalid input! Either the token or webhook is required - not both.",
+            ),
           );
           assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
           assert.ok(
@@ -95,7 +93,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Missing input! A token must be provided to use the method decided."),
+            err.message.includes(
+              "Missing input! A token must be provided to use the method decided.",
+            ),
           );
         } else {
           assert.fail(err);
@@ -110,7 +110,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Missing input! Either a method or webhook is required to take action."),
+            err.message.includes(
+              "Missing input! Either a method or webhook is required to take action.",
+            ),
           );
         } else {
           assert.fail(err);
@@ -126,7 +128,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'."),
+            err.message.includes(
+              "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+            ),
           );
         } else {
           assert.fail(err);
@@ -143,7 +147,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'."),
+            err.message.includes(
+              "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+            ),
           );
         } else {
           assert.fail(err);
@@ -170,9 +176,7 @@ describe("config", () => {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
-        assert.ok(
-          mocks.core.setSecret.withArgs("https://slack.com").called,
-        );
+        assert.ok(mocks.core.setSecret.withArgs("https://slack.com").called);
       }
     });
   });
@@ -190,7 +194,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes('Invalid input! An unknown "retries" value was used: FOREVER'),
+            err.message.includes(
+              'Invalid input! An unknown "retries" value was used: FOREVER',
+            ),
           );
         } else {
           assert.fail(err);
@@ -210,7 +216,9 @@ describe("config", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes('Invalid input! An unknown "retries" value was used: FOREVER'),
+            err.message.includes(
+              'Invalid input! An unknown "retries" value was used: FOREVER',
+            ),
           );
         } else {
           assert.fail(err);

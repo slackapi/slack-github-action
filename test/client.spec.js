@@ -472,7 +472,9 @@ describe("client", () => {
         assert.fail("An invalid proxy URL was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.ok(err.message.includes("Failed to configure the HTTPS proxy"));
+          assert.ok(
+            err.message.includes("Failed to configure the HTTPS proxy"),
+          );
         } else {
           assert.fail(err);
         }

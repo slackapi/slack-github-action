@@ -47,7 +47,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Just the payload or payload file path is required."),
+            err.message.includes(
+              "Invalid input! Just the payload or payload file path is required.",
+            ),
           );
         } else {
           assert.fail(err);
@@ -279,7 +281,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! No payload content was provided"),
+            err.message.includes(
+              "Invalid input! No payload content was provided",
+            ),
           );
         } else {
           assert.fail(err);
@@ -295,7 +299,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Failed to parse contents of the provided payload"),
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload",
+            ),
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 2);
@@ -555,7 +561,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Failed to parse contents of the provided payload file"),
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
         } else {
           assert.fail(err);
@@ -571,12 +579,16 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Failed to parse contents of the provided payload file"),
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
           assert.ok(
-            err.cause.values[0].message.includes("Invalid input! Failed to parse file extension unknown.md"),
+            err.cause.values[0].message.includes(
+              "Invalid input! Failed to parse file extension unknown.md",
+            ),
           );
         } else {
           assert.fail(err);
@@ -596,7 +608,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Failed to parse contents of the provided payload file"),
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
@@ -618,7 +632,9 @@ describe("content", () => {
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
-            err.message.includes("Invalid input! Failed to parse contents of the provided payload file"),
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
