@@ -82,7 +82,7 @@ describe("config", () => {
             mocks.core.setSecret.withArgs("https://example.com").called,
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -98,7 +98,7 @@ describe("config", () => {
             err.message.includes("Missing input! A token must be provided to use the method decided."),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -113,7 +113,7 @@ describe("config", () => {
             err.message.includes("Missing input! Either a method or webhook is required to take action."),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -129,7 +129,7 @@ describe("config", () => {
             err.message.includes("Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'."),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -146,7 +146,7 @@ describe("config", () => {
             err.message.includes("Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'."),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -193,7 +193,7 @@ describe("config", () => {
             err.message.includes('Invalid input! An unknown "retries" value was used: FOREVER'),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -213,7 +213,7 @@ describe("config", () => {
             err.message.includes('Invalid input! An unknown "retries" value was used: FOREVER'),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });

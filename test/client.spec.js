@@ -34,7 +34,7 @@ describe("client", () => {
         if (err instanceof SlackError) {
           assert.ok(err.message.includes("No API method was provided for use"));
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -57,7 +57,7 @@ describe("client", () => {
         if (err instanceof SlackError) {
           assert.ok(err.message.includes("No token was provided to post with"));
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -474,7 +474,7 @@ describe("client", () => {
         if (err instanceof SlackError) {
           assert.ok(err.message.includes("Failed to configure the HTTPS proxy"));
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });

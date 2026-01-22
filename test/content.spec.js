@@ -50,7 +50,7 @@ describe("content", () => {
             err.message.includes("Invalid input! Just the payload or payload file path is required."),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -282,7 +282,7 @@ describe("content", () => {
             err.message.includes("Invalid input! No payload content was provided"),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -303,7 +303,7 @@ describe("content", () => {
           assert.ok(jsonError instanceof SyntaxError);
           assert.ok(yamlError instanceof YAMLException);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -542,7 +542,7 @@ describe("content", () => {
             err.message.includes("Invalid input! No payload found for content"),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -558,7 +558,7 @@ describe("content", () => {
             err.message.includes("Invalid input! Failed to parse contents of the provided payload file"),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -579,7 +579,7 @@ describe("content", () => {
             err.cause.values[0].message.includes("Invalid input! Failed to parse file extension unknown.md"),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -602,7 +602,7 @@ describe("content", () => {
           assert.equal(err.cause.values.length, 1);
           assert.ok(err.cause.values[0] instanceof SyntaxError);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -624,7 +624,7 @@ describe("content", () => {
           assert.equal(err.cause.values.length, 1);
           assert.ok(err.cause.values[0] instanceof YAMLException);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
