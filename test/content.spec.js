@@ -1,6 +1,7 @@
+import assert from "node:assert";
 import path from "node:path";
+import { beforeEach, describe, it } from "node:test";
 import core from "@actions/core";
-import { assert } from "chai";
 import { YAMLException } from "js-yaml";
 import Config from "../src/config.js";
 import Content from "../src/content.js";
@@ -45,12 +46,13 @@ describe("content", () => {
         assert.fail("Failed to throw for invalid input");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Just the payload or payload file path is required.",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Just the payload or payload file path is required.",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -278,12 +280,13 @@ describe("content", () => {
         assert.fail("Failed to throw for missing payload content");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! No payload content was provided",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! No payload content was provided",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -295,17 +298,18 @@ describe("content", () => {
         assert.fail("Failed to throw for invalid JSON");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Failed to parse contents of the provided payload",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload",
+            ),
           );
-          assert.isDefined(err.cause?.values);
+          assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 2);
           const [jsonError, yamlError] = err.cause.values;
-          assert.isTrue(jsonError instanceof SyntaxError);
-          assert.isTrue(yamlError instanceof YAMLException);
+          assert.ok(jsonError instanceof SyntaxError);
+          assert.ok(yamlError instanceof YAMLException);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -515,7 +519,7 @@ describe("content", () => {
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.json"), "utf-8")
         .returns(`{
-            "message": "What makes $\{\{ env.TREASURE }} a secret"
+            "message": "What makes $\{{ env.TREASURE }} a secret"
           }`);
       mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
       const config = new Config(mocks.core);
@@ -540,12 +544,11 @@ describe("content", () => {
         assert.fail("Failed to throw for the wrong payload type");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! No payload found for content",
+          assert.ok(
+            err.message.includes("Invalid input! No payload found for content"),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -557,12 +560,13 @@ describe("content", () => {
         assert.fail("Failed to throw for nonexistent files");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Failed to parse contents of the provided payload file",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -574,18 +578,20 @@ describe("content", () => {
         assert.fail("Failed to throw for an unknown extension");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Failed to parse contents of the provided payload file",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
-          assert.isDefined(err.cause?.values);
+          assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
-          assert.include(
-            err.cause.values[0].message,
-            "Invalid input! Failed to parse file extension unknown.md",
+          assert.ok(
+            err.cause.values[0].message.includes(
+              "Invalid input! Failed to parse file extension unknown.md",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -601,15 +607,16 @@ describe("content", () => {
         assert.fail("Failed to throw for invalid JSON");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Failed to parse contents of the provided payload file",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
-          assert.isDefined(err.cause?.values);
+          assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
-          assert.isTrue(err.cause.values[0] instanceof SyntaxError);
+          assert.ok(err.cause.values[0] instanceof SyntaxError);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -624,15 +631,16 @@ describe("content", () => {
         assert.fail("Failed to throw for invalid YAML");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Failed to parse contents of the provided payload file",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Failed to parse contents of the provided payload file",
+            ),
           );
-          assert.isDefined(err.cause?.values);
+          assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
-          assert.isTrue(err.cause.values[0] instanceof YAMLException);
+          assert.ok(err.cause.values[0] instanceof YAMLException);
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });

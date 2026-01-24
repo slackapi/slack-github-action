@@ -1,7 +1,8 @@
+import assert from "node:assert";
+import { beforeEach, describe, it } from "node:test";
 import core from "@actions/core";
 import webapi from "@slack/web-api";
 import errors from "@slack/web-api/dist/errors.js";
-import { assert } from "chai";
 import sinon from "sinon";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
@@ -31,9 +32,9 @@ describe("client", () => {
         assert.fail("Failed to throw for missing input");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(err.message, "No API method was provided for use");
+          assert.ok(err.message.includes("No API method was provided for use"));
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -54,9 +55,9 @@ describe("client", () => {
         assert.fail("Failed to throw for missing input");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(err.message, "No token was provided to post with");
+          assert.ok(err.message.includes("No token was provided to post with"));
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -87,8 +88,8 @@ describe("client", () => {
         webapi: mocks.webapi,
       };
       await new Client().post(config);
-      assert.isTrue(constructors.calledWithNew());
-      assert.isTrue(
+      assert.ok(constructors.calledWithNew());
+      assert.ok(
         constructors.calledWith("xoxb-example-002", {
           agent: undefined,
           allowAbsoluteUrls: false,
@@ -97,14 +98,14 @@ describe("client", () => {
           slackApiUrl: undefined,
         }),
       );
-      assert.isTrue(apis.calledOnce);
-      assert.isTrue(
+      assert.ok(apis.calledOnce);
+      assert.ok(
         apis.calledWith("pins.add", {
           channel: "CHANNELHERE",
           timestamp: "1234567890.000000",
         }),
       );
-      assert.isTrue(config.core.setOutput.calledWith("ok", true));
+      assert.ok(config.core.setOutput.calledWith("ok", true));
     });
 
     it("uses arguments to send to a custom api method", async () => {
@@ -134,8 +135,8 @@ describe("client", () => {
         webapi: mocks.webapi,
       };
       await new Client().post(config);
-      assert.isTrue(constructors.calledWithNew());
-      assert.isTrue(
+      assert.ok(constructors.calledWithNew());
+      assert.ok(
         constructors.calledWith("ollamapassword", {
           agent: undefined,
           allowAbsoluteUrls: false,
@@ -144,16 +145,16 @@ describe("client", () => {
           slackApiUrl: "http://localhost:11434/api/",
         }),
       );
-      assert.isTrue(apis.calledOnce);
-      assert.isTrue(
+      assert.ok(apis.calledOnce);
+      assert.ok(
         apis.calledWith("generate", {
           model: "llama3.2",
           prompt: "How many sides does a circle have?",
           stream: false,
         }),
       );
-      assert.isTrue(config.core.setOutput.calledWith("ok", undefined));
-      assert.isTrue(
+      assert.ok(config.core.setOutput.calledWith("ok", undefined));
+      assert.ok(
         config.core.setOutput.calledWith(
           "response",
           JSON.stringify({ done: true, response: "Infinite" }),
@@ -306,7 +307,7 @@ describe("client", () => {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.isTrue(mocks.core.setFailed.called);
+        assert.ok(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -341,7 +342,7 @@ describe("client", () => {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.isFalse(mocks.core.setFailed.called);
+        assert.strictEqual(mocks.core.setFailed.called, false);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -377,7 +378,7 @@ describe("client", () => {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.isTrue(mocks.core.setFailed.called);
+        assert.ok(mocks.core.setFailed.called);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -406,7 +407,7 @@ describe("client", () => {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.isFalse(mocks.core.setFailed.called);
+        assert.strictEqual(mocks.core.setFailed.called, false);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -432,7 +433,7 @@ describe("client", () => {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.isFalse(mocks.core.setFailed.called);
+        assert.strictEqual(mocks.core.setFailed.called, false);
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
@@ -456,7 +457,7 @@ describe("client", () => {
       const client = new Client();
       const { httpsAgent, proxy: proxying } = client.proxies(config);
       assert.deepEqual(httpsAgent.proxy, new URL(proxy));
-      assert.isNotFalse(proxying);
+      assert.notStrictEqual(proxying, false);
     });
 
     it("fails to configure proxies with an invalid proxied url", async () => {
@@ -471,9 +472,11 @@ describe("client", () => {
         assert.fail("An invalid proxy URL was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(err.message, "Failed to configure the HTTPS proxy");
+          assert.ok(
+            err.message.includes("Failed to configure the HTTPS proxy"),
+          );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });

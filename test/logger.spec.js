@@ -1,6 +1,7 @@
+import assert from "node:assert";
+import { beforeEach, describe, it } from "node:test";
 import core from "@actions/core";
 import { LogLevel } from "@slack/logger";
-import { assert } from "chai";
 import Logger from "../src/logger.js";
 import { mocks } from "./index.spec.js";
 
@@ -15,7 +16,7 @@ describe("logger", () => {
       const { logger } = new Logger(core);
       const actual = logger.getLevel();
       const expected = LogLevel.DEBUG;
-      assert.equal(actual, expected);
+      assert.strictEqual(actual, expected);
     });
 
     it("info", () => {
@@ -23,7 +24,7 @@ describe("logger", () => {
       const { logger } = new Logger(core);
       const actual = logger.getLevel();
       const expected = LogLevel.INFO;
-      assert.equal(actual, expected);
+      assert.strictEqual(actual, expected);
     });
   });
 });

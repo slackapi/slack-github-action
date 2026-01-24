@@ -1,4 +1,5 @@
-import { assert } from "chai";
+import assert from "node:assert";
+import { beforeEach, describe, it } from "node:test";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import send from "../src/send.js";
@@ -34,7 +35,7 @@ describe("config", () => {
       assert.equal(config.inputs.proxy, "https://example.com");
       assert.equal(config.inputs.retries, config.Retries.ZERO);
       assert.equal(config.inputs.token, "xoxb-example");
-      assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
+      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
     });
 
     it("allows token environment variables with a webhook", async () => {
@@ -45,10 +46,8 @@ describe("config", () => {
       assert.equal(config.inputs.token, "xoxb-example");
       assert.equal(config.inputs.webhook, "https://example.com");
       assert.equal(config.inputs.webhookType, "incoming-webhook");
-      assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.isTrue(
-        mocks.core.setSecret.withArgs("https://example.com").called,
-      );
+      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
     });
 
     it("allows webhook environment variables with a token", async () => {
@@ -59,10 +58,8 @@ describe("config", () => {
       assert.equal(config.inputs.method, "chat.postMessage");
       assert.equal(config.inputs.token, "xoxb-example");
       assert.equal(config.inputs.webhook, "https://example.com");
-      assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.isTrue(
-        mocks.core.setSecret.withArgs("https://example.com").called,
-      );
+      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
     });
 
     it("errors when both the token and webhook is provided", async () => {
@@ -73,16 +70,17 @@ describe("config", () => {
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! Either the token or webhook is required - not both.",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! Either the token or webhook is required - not both.",
+            ),
           );
-          assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
-          assert.isTrue(
+          assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+          assert.ok(
             mocks.core.setSecret.withArgs("https://example.com").called,
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -94,12 +92,13 @@ describe("config", () => {
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Missing input! A token must be provided to use the method decided.",
+          assert.ok(
+            err.message.includes(
+              "Missing input! A token must be provided to use the method decided.",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -110,12 +109,13 @@ describe("config", () => {
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Missing input! Either a method or webhook is required to take action.",
+          assert.ok(
+            err.message.includes(
+              "Missing input! Either a method or webhook is required to take action.",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -127,12 +127,13 @@ describe("config", () => {
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          assert.ok(
+            err.message.includes(
+              "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -145,12 +146,13 @@ describe("config", () => {
         assert.fail("Failed to error when invalid inputs are provided");
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+          assert.ok(
+            err.message.includes(
+              "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -163,7 +165,7 @@ describe("config", () => {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
-        assert.isTrue(mocks.core.setSecret.withArgs("xoxb-example").called);
+        assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
       }
     });
 
@@ -174,9 +176,7 @@ describe("config", () => {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
-        assert.isTrue(
-          mocks.core.setSecret.withArgs("https://slack.com").called,
-        );
+        assert.ok(mocks.core.setSecret.withArgs("https://slack.com").called);
       }
     });
   });
@@ -193,12 +193,13 @@ describe("config", () => {
         await send(mocks.core);
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            'Invalid input! An unknown "retries" value was used: FOREVER',
+          assert.ok(
+            err.message.includes(
+              'Invalid input! An unknown "retries" value was used: FOREVER',
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
@@ -214,12 +215,13 @@ describe("config", () => {
         await send(mocks.core);
       } catch (err) {
         if (err instanceof SlackError) {
-          assert.include(
-            err.message,
-            'Invalid input! An unknown "retries" value was used: FOREVER',
+          assert.ok(
+            err.message.includes(
+              'Invalid input! An unknown "retries" value was used: FOREVER',
+            ),
           );
         } else {
-          assert.fail("Failed to throw a SlackError", err);
+          assert.fail(err);
         }
       }
     });
