@@ -6,3 +6,6 @@ node_modules
 
 # Extra files
 .DS_Store
+
+# Testing remnants
+coverage.xml
