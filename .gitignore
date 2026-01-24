@@ -8,4 +8,4 @@ node_modules
 .DS_Store
 
 # Testing remnants
-coverage.xml
+coverage.txt
