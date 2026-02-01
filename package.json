@@ -34,7 +34,7 @@
   },
   "homepage": "https://docs.slack.dev/tools/slack-github-action/",
   "dependencies": {
-    "@actions/core": "^2.0.1",
+    "@actions/core": "^3.0.0",
     "@actions/github": "^7.0.0",
     "@slack/logger": "^4.0.0",
     "@slack/web-api": "^7.13.0",
