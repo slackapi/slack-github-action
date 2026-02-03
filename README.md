@@ -1,4 +1,4 @@
-# Slack Send GitHub Action
+# ppe-test
 
 > the GitHub Action for sending data to Slack
 
