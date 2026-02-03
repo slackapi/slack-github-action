@@ -1,4 +1,3 @@
-import core from "@actions/core";
 import webapi from "@slack/web-api";
 import axios from "axios";
 import Content from "./content.js";
@@ -94,7 +93,7 @@ export default class Config {
    * kept for later use.
    *
    * @constructor
-   * @param {core} core - GitHub Actions core utilities.
+   * @param {import("@actions/core")} core - GitHub Actions core utilities.
    */
   constructor(core) {
     this.axios = axios;
@@ -132,18 +131,18 @@ export default class Config {
    */
   mask() {
     if (this.inputs.token) {
-      core.debug("Setting the provided token as a secret variable.");
-      core.setSecret(this.inputs.token);
+      this.core.debug("Setting the provided token as a secret variable.");
+      this.core.setSecret(this.inputs.token);
     }
     if (this.inputs.webhook) {
-      core.debug("Setting the provided webhook as a secret variable.");
-      core.setSecret(this.inputs.webhook);
+      this.core.debug("Setting the provided webhook as a secret variable.");
+      this.core.setSecret(this.inputs.webhook);
     }
   }
 
   /**
    * Confirm the configurations are correct enough to continue.
-   * @param {core} core - GitHub Actions core utilities.
+   * @param {import("@actions/core")} core - GitHub Actions core utilities.
    */
   validate(core) {
     switch (this.inputs.retries.trim().toUpperCase()) {

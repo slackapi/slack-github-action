@@ -1,5 +1,3 @@
-import core from "@actions/core";
-
 /**
  * @typedef Cause
  * @property {Error[]} [values] - Caught exceptions.
@@ -15,7 +13,7 @@ export default class SlackError extends Error {
    */
 
   /**
-   * @param {core} _core - GitHub Actions core utilities.
+   * @param {import("@actions/core")} _core - GitHub Actions core utilities.
    * @param {any} error - The error message to throw.
    * @param {Options} options - configurations of erroring.
    */

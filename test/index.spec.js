@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import core from "@actions/core";
 import webapi from "@slack/web-api";
 import axios, { AxiosError } from "axios";
 import sinon from "sinon";
@@ -45,7 +44,18 @@ export class Mock {
     this.sandbox = sinon.createSandbox();
     this.axios = this.sandbox.stub(axios);
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
-    this.core = this.sandbox.stub(core);
+    this.core = {
+      debug: this.sandbox.stub(),
+      error: this.sandbox.stub(),
+      getInput: this.sandbox.stub(),
+      getBooleanInput: this.sandbox.stub(),
+      info: this.sandbox.stub(),
+      isDebug: this.sandbox.stub(),
+      setFailed: this.sandbox.stub(),
+      setOutput: this.sandbox.stub(),
+      setSecret: this.sandbox.stub(),
+      warning: this.sandbox.stub(),
+    };
     this.fs = this.sandbox.stub(fs);
     this.webapi = {
       WebClient: function () {
@@ -65,7 +75,16 @@ export class Mock {
     this.sandbox.reset();
     this.axios.post.resetHistory();
     this.calls.resetHistory();
+    this.core.debug.reset();
+    this.core.error.reset();
     this.core.getInput.reset();
+    this.core.getBooleanInput.reset();
+    this.core.info.reset();
+    this.core.isDebug.reset();
+    this.core.setFailed.reset();
+    this.core.setOutput.reset();
+    this.core.setSecret.reset();
+    this.core.warning.reset();
     this.webapi = {
       WebClient: function () {
         this.apiCall = () => ({

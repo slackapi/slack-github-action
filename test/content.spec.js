@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import path from "node:path";
 import { beforeEach, describe, it } from "node:test";
-import core from "@actions/core";
 import { YAMLException } from "js-yaml";
 import Config from "../src/config.js";
 import Content from "../src/content.js";
@@ -270,7 +269,7 @@ describe("content", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {
           payloadFilePath: "unknown.json",
         },
@@ -534,7 +533,7 @@ describe("content", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {
           payload: "LGTM",
         },

@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
-import core from "@actions/core";
 import { AxiosError } from "axios";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
@@ -77,7 +76,7 @@ describe("webhook", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {},
       };
       try {
@@ -169,7 +168,7 @@ describe("webhook", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {},
       };
       try {
