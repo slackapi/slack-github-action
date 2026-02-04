@@ -1,7 +1,6 @@
-import fs from "node:fs";
+import { mock } from "node:test";
 import webapi from "@slack/web-api";
 import axios, { AxiosError } from "axios";
-import sinon from "sinon";
 
 /**
  * Hello experimenter! These tests are here to confirm that the happy paths keep
@@ -35,65 +34,84 @@ export class Mock {
   };
 
   /**
-   * Setup stubbed dependencies and configure default input arguments for all
+   * Lookup tables for input values.
+   */
+  inputs = {};
+  booleanInputs = {};
+
+  /**
+   * Setup mocked dependencies and configure default input arguments for all
    * tests.
    *
    * @see {@link ../action.yml}
    */
   constructor() {
-    this.sandbox = sinon.createSandbox();
-    this.axios = this.sandbox.stub(axios);
-    this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
+    this.axios = {
+      post: mock.fn((..._args) => {
+        if (this.axios.post._promise !== undefined) {
+          return this.axios.post._promise;
+        }
+        throw new Error(
+          "Test error: axios.post was called but no promise was configured. " +
+            "Set mocks.axios.post._promise = Promise.resolve(...) or Promise.reject(...)",
+        );
+      }),
+    };
+    axios.post = this.axios.post;
+    this.calls = mock.fn((..._args) => {
+      if (this.calls._resolvesWith !== undefined) {
+        return Promise.resolve(this.calls._resolvesWith);
+      }
+      if (this.calls._rejectsWith !== undefined) {
+        return Promise.reject(this.calls._rejectsWith);
+      }
+      throw new Error(
+        "Test error: apiCall was called but no promise was configured. " +
+          "Set mocks.calls._resolvesWith = {...} or mocks.calls._rejectsWith = {...}",
+      );
+    });
+    webapi.WebClient.prototype.apiCall = this.calls;
     this.core = {
-      debug: this.sandbox.stub(),
-      error: this.sandbox.stub(),
-      getInput: this.sandbox.stub(),
-      getBooleanInput: this.sandbox.stub(),
-      info: this.sandbox.stub(),
-      isDebug: this.sandbox.stub(),
-      setFailed: this.sandbox.stub(),
-      setOutput: this.sandbox.stub(),
-      setSecret: this.sandbox.stub(),
-      warning: this.sandbox.stub(),
+      debug: mock.fn(),
+      error: mock.fn(),
+      getInput: mock.fn((key) => this.inputs[key] ?? ""),
+      getBooleanInput: mock.fn((key) => this.booleanInputs[key] ?? false),
+      info: mock.fn(),
+      isDebug: mock.fn(() => this._isDebug ?? false),
+      setFailed: mock.fn(),
+      setOutput: mock.fn(),
+      setSecret: mock.fn(),
+      warning: mock.fn(),
     };
-    this.fs = this.sandbox.stub(fs);
-    this.webapi = {
-      WebClient: function () {
-        this.apiCall = () => ({
-          ok: true,
-        });
-      },
-    };
-    this.core.getInput.withArgs("errors").returns("false");
-    this.core.getInput.withArgs("retries").returns("5");
   }
 
   /**
-   * Testing interface that removes internal state from existing stubs.
+   * Testing interface that removes internal state from existing mocks.
    */
   reset() {
-    this.sandbox.reset();
-    this.axios.post.resetHistory();
-    this.calls.resetHistory();
-    this.core.debug.reset();
-    this.core.error.reset();
-    this.core.getInput.reset();
-    this.core.getBooleanInput.reset();
-    this.core.info.reset();
-    this.core.isDebug.reset();
-    this.core.setFailed.reset();
-    this.core.setOutput.reset();
-    this.core.setSecret.reset();
-    this.core.warning.reset();
-    this.webapi = {
-      WebClient: function () {
-        this.apiCall = () => ({
-          ok: true,
-        });
-      },
-    };
-    this.core.getInput.withArgs("errors").returns("false");
-    this.core.getInput.withArgs("retries").returns("5");
+    // Clear lookup tables
+    this.inputs = {};
+    this.booleanInputs = {};
+
+    // Reset axios mock
+    this.axios.post.mock.resetCalls();
+    this.axios.post._promise = undefined;
+
+    // Reset apiCall mock
+    this.calls.mock.resetCalls();
+    this.calls._resolvesWith = undefined;
+    this.calls._rejectsWith = undefined;
+
+    // Reset core mocks
+    for (const fn of Object.values(this.core)) {
+      fn.mock?.resetCalls();
+    }
+    this._isDebug = false;
+
+    // Reset webapi
+    this.webapi = {};
+
+    // Clear environment variables
     process.env.SLACK_TOKEN = "";
     process.env.SLACK_WEBHOOK_URL = "";
   }

@@ -1,0 +1,3 @@
+{
+  "message": "What makes ${{ env.TREASURE }} a secret"
+}

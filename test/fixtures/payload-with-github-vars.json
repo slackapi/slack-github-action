@@ -1,0 +1,4 @@
+{
+  "message": "this matches an existing variable: ${{ github.apiUrl }}",
+  "channel": "C0123456789"
+}

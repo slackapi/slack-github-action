@@ -19,62 +19,68 @@ describe("send", () => {
 
   describe("techniques", async () => {
     it("webhook trigger", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns('"greetings": "hello"');
-      mocks.axios.post.returns(
-        Promise.resolve({ status: 200, data: { ok: true } }),
-      );
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "webhook-trigger",
+        payload: '"greetings": "hello"',
+      };
+      mocks.axios.post._promise = Promise.resolve({
+        status: 200,
+        data: { ok: true },
+      });
       await send(mocks.core);
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
+        mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify({ ok: true }),
       );
-      assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
+      assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+      assert.ok(mocks.core.setOutput.mock.calls[2].arguments[1] >= 0);
     });
 
     it("token", async () => {
       process.env.SLACK_WEBHOOK_URL = "https://example.com"; // https://github.com/slackapi/slack-github-action/issues/373
-      mocks.calls.resolves({ ok: true });
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
+      mocks.calls._resolvesWith = { ok: true };
+      mocks.inputs = {
+        ...mocks.inputs,
+        method: "chat.postMessage",
+        token: "xoxb-example",
+        payload: '"text": "hello"',
+      };
       await send(mocks.core);
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
+        mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify({ ok: true }),
       );
-      assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
+      assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+      assert.ok(mocks.core.setOutput.mock.calls[2].arguments[1] >= 0);
     });
 
     it("incoming webhook", async () => {
       process.env.SLACK_TOKEN = "xoxb-example"; // https://github.com/slackapi/slack-github-action/issues/373
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
-      mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        payload: '"text": "hello"',
+      };
+      mocks.axios.post._promise = Promise.resolve({ status: 200, data: "ok" });
       await send(mocks.core);
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
+        mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify("ok"),
       );
-      assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-      assert.ok(mocks.core.setOutput.getCall(2).lastArg >= 0);
+      assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+      assert.ok(mocks.core.setOutput.mock.calls[2].arguments[1] >= 0);
     });
   });
 });
