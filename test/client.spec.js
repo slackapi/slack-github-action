@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
-import core from "@actions/core";
 import webapi from "@slack/web-api";
 import errors from "@slack/web-api/dist/errors.js";
 import sinon from "sinon";
@@ -22,7 +21,7 @@ describe("client", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {
           token: "xoxb-example",
         },
@@ -44,7 +43,7 @@ describe("client", () => {
        * @type {Config}
        */
       const config = {
-        core: core,
+        core: mocks.core,
         inputs: {
           method: "chat.postMessage",
         },
@@ -79,8 +78,8 @@ describe("client", () => {
             timestamp: "1234567890.000000",
           },
         },
-        core: core,
-        logger: new Logger(core).logger,
+        core: mocks.core,
+        logger: new Logger(mocks.core).logger,
         inputs: {
           method: "pins.add",
           token: "xoxb-example-002",
@@ -124,8 +123,8 @@ describe("client", () => {
             stream: false,
           },
         },
-        core: core,
-        logger: new Logger(core).logger,
+        core: mocks.core,
+        logger: new Logger(mocks.core).logger,
         inputs: {
           api: "http://localhost:11434/api/",
           method: "generate",

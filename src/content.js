@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import github from "@actions/github";
+import * as github from "@actions/github";
 import { flatten } from "flat";
 import yaml from "js-yaml";
 import markup from "markup-js";
