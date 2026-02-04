@@ -89,29 +89,25 @@ export class Mock {
    * Testing interface that removes internal state from existing mocks.
    */
   reset() {
-    // Clear lookup tables
-    this.inputs = {};
-    this.booleanInputs = {};
-
-    // Reset axios mock
+    this._isDebug = false;
     this.axios.post.mock.resetCalls();
     this.axios.post._promise = undefined;
-
-    // Reset apiCall mock
+    this.booleanInputs = {};
     this.calls.mock.resetCalls();
     this.calls._resolvesWith = undefined;
     this.calls._rejectsWith = undefined;
-
-    // Reset core mocks
-    for (const fn of Object.values(this.core)) {
-      fn.mock?.resetCalls();
-    }
-    this._isDebug = false;
-
-    // Reset webapi
+    this.core.debug.mock.resetCalls();
+    this.core.error.mock.resetCalls();
+    this.core.getBooleanInput.mock.resetCalls();
+    this.core.getInput.mock.resetCalls();
+    this.core.info.mock.resetCalls();
+    this.core.isDebug.mock.resetCalls();
+    this.core.setFailed.mock.resetCalls();
+    this.core.setOutput.mock.resetCalls();
+    this.core.setSecret.mock.resetCalls();
+    this.core.warning.mock.resetCalls();
+    this.inputs = {};
     this.webapi = {};
-
-    // Clear environment variables
     process.env.SLACK_TOKEN = "";
     process.env.SLACK_WEBHOOK_URL = "";
   }
