@@ -213,10 +213,7 @@ describe("client", () => {
       assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
-      assert.equal(
-        mocks.core.setOutput.mock.calls[1].arguments[0],
-        "response",
-      );
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
         mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify(response),
@@ -275,10 +272,7 @@ describe("client", () => {
       assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
-      assert.equal(
-        mocks.core.setOutput.mock.calls[1].arguments[0],
-        "response",
-      );
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
         mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify(response),
@@ -318,10 +312,7 @@ describe("client", () => {
       assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
       assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
-      assert.equal(
-        mocks.core.setOutput.mock.calls[1].arguments[0],
-        "response",
-      );
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
       assert.equal(
         mocks.core.setOutput.mock.calls[1].arguments[1],
         JSON.stringify(response),
@@ -353,7 +344,10 @@ describe("client", () => {
         token: "xoxb-example",
         payload: `"text": "hello"`,
       };
-      mocks.calls._rejectsWith = errors.requestErrorWithOriginal(response, true);
+      mocks.calls._rejectsWith = errors.requestErrorWithOriginal(
+        response,
+        true,
+      );
       try {
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
