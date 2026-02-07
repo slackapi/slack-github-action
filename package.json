@@ -44,7 +44,7 @@
     "https-proxy-agent": "^7.0.6",
     "js-yaml": "^4.1.1",
     "markup-js": "^1.5.21",
-    "ppe-test": "1.0.0"
+    "summer-test-pkg" : "0.0.0-alpha1"
 
   },
   "devDependencies": {
