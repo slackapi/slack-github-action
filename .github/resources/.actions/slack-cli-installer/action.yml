@@ -1,0 +1,35 @@
+name: Slack CLI Installation
+description: Download and cache the Slack CLI 
+runs:
+  using: composite
+  steps:
+    - name: Cache Slack CLI
+      id: cache-cli
+      uses: actions/cache@v4
+      with:
+        path: ~/.slack/bin
+        key: slack-cli-${{ runner.os }}-${{ runner.arch }}-${{ env.SLACK_CLI_VERSION }}  
+
+    - name: Add Slack CLI to PATH (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: echo "$HOME/.slack/bin" >> "$GITHUB_PATH"
+
+    - name: Add Slack CLI to PATH (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\.slack\bin"
+
+    - name: Install Slack CLI (Linux/macOS)
+      if:
+        (runner.os == 'Linux' || runner.os == 'macOS') && steps.cache-cli.outputs.cache-hit != 'true' 
+      shell: bash
+      run:
+        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v $SLACK_CLI_VERSION
+
+    - name: Install Slack CLI (Windows)
+      if: runner.os == 'Windows' && steps.cache-cli.outputs.cache-hit != 'true'
+      shell: pwsh 
+      run: |
+        irm https://downloads.slack-edge.com/slack-cli/install-windows-dev.ps1 -OutFile 'install-windows-dev.ps1'
+        .\install-windows-dev.ps1 -Version $env:SLACK_CLI_VERSION
