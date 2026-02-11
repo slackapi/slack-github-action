@@ -18,15 +18,29 @@ Information on setting up and configuring mocked events can be found in [`.githu
 
 ### Testing
 
-When testing locally, ensure at least linting and unit tests pass by running `npm test`.
-Additionally, sending a PR is highly recommended with every change as there are several GitHub
-Actions jobs that execute what are effectively integration tests for this GitHub Action.
+Expected behaviors are confirmed with both unit tests and integration tests. Our unit tests run fast without secrets, while integration tests use webhooks and tokens for sending data to Slack across various techniques.
 
-#### Checks on PRs
+#### Unit tests
 
-Actions that run the integration tests on PRs from a fork will require approval before running.
-These checks use stored secrets so the changes should be reviewed before approving the workflow to
-avoid accidentally leaking tokens!
+Run the following scripts to confirm tests pass before opening a PR:
+
+```sh
+$ npm test       # Unit tests
+$ npm run lint   # Lint and format
+$ npm run check  # Typecheck
+```
+
+The `test.yml` workflow runs these scripts for pull requests and changes to the `main` branch.
+
+#### Integration tests
+
+The `integration.yml` workflow uses this action in interactions with Slack using secrets saved to the `staging` environment.
+
+A PR from a forked branch will fail this workflow until a maintainer reviews the code and [dispatches](https://github.com/slackapi/slack-github-action/actions/workflows/integration.yml) a test run that points to the most recent commit using the following format:
+
+```
+pull/<NUMBER>/head
+```
 
 ### Releasing
 
