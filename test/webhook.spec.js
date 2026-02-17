@@ -14,26 +14,32 @@ describe("webhook", () => {
 
   describe("success", () => {
     it("sends the parsed payload to the provided webhook trigger", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.axios.post.returns(
-        Promise.resolve({ status: 200, data: { ok: true } }),
-      );
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "webhook-trigger",
+        payload: "drinks: coffee",
+      };
+      mocks.axios.post._promise = Promise.resolve({
+        status: 200,
+        data: { ok: true },
+      });
       try {
         await send(mocks.core);
-        assert.equal(mocks.axios.post.getCalls().length, 1);
-        const [url, payload, options] = mocks.axios.post.getCall(0).args;
+        assert.equal(mocks.axios.post.mock.calls.length, 1);
+        const [url, payload, options] =
+          mocks.axios.post.mock.calls[0].arguments;
         assert.equal(url, "https://hooks.slack.com");
         assert.deepEqual(payload, { drinks: "coffee" });
         assert.deepEqual(options, {});
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify({ ok: true }),
         );
       } catch (err) {
@@ -43,24 +49,29 @@ describe("webhook", () => {
     });
 
     it("sends the parsed payload to the provided incoming webhook", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("text: greetings");
-      mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        payload: "text: greetings",
+      };
+      mocks.axios.post._promise = Promise.resolve({ status: 200, data: "ok" });
       try {
         await send(mocks.core);
-        assert.equal(mocks.axios.post.getCalls().length, 1);
-        const [url, payload, options] = mocks.axios.post.getCall(0).args;
+        assert.equal(mocks.axios.post.mock.calls.length, 1);
+        const [url, payload, options] =
+          mocks.axios.post.mock.calls[0].arguments;
         assert.equal(url, "https://hooks.slack.com");
         assert.deepEqual(payload, { text: "greetings" });
         assert.deepEqual(options, {});
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify("ok"),
         );
       } catch (err) {
@@ -92,11 +103,12 @@ describe("webhook", () => {
     });
 
     it("returns the failures from a webhook trigger", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "webhook-trigger",
+        payload: "drinks: coffee",
+      };
       const response = new AxiosError(
         "Request failed with status code 400",
         "ERR_BAD_REQUEST",
@@ -104,7 +116,7 @@ describe("webhook", () => {
         {},
         { status: 400 },
       );
-      mocks.axios.post.resolves(Promise.reject(response));
+      mocks.axios.post._promise = Promise.reject(response);
       try {
         await send(mocks.core);
       } catch (err) {
@@ -116,22 +128,23 @@ describe("webhook", () => {
           assert.fail(err);
         }
       }
-      assert.equal(mocks.axios.post.getCalls().length, 1);
-      const [url, payload, options] = mocks.axios.post.getCall(0).args;
+      assert.equal(mocks.axios.post.mock.calls.length, 1);
+      const [url, payload, options] = mocks.axios.post.mock.calls[0].arguments;
       assert.equal(url, "https://hooks.slack.com");
       assert.deepEqual(payload, { drinks: "coffee" });
       assert.deepEqual(options, {});
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
     });
 
     it("returns the failures from an incoming webhook", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("textt: oops");
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        payload: "textt: oops",
+      };
       const response = new AxiosError(
         "Request failed with status code 400",
         "ERR_BAD_REQUEST",
@@ -139,7 +152,7 @@ describe("webhook", () => {
         {},
         { status: 400 },
       );
-      mocks.axios.post.resolves(Promise.reject(response));
+      mocks.axios.post._promise = Promise.reject(response);
       try {
         await send(mocks.core);
       } catch (err) {
@@ -151,14 +164,14 @@ describe("webhook", () => {
           assert.fail(err);
         }
       }
-      assert.equal(mocks.axios.post.getCalls().length, 1);
-      const [url, payload, options] = mocks.axios.post.getCall(0).args;
+      assert.equal(mocks.axios.post.mock.calls.length, 1);
+      const [url, payload, options] = mocks.axios.post.mock.calls[0].arguments;
       assert.equal(url, "https://hooks.slack.com");
       assert.deepEqual(payload, { textt: "oops" });
       assert.deepEqual(options, {});
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
     });
   });
 
@@ -186,9 +199,12 @@ describe("webhook", () => {
     });
 
     it("skips proxying an http webhook url altogether", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "http://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        proxy: "https://example.com",
+      };
       const config = new Config(mocks.core);
       const webhook = new Webhook();
       const request = webhook.proxies(config);
@@ -197,11 +213,12 @@ describe("webhook", () => {
 
     it("sets up the proxy agent for the provided https proxy", async () => {
       const proxy = "https://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        proxy,
+      };
       const config = new Config(mocks.core);
       const webhook = new Webhook();
       const { httpsAgent, proxy: proxying } = webhook.proxies(config);
@@ -211,11 +228,12 @@ describe("webhook", () => {
 
     it("sets up the agent without proxy for http proxies", async () => {
       const proxy = "http://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        proxy,
+      };
       const config = new Config(mocks.core);
       const webhook = new Webhook();
       const { httpsAgent, proxy: proxying } = webhook.proxies(config);
@@ -225,11 +243,12 @@ describe("webhook", () => {
 
     it("fails to configure proxies with an invalid proxied url", async () => {
       const proxy = "https://";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        proxy,
+      };
       try {
         const config = new Config(mocks.core);
         const webhook = new Webhook();
@@ -248,11 +267,12 @@ describe("webhook", () => {
 
     it("fails to configure proxies with an unknown url protocol", async () => {
       const proxy = "ssh://";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      mocks.inputs = {
+        ...mocks.inputs,
+        webhook: "https://hooks.slack.com",
+        "webhook-type": "incoming-webhook",
+        proxy,
+      };
       try {
         const config = new Config(mocks.core);
         const webhook = new Webhook();

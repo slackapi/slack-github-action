@@ -11,7 +11,7 @@ describe("logger", () => {
 
   describe("level", () => {
     it("debug", () => {
-      mocks.core.isDebug.returns(true);
+      mocks._isDebug = true;
       const { logger } = new Logger(mocks.core);
       const actual = logger.getLevel();
       const expected = LogLevel.DEBUG;
@@ -19,7 +19,7 @@ describe("logger", () => {
     });
 
     it("info", () => {
-      mocks.core.isDebug.returns(false);
+      mocks._isDebug = false;
       const { logger } = new Logger(mocks.core);
       const actual = logger.getLevel();
       const expected = LogLevel.INFO;
