@@ -1,0 +1,56 @@
+{
+  "channel": "C0123456789",
+  "reply_broadcast": false,
+  "message": "Served ${{ env.NUMBER }} items",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Served ${{ env.NUMBER }} items on: ${{ env.DETAILS }}"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "section",
+      "block_id": "selector",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Send feedback"
+      },
+      "accessory": {
+        "action_id": "response",
+        "type": "multi_static_select",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Select URL"
+        },
+        "options": [
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "${{ github.apiUrl }}"
+            },
+            "value": "api"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "${{ github.serverUrl }}"
+            },
+            "value": "server"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "${{ github.graphqlUrl }}"
+            },
+            "value": "graphql"
+          }
+        ]
+      }
+    }
+  ]
+}
