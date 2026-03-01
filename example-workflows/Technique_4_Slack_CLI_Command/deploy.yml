@@ -24,6 +24,7 @@ jobs:
       - name: Post a deployment message
         uses: slackapi/slack-github-action@v2
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
