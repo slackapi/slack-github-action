@@ -38,7 +38,7 @@
     "@actions/github": "^9.0.0",
     "@slack/logger": "^4.0.0",
     "@slack/web-api": "^7.14.1",
-    "axios": "^1.13.5",
+    "axios": "^1.13.6",
     "axios-retry": "^4.5.0",
     "flat": "^6.0.1",
     "https-proxy-agent": "^7.0.6",
