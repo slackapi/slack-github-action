@@ -12,7 +12,7 @@ on:
 
 jobs:
   integration:
-    name: Run integration tests
+    name: Run API tests
     runs-on: ubuntu-latest
     environment: staging
     permissions:
@@ -68,7 +68,7 @@ jobs:
         env:
           INPUT_REF: ${{ inputs.ref }}
 
-      - name: "integration(wfb): send a payload to workflow builder via webhook trigger"
+      - name: "test(wfb): send a payload to workflow builder via webhook trigger"
         id: wfb
         uses: ./
         with:
@@ -82,12 +82,12 @@ jobs:
             repo_name: ${{ github.event.repository.full_name }}
             status: ${{ job.status }}
 
-      - name: "integration(wfb): confirm a payload was sent"
+      - name: "test(wfb): confirm a payload was sent"
         run: test -n "$WFB_OUTPUT_TIME"
         env:
           WFB_OUTPUT_TIME: ${{ steps.wfb.outputs.time }}
 
-      - name: "integration(botToken): post a message to channel"
+      - name: "test(api): post a message to channel"
         id: message
         uses: ./
         with:
@@ -98,12 +98,12 @@ jobs:
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: ":checkered_flag: Action happens at <https://github.com/${{ github.repository }}>"
 
-      - name: "integration(method): confirm a message was posted"
+      - name: "test(api): confirm a message was posted"
         run: test -n "$MESSAGE_OUTPUT_TS"
         env:
           MESSAGE_OUTPUT_TS: ${{ steps.message.outputs.ts }}
 
-      - name: "integration(method): post a message with blocks"
+      - name: "test(api): post a message with blocks"
         id: blocks
         uses: ./
         with:
@@ -120,12 +120,12 @@ jobs:
                     short: true
                     value: "Processing"
 
-      - name: "integration(method): confirm the blocks were posted"
+      - name: "test(api): confirm the blocks were posted"
         run: test -n "$BLOCKS_OUTPUT_TS"
         env:
           BLOCKS_OUTPUT_TS: ${{ steps.blocks.outputs.ts }}
 
-      - name: "integration(method): post a threaded message"
+      - name: "test(api): post a threaded message"
         id: timer
         uses: ./
         with:
@@ -137,15 +137,15 @@ jobs:
             text: "Started at `${{ steps.blocks.outputs.time }}`"
             thread_ts: "${{ steps.blocks.outputs.ts }}"
 
-      - name: "integration(incoming): confirm the thread started"
+      - name: "test(api): confirm the thread started"
         run: test -n "$TIMER_OUTPUT_TIME"
         env:
           TIMER_OUTPUT_TIME: ${{ steps.timer.outputs.time }}
 
-      - name: "integration(method): wait to mock event processing"
+      - name: "test(api): wait to mock event processing"
         run: sleep 3
 
-      - name: "integration(method): update the original message"
+      - name: "test(api): update the original message"
         id: finished
         uses: ./
         with:
@@ -163,7 +163,7 @@ jobs:
                     short: true
                     value: "Completed"
 
-      - name: "integration(method): post another threaded message"
+      - name: "test(api): post another threaded message"
         id: done
         uses: ./
         with:
@@ -175,7 +175,7 @@ jobs:
             text: "Finished at `${{ steps.finished.outputs.time }}`"
             thread_ts: "${{ steps.timer.outputs.thread_ts }}"
 
-      - name: "integration(method): post a file into a channel"
+      - name: "test(api): post a file into a channel"
         id: file
         uses: ./
         with:
@@ -188,7 +188,7 @@ jobs:
             file: .github/workflows/integration.yml
             filename: integration.yml
 
-      - name: "integration(method): react to the completed update message"
+      - name: "test(api): react to the completed update message"
         uses: ./
         with:
           errors: true
@@ -199,12 +199,12 @@ jobs:
             timestamp: ${{ steps.blocks.outputs.ts }}
             name: "tada"
 
-      - name: "integration(method): confirm the thread ended"
+      - name: "test(api): confirm the thread ended"
         run: test -n "$DONE_OUTPUT_TIME"
         env:
           DONE_OUTPUT_TIME: ${{ steps.done.outputs.time }}
 
-      - name: "integration(incoming): post a message via incoming webhook"
+      - name: "test(incoming): post a message via incoming webhook"
         id: incoming
         uses: ./
         with:
@@ -212,7 +212,7 @@ jobs:
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK }}
           webhook-type: incoming-webhook
           payload: |
-            text: "Incoming webhook test for slack send"
+            text: "Incoming webhook test for the Slack GitHub Action"
             blocks:
               - type: section
                 text:
@@ -220,17 +220,17 @@ jobs:
                   text: ":link: A message was received via incoming webhook"
                   emoji: true
 
-      - name: "integration(incoming): confirm a webhook was posted"
+      - name: "test(incoming): confirm a webhook was posted"
         run: test -n "$INCOMING_WEBHOOK_OUTPUT_TIME"
         env:
           INCOMING_WEBHOOK_OUTPUT_TIME: ${{ steps.incoming.outputs.time }}
 
-      - name: "integration(incoming): reveal contents of the github payload"
+      - name: "test(incoming): reveal contents of the github payload"
         run: echo "$JSON"
         env:
           JSON: ${{ toJSON(github) }}
 
-      - name: "integration(incoming): post a message via payload file"
+      - name: "test(incoming): post a message via payload file"
         id: payload_file
         uses: ./
         with:
@@ -243,15 +243,81 @@ jobs:
           JOB_STATUS: ${{ job.status }}
           ATTACHMENT_COLOR: ${{ (job.status == 'success' && 'good') || (job.status == 'failure' && 'danger') || 'warning' }}
 
-      - name: "integration(incoming): confirm a payload file was posted"
+      - name: "test(incoming): confirm a payload file was posted"
         run: test -n "$PAYLOAD_FILE_OUTPUT_TIME"
         env:
           PAYLOAD_FILE_OUTPUT_TIME: ${{ steps.payload_file.outputs.time }}
 
-      - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7 # v0.1.1
+  cli:
+    name: Run CLI tests
+    runs-on: ${{ matrix.os }}
+    environment: staging
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: "build: checkout the latest changes"
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          extension: js
-          include: src
+          persist-credentials: false
+          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+
+      - name: "test(cli): run a slack cli version check"
+        id: version
+        uses: ./cli
+        with:
+          command: "version"
+          version: "3.14.0"
+
+      - name: "test(cli): confirm the version check outputs"
+        shell: bash
+        run: |
+          set -ex
+          [ "$CLI_OK" = "true" ]
+          echo "$CLI_TIME" | grep -qE '^[0-9]+$'
+          [ -n "$CLI_RESPONSE" ]
+        env:
+          CLI_OK: ${{ steps.version.outputs.ok }}
+          CLI_RESPONSE: ${{ steps.version.outputs.response }}
+          CLI_TIME: ${{ steps.version.outputs.time }}
+
+      - name: "test(cli): run an unknown command"
+        id: unknown
+        continue-on-error: true
+        uses: ./cli
+        with:
+          command: "off"
+
+      - name: "test(cli): confirm the unknown command outputs"
+        shell: bash
+        run: |
+          set -ex
+          [ "$CLI_OK" = "false" ]
+          echo "$CLI_TIME" | grep -qE '^[0-9]+$'
+          [ -n "$CLI_RESPONSE" ]
+        env:
+          CLI_OK: ${{ steps.unknown.outputs.ok }}
+          CLI_RESPONSE: ${{ steps.unknown.outputs.response }}
+          CLI_TIME: ${{ steps.unknown.outputs.time }}
+
+      - name: "chore: configure the actioneering application"
+        shell: bash
+        run: mv .github/resources/.slack .slack
+
+      - name: "test(cli): validate the app manifest"
+        uses: ./cli
+        with:
+          command: "manifest"
+          token: ${{ secrets.SLACK_SERVICE_TOKEN }}
+
+      - name: "test(cli): deploy the app"
+        uses: ./cli
+        with:
+          command: "deploy --app ${{ vars.SLACK_APP_ID }} --hide-triggers --force"
+          token: ${{ secrets.SLACK_SERVICE_TOKEN }}

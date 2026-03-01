@@ -1,6 +1,6 @@
-# Slack Send GitHub Action
+# Slack GitHub Action
 
-The GitHub Action for sending data to Slack.
+The GitHub Action for sending data to Slack and running commands.
 
 ## Versioning
 

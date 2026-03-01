@@ -1,4 +1,4 @@
-name: "Slack: Send to Slack"
+name: "Slack GitHub Action"
 author: "slackapi"
 description: "Send data to Slack to start a Slack workflow in Workflow Builder, call a Slack API method, or post a message into a channel"
 inputs:
