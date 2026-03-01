@@ -36,7 +36,7 @@ jobs:
         if: ${{ steps.email.outputs.ok }}
         run: |
           SLACK_USER_ID=$(echo '${{ steps.email.outputs.response }}' | jq -r '.user.id')
-          SLACK_DISPLAY_NAME=$(echo '${{ steps.email.outputs.response }}' | jq -r '.user.profile.display_name // .user.real_name')
+          SLACK_DISPLAY_NAME=$(echo '${{ steps.email.outputs.response }}' | jq -r '(.user.profile.display_name | select(. != "")) // .user.real_name')
           echo "SLACK_USER_ID=$SLACK_USER_ID" >> "$GITHUB_ENV"
           echo "SLACK_DISPLAY_NAME=$SLACK_DISPLAY_NAME" >> "$GITHUB_ENV"
 
