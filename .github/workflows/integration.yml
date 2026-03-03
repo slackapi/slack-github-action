@@ -247,11 +247,3 @@ jobs:
         run: test -n "$PAYLOAD_FILE_OUTPUT_TIME"
         env:
           PAYLOAD_FILE_OUTPUT_TIME: ${{ steps.payload_file.outputs.time }}
-
-      - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7 # v0.1.1
-        with:
-          codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          extension: js
-          include: src
