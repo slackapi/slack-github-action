@@ -273,7 +273,6 @@ jobs:
         uses: ./cli
         with:
           command: "version"
-          version: "3.14.0"
 
       - name: "test(cli): confirm the version check outputs"
         shell: bash
