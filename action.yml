@@ -1,6 +1,6 @@
 name: "Slack GitHub Action"
 author: "slackapi"
-description: "Send data to Slack to start a Slack workflow in Workflow Builder, call a Slack API method, or post a message into a channel"
+description: "Post a message, call a Web API method, start a Slack workflow, or run a Slack CLI command from GitHub Actions"
 inputs:
   api:
     description: "A custom API URL to send Slack API method requests to."
