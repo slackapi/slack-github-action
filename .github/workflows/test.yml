@@ -8,7 +8,7 @@ on:
 
 jobs:
   tests:
-    name: Run tests
+    name: Run unit tests
     runs-on: ubuntu-latest
     permissions:
       checks: write
