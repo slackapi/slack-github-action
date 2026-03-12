@@ -5,15 +5,15 @@
         "checkJs": true,
         "esModuleInterop": true,
         "lib": [
-            "ES2023"
+            "ESNext"
         ],
-        "module": "node16",
-        "moduleResolution": "node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "target": "ES2022"
+        "target": "ESNext"
     },
     "exclude": [
         "node_modules"
