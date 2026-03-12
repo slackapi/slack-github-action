@@ -1,0 +1,150 @@
+name: "Slack GitHub Action: CLI"
+author: "slackapi"
+description: "Install the Slack CLI and run a command in a GitHub Actions workflow"
+inputs:
+  command:
+    description: "A Slack CLI command to run without the 'slack' prefix."
+    required: true
+  token:
+    description: "A service token passed as the '--token' flag to the CLI command."
+    required: false
+  version:
+    description: "The version of the Slack CLI to install. Defaults to the latest."
+    required: false
+outputs:
+  ok:
+    description: "If the command completed with a '0' exit code."
+    value: ${{ steps.slack-cli-unix.outputs.ok || steps.slack-cli-windows.outputs.ok }}
+  response:
+    description: "The standard output from the CLI command."
+    value: ${{ steps.slack-cli-unix.outputs.response || steps.slack-cli-windows.outputs.response }}
+  time:
+    description: "The Unix epoch time that the step completed."
+    value: ${{ steps.slack-cli-unix.outputs.time || steps.slack-cli-windows.outputs.time }}
+runs:
+  using: composite
+  steps:
+    - name: Check if Slack CLI already exists
+      id: slack-cli-check
+      shell: bash
+      run: |
+        if command -v slack &> /dev/null; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Cache Slack CLI
+      if: steps.slack-cli-check.outputs.exists != 'true' && inputs.version != ''
+      id: cache-cli
+      uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      with:
+        path: |
+          ${{ runner.os == 'Windows' && '~/AppData/Local/slack-cli' || '~/.slack/bin' }}
+        key: slack-cli-${{ runner.os }}-${{ runner.arch }}-${{ inputs.version }}
+
+    - name: Bash Add Slack CLI to PATH
+      if: steps.slack-cli-check.outputs.exists != 'true' && runner.os != 'Windows'
+      shell: bash
+      run: echo "$HOME/.slack/bin" >> "$GITHUB_PATH" # zizmor: ignore[github-env]
+
+    - name: Pwsh Add Slack CLI to PATH
+      if: steps.slack-cli-check.outputs.exists != 'true' && runner.os == 'Windows'
+      shell: pwsh
+      run: Add-Content -Path $env:GITHUB_PATH -Value "$env:USERPROFILE\AppData\Local\slack-cli\bin" # zizmor: ignore[github-env]
+
+    - name: Bash Install Slack CLI
+      if: >-
+        steps.slack-cli-check.outputs.exists != 'true' &&
+        steps.cache-cli.outputs.cache-hit != 'true' &&
+        runner.os != 'Windows'
+      shell: bash
+      run: |
+        if [ -n "$SLACK_CLI_VERSION" ]; then
+          curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v "$SLACK_CLI_VERSION"
+        else
+          curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s
+        fi
+      env:
+        SLACK_CLI_VERSION: ${{ inputs.version }}
+
+    - name: Pwsh Install Slack CLI
+      if: >-
+        steps.slack-cli-check.outputs.exists != 'true' &&
+        steps.cache-cli.outputs.cache-hit != 'true' &&
+        runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        if ($env:SLACK_CLI_VERSION) {
+          $installer = Join-Path $env:TEMP "install-slack-cli.ps1"
+          Invoke-WebRequest -Uri "https://downloads.slack-edge.com/slack-cli/install-windows.ps1" -OutFile $installer
+          & $installer -v $env:SLACK_CLI_VERSION
+        } else {
+          irm https://downloads.slack-edge.com/slack-cli/install-windows.ps1 | iex
+        }
+      env:
+        SLACK_CLI_VERSION: ${{ inputs.version }}
+
+    - name: Bash Run Slack CLI command
+      id: slack-cli-unix
+      if: runner.os != 'Windows'
+      shell: bash
+      env:
+        SLACK_COMMAND: ${{ inputs.command }}
+        SLACK_TOKEN: ${{ inputs.token }}
+      run: |
+        args="$SLACK_COMMAND --skip-update"
+        if [ "$RUNNER_DEBUG" = "1" ]; then
+          args="$args --verbose"
+        fi
+        if [ -n "$SLACK_TOKEN" ]; then
+          args="$args --token $SLACK_TOKEN"
+        fi
+
+        set +e
+        output=$(slack $args 2>&1 | tee /dev/stderr)
+        exit_code=$?
+        set -e
+
+        echo "ok=$([ $exit_code -eq 0 ] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+        echo "time=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+        echo "response<<SLACKCLIEOF" >> "$GITHUB_OUTPUT"
+        echo "$output" >> "$GITHUB_OUTPUT"
+        echo "SLACKCLIEOF" >> "$GITHUB_OUTPUT"
+
+        if [ $exit_code -ne 0 ]; then
+          exit $exit_code
+        fi
+
+    - name: Pwsh Run Slack CLI command
+      id: slack-cli-windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      env:
+        SLACK_COMMAND: ${{ inputs.command }}
+        SLACK_TOKEN: ${{ inputs.token }}
+      run: |
+        $cliArgs = "$env:SLACK_COMMAND --skip-update"
+        if ($env:RUNNER_DEBUG -eq "1") {
+          $cliArgs = "$cliArgs --verbose"
+        }
+        if ($env:SLACK_TOKEN) {
+          $cliArgs = "$cliArgs --token $env:SLACK_TOKEN"
+        }
+
+        $outputFile = New-TemporaryFile
+        slack $cliArgs.Split(' ') 2>&1 | Tee-Object -FilePath $outputFile.FullName
+        $exit_code = $LASTEXITCODE
+        $output = Get-Content $outputFile.FullName -Raw
+
+        "ok=$( if ($exit_code -eq 0) { 'true' } else { 'false' } )" >> $env:GITHUB_OUTPUT
+        "time=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_OUTPUT
+
+        "response<<SLACKCLIEOF" >> $env:GITHUB_OUTPUT
+        $output >> $env:GITHUB_OUTPUT
+        "SLACKCLIEOF" >> $env:GITHUB_OUTPUT
+
+        if ($exit_code -ne 0) {
+          exit $exit_code
+        }

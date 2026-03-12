@@ -24,6 +24,7 @@ jobs:
       - name: Send the issue link into the Slack channel
         uses: slackapi/slack-github-action@v2.1.1
         with:
+          errors: true
           method: chat.postMessage # https://docs.slack.dev/reference/methods/chat.postMessage/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |

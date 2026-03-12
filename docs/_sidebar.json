@@ -57,6 +57,20 @@
             "tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-block-message",
             "tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-blocks-found-in-file"
           ]
+        },
+        {
+          "type": "category",
+          "label": "Running Slack CLI commands",
+          "link": {
+            "type": "doc",
+            "id": "tools/slack-github-action/sending-techniques/running-slack-cli-commands/running-slack-cli-commands"
+          },
+          "items": [
+            "tools/slack-github-action/sending-techniques/running-slack-cli-commands/running-slack-cli-commands",
+            "tools/slack-github-action/sending-techniques/running-slack-cli-commands/deploy-an-app",
+            "tools/slack-github-action/sending-techniques/running-slack-cli-commands/validate-a-manifest",
+            "tools/slack-github-action/sending-techniques/running-slack-cli-commands/manage-collaborators"
+          ]
         }
       ]
     },
