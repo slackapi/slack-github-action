@@ -29,8 +29,8 @@
     "url": "https://github.com/slackapi/slack-github-action/issues"
   },
   "engines": {
-    "node": ">=24.0.0",
-    "npm": ">=11.3.0"
+    "node": ">=24.11.0",
+    "npm": ">=11.6.1"
   },
   "homepage": "https://docs.slack.dev/tools/slack-github-action/",
   "dependencies": {
