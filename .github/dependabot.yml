@@ -7,10 +7,6 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         versions:
-          - "21.x"
-          - "22.x"
-          - "23.x"
-          - "24.x"
           - "25.x"
   - package-ecosystem: "github-actions"
     directory: "/"

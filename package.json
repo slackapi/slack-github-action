@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "ncc build src/index.js --license licenses.txt --source-map",
-    "check": "tsc --noemit --module es2022 --project ./jsconfig.json",
-    "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:20-buster --container-architecture linux/amd64",
+    "check": "tsc --noemit --project ./jsconfig.json",
+    "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:24 --container-architecture linux/amd64",
     "lint:fix": "biome check --write",
     "lint": "biome check",
     "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/coverage.txt test/*.spec.js",
@@ -29,8 +29,8 @@
     "url": "https://github.com/slackapi/slack-github-action/issues"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.2.0"
+    "node": ">=24.11.0",
+    "npm": ">=11.6.1"
   },
   "homepage": "https://docs.slack.dev/tools/slack-github-action/",
   "dependencies": {
@@ -41,19 +41,19 @@
     "axios": "^1.13.6",
     "axios-retry": "^4.5.0",
     "flat": "^6.0.1",
-    "https-proxy-agent": "^7.0.6",
+    "https-proxy-agent": "^8.0.0",
     "js-yaml": "^4.1.1",
     "markup-js": "^1.5.21"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.4",
+    "@biomejs/biome": "^2.4.6",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
-    "@types/node": "^20.19.35",
+    "@types/node": "^24.12.0",
     "@types/sinon": "^21.0.0",
     "@vercel/ncc": "^0.38.4",
-    "sinon": "^21.0.1",
+    "sinon": "^21.0.2",
     "typescript": "^5.9.3"
   }
 }

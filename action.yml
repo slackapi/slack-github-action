@@ -54,5 +54,5 @@ outputs:
   ts:
     description: "The timestamp of a Slack message or event in the response."
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"
