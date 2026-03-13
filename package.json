@@ -37,7 +37,7 @@
     "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",
     "@slack/logger": "^4.0.1",
-    "@slack/web-api": "^7.14.1",
+    "@slack/web-api": "^7.15.0",
     "axios": "^1.13.6",
     "axios-retry": "^4.5.0",
     "flat": "^6.0.1",
