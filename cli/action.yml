@@ -1,4 +1,4 @@
-name: "Slack GitHub Action: CLI"
+name: "The Slack GitHub Action: CLI"
 author: "slackapi"
 description: "Install the Slack CLI and run a command in a GitHub Actions workflow"
 inputs:

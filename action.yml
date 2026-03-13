@@ -1,4 +1,4 @@
-name: "Slack GitHub Action"
+name: "The Slack GitHub Action"
 author: "slackapi"
 description: "Post a message, call a Web API method, start a Slack workflow, or run a Slack CLI command from GitHub Actions"
 inputs:
