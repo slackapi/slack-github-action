@@ -1,6 +1,6 @@
 {
   "name": "slack-github-action",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "The official Slack GitHub Action. Use this to send data into your Slack workspace",
   "main": "dist/index.js",
   "type": "module",
@@ -11,7 +11,7 @@
     "lint:fix": "biome check --write",
     "lint": "biome check",
     "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/coverage.txt test/*.spec.js",
-    "postversion": "TAG=\"v$(npm pkg get version | jq -r)\" && grep -rl 'slackapi/slack-github-action@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action@v.*|slackapi/slack-github-action@${TAG}|g\""
+    "postversion": "TAG=\"v$(npm pkg get version | jq -r)\" && grep -rl 'slackapi/slack-github-action@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action@v.*|slackapi/slack-github-action@${TAG}|g\" && grep -rl 'slackapi/slack-github-action/cli@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action/cli@v.*|slackapi/slack-github-action/cli@${TAG}|g\""
   },
   "repository": {
     "type": "git",
