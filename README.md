@@ -1,6 +1,6 @@
 # Slack GitHub Action
 
-> the GitHub Action for sending data to Slack and running commands
+> the Slack GitHub Action is for sending data to Slack and running commands
 
 [![codecov](https://codecov.io/gh/slackapi/slack-github-action/graph/badge.svg?token=OZNX7FHN78)](https://codecov.io/gh/slackapi/slack-github-action)
 
