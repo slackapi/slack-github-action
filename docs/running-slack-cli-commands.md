@@ -1,7 +1,3 @@
----
-sidebar_label: Overview
----
-
 # Running Slack CLI commands
 
 The Slack CLI technique installs and runs [Slack CLI](/tools/slack-cli/) commands directly from a GitHub Actions workflow.
@@ -95,6 +91,47 @@ steps:
 
 ## Example workflows
 
-* [**Deploy an app**](/tools/slack-github-action/sending-techniques/running-slack-cli-commands/deploy-an-app): Deploy to Slack on push to the main branch.
-* [**Validate a manifest**](/tools/slack-github-action/sending-techniques/running-slack-cli-commands/validate-a-manifest): Check the app manifest on pull requests.
-* [**Manage collaborators**](/tools/slack-github-action/sending-techniques/running-slack-cli-commands/manage-collaborators): Add or remove an app collaborator using CLI and API techniques together.
+<details>
+<summary><strong>Deploy an app</strong></summary>
+
+This workflow deploys a Slack app when changes are pushed to the main branch.
+
+This example uses a service token to authenticate the deploy command.
+
+### GitHub Actions workflow
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_4_Slack_CLI_Command/deploy.yml
+```
+
+</details>
+
+<details>
+<summary><strong>Validate a manifest</strong></summary>
+
+This workflow validates the app manifest on pull requests to catch configuration issues early.
+
+This example checks the app manifest file in the repository.
+
+### GitHub Actions workflow
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_4_Slack_CLI_Command/manifest.yml
+```
+
+</details>
+
+<details>
+<summary><strong>Manage collaborators</strong></summary>
+
+This workflow adds or removes an app collaborator using a manually triggered workflow.
+
+This example combines the Slack API technique ([`users.lookupByEmail`](https://docs.slack.dev/reference/methods/users.lookupByEmail), [`chat.postMessage`](https://docs.slack.dev/reference/methods/chat.postMessage)) with the CLI technique ([`collaborators add`](https://docs.slack.dev/tools/slack-cli/reference/commands/slack_collaborators_add)/[`remove`](https://docs.slack.dev/tools/slack-cli/reference/commands/slack_collaborators_remove)) to look up a user by email, update collaborators, and post a confirmation message.
+
+### GitHub Actions workflow
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_4_Slack_CLI_Command/collaborators.yml
+```
+
+</details>

@@ -1,4 +1,4 @@
-# Sending variables
+# Gathering variables
 
 There are different [techniques to send data](/tools/slack-github-action/sending-techniques) into Slack and whichever one is chosen will require a certain set of customized inputs, as described later.
 
