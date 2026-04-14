@@ -67,6 +67,24 @@ Input values for the payload to be sent can also be provided in a file, either i
     webhook-type: webhook-trigger
 ```
 
+### Flattening nested payloads
+
+Variables and data provided in the payload might contain nested fields that need to be flattened before being sent with a [webhook trigger](/tools/slack-github-action/sending-data-webhook-slack-workflow) to match the expected input format of [Workflow Builder](https://slack.com/features/workflow-automation).
+
+The `payload-delimiter` option will flatten the input payload using the provided delimiter and will also make values stringified:
+
+```yaml
+- name: Flatten the default GitHub payload
+  uses: slackapi/slack-github-action@v3.0.1
+  with:
+    payload-delimiter: "_"
+    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+    webhook-type: webhook-trigger
+```
+
+Reference to the flattening implementation is available for exploration from within the [`flat`](https://www.npmjs.com/package/flat) package.
+
+
 ## Expected outputs
 
 The technique, like all Slack Github Action techniques, [outputs values](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs) that can be used as inputs in following steps of a GitHub workflow.
@@ -78,6 +96,7 @@ The following outputs are returned with each of the techniques:
 |`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
 | `ok` | `boolean` | If the request completed with success.
 | `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
+
 
 ## Example workflows
 

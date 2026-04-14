@@ -21,23 +21,6 @@ The `errors` option defaults to `false` so failed requests do not cause the step
 
 Invalid inputs to the GitHub Action, such as not including a payload, will always cause the GitHub step to fail.
 
-## Flattening nested payloads
-
-Variables and data provided in the payload might contain nested fields that need to be flattened before being sent with a [webhook trigger](/tools/slack-github-action/sending-techniques/sending-data-webhook-slack-workflow) to match the expected input format of [Workflow Builder](https://slack.com/features/workflow-automation).
-
-The `payload-delimiter` option will flatten the input payload using the provided delimiter and will also make values stringified:
-
-```yaml
-- name: Flatten the default GitHub payload
-  uses: slackapi/slack-github-action@v3.0.1
-  with:
-    payload-delimiter: "_"
-    webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-    webhook-type: webhook-trigger
-```
-
-Reference to the flattening implementation is available for exploration from within the [`flat`](https://www.npmjs.com/package/flat) package.
-
 ## Parsing templated variables
 
 Additional variables provided in the GitHub event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and event [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) can be used to replace templated variables in the input payload with the `payload-templated` option:

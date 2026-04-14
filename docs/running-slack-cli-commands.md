@@ -78,6 +78,17 @@ steps:
       token: ${{ secrets.SLACK_SERVICE_TOKEN }}
 ```
 
+<details>
+<summary><strong>Workflow: Validate a manifest</strong></summary>
+
+This workflow validates the app manifest on pull requests to catch configuration issues early.
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_4_Slack_CLI_Command/manifest.yml
+```
+
+</details>
+
 ### Deploy an app with a service token
 
 ```yaml
@@ -89,10 +100,8 @@ steps:
       token: ${{ secrets.SLACK_SERVICE_TOKEN }}
 ```
 
-## Example workflows
-
 <details>
-<summary><strong>Deploy an app</strong></summary>
+<summary><strong>Workflow: Deploy an app</strong></summary>
 
 This workflow deploys a Slack app when changes are pushed to the main branch. It uses a service token to authenticate the deploy command.
 
@@ -102,19 +111,11 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 
 </details>
 
-<details>
-<summary><strong>Validate a manifest</strong></summary>
-
-This workflow validates the app manifest on pull requests to catch configuration issues early.
-
-```js reference
-https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_4_Slack_CLI_Command/manifest.yml
-```
-
-</details>
+### Manage collaborators 
 
 <details>
-<summary><strong>Manage collaborators</strong></summary>
+
+<summary><strong>Workflow: Manage collaborators</strong></summary>
 
 This workflow adds or removes an app collaborator using a manually triggered workflow.
 
