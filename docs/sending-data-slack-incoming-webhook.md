@@ -57,11 +57,7 @@ The following outputs are returned with each of the techniques:
 <details>
 <summary><strong>Post an inline text message</strong></summary>
 
-This workflow writes a line of text after a push event is received.
-
-This example uses incoming webhooks to post a plain text message.
-
-### GitHub Actions workflow
+This workflow uses incoming webhooks to post a plain text message.
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/text.yml
@@ -72,11 +68,7 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 <details>
 <summary><strong>Post an inline block message</strong></summary>
 
-This workflow formats a response to recent adventures.
-
-This example uses incoming webhooks to post a message with Block Kit.
-
-### GitHub Actions workflow
+This workflow uses incoming webhooks to post a message with Block Kit.
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/blocks.yml
@@ -87,17 +79,15 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 <details>
 <summary><strong>Post blocks found in a file</strong></summary>
 
-This workflow links to the GitHub Actions job in progress.
+This workflow uses file data when posting to an incoming webhook. It links to the GitHub Actions job in progress.
 
-This example uses file data when posting to an incoming webhook.
-
-### Payload file being sent
+Payload file being sent
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/saved.data.json
 ```
 
-### GitHub Actions workflow
+### Workflow 
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/saved.gha.yml

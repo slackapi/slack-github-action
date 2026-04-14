@@ -160,11 +160,7 @@ While these outputs are returned with certain Slack API methods:
 <details>
 <summary><strong>Direct message the author</strong></summary>
 
-This workflow sends a direct message to the user that pushed the most recent commits.
-
-This example uses the email of the pusher to find the user to send a message to.
-
-### GitHub Actions workflow
+This workflow sends a direct message to the user that pushed the most recent commits. It does so by grabbing the email of the pusher.
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_2_Slack_API_Method/author.yml
@@ -175,11 +171,8 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 <details>
 <summary><strong>Invite a usergroup to channel</strong></summary>
 
-This workflow creates a channel after a bug is reported and add members of a usergroup.
+This workflow creates a channel after a bug is reported and add members of a usergroup by chaining multiple Slack API method calls together.
 
-This example chains multiple Slack API methods together to help fix bugs fast.
-
-### GitHub Actions workflow
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_2_Slack_API_Method/invite.yml

@@ -88,25 +88,25 @@ This workflow converts build outputs from earlier GitHub Action steps into a Sla
 
 This example uses data from a payload file to [send a message](/tools/deno-slack-sdk/reference/slack-functions/send_message/) to a hardcoded channel.
 
-### Payload file being sent
+Payload file being sent
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/builds.data.json
 ```
 
-### GitHub Actions workflow
+GitHub Actions workflow
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/builds.gha.yml
 ```
 
-### Slack app manifest
+Slack app manifest
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/builds.manifest.json
 ```
 
-### Slack webhook trigger
+Slack webhook trigger
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/builds.trigger.json
@@ -125,19 +125,19 @@ This example uses [Slack functions](/tools/deno-slack-sdk/guides/creating-slack-
 2. Send a message to the selected channel.
 3. React with a `:tada:` emoji.
 
-### GitHub Actions workflow
+GitHub Actions workflow
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/announcements.gha.yml
 ```
 
-### Slack app manifest
+Slack app manifest
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/announcements.manifest.json
 ```
 
-### Slack webhook trigger
+Slack webhook trigger
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/announcements.trigger.json
@@ -152,19 +152,19 @@ This workflow shows the latest commit status in the header of a channel.
 
 This example uses the default GitHub event [context](https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts#L6) and [payload](https://docs.github.com/en/webhooks/webhook-events-and-payloads) to [update a channel topic](/tools/deno-slack-sdk/reference/slack-functions/update_channel_topic/).
 
-### GitHub Actions workflow
+GitHub Actions workflow
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/topic.gha.yml
 ```
 
-### Slack app manifest
+Slack app manifest
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/topic.manifest.json
 ```
 
-### Slack webhook trigger
+Slack webhook trigger
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_1_Slack_Workflow_Builder/topic.trigger.json
