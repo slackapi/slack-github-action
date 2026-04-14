@@ -6,10 +6,10 @@
     "className": "sidebar-title"
   },
   { "type": "html", "value": "<hr>" },
-  "/tools/slack-github-action/sending-variables",
-  "tools/slack-github-action/sending-data-webhook-slack-workflow/sending-data-webhook-slack-workflow",
-  "tools/slack-github-action/sending-data-slack-api-method/sending-data-slack-api-method",
-  "tools/slack-github-action/sending-data-slack-incoming-webhook/sending-data-slack-incoming-webhook",
-  "tools/slack-github-action/running-slack-cli-commands/running-slack-cli-commands",
+  "/tools/slack-github-action/gathering-variables",
+  "tools/slack-github-action/sending-data-webhook-slack-workflow",
+  "tools/slack-github-action/sending-data-slack-api-method",
+  "tools/slack-github-action/sending-data-slack-incoming-webhook",
+  "tools/slack-github-action/running-slack-cli-commands",
   "tools/slack-github-action/additional-configurations"
 ]
