@@ -1,7 +1,3 @@
----
-sidebar_label: Overview
----
-
 # Sending data using a Slack API method
 
 A bot token or user token or [token of some other kind](/authentication/tokens) must be used to call one of [the Slack API methods](/reference/methods) with this technique.
@@ -139,7 +135,47 @@ Calling [a Slack API method](/reference/methods) with [`@slack/web-api`](/tools/
       filename: "results-${{ github.sha }}.out"
 ```
 
+## Expected outputs
+
+The technique, like all Slack Github Action techniques, [outputs values](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs) that can be used as inputs in following steps of a GitHub workflow.
+
+The following outputs are returned with each of the techniques:
+
+| Output | Type  | Description|
+|---|---|---|
+|`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
+| `ok` | `boolean` | If the request completed with success.
+| `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
+
+While these outputs are returned with certain Slack API methods:
+
+| Output | Type  | Description|
+|---|---|---|
+|`channel_id` | `string` | The [channel ID](/reference/objects/conversation-object) included in the response.
+| `ts`| `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of the Slack event or message.
+| `thread_ts` | `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of a parent Slack message with [threaded replies](/messaging/retrieving-messages#pulling_threads).
+
 ## Example workflows
 
-- [**Direct message the author**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/direct-message-author): Write to the Slack user with a matching email.
-- [**Invite a usergroup to channel**](/tools/slack-github-action/sending-techniques/sending-data-slack-api-method/invite-usergroup-to-channel): Create a channel and invite members.
+<details>
+<summary><strong>Direct message the author</strong></summary>
+
+This workflow sends a direct message to the user that pushed the most recent commits. It does so by grabbing the email of the pusher.
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_2_Slack_API_Method/author.yml
+```
+
+</details>
+
+<details>
+<summary><strong>Invite a usergroup to channel</strong></summary>
+
+This workflow creates a channel after a bug is reported and add members of a usergroup by chaining multiple Slack API method calls together.
+
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_2_Slack_API_Method/invite.yml
+```
+
+</details>

@@ -1,7 +1,3 @@
----
-sidebar_label: Overview
----
-
 # Sending data as a message with a Slack incoming webhook URL
 
 This technique uses this Action to post a message to a channel or direct message with [incoming webhooks](/messaging/sending-messages-using-incoming-webhooks) and a Slack app.
@@ -44,8 +40,57 @@ Add the collected webhook from above to a GitHub workflow and configure the step
             text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
 ```
 
+## Expected outputs
+
+The technique, like all Slack Github Action techniques, [outputs values](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs) that can be used as inputs in following steps of a GitHub workflow.
+
+The following outputs are returned with each of the techniques:
+
+| Output | Type  | Description|
+|---|---|---|
+|`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
+| `ok` | `boolean` | If the request completed with success.
+| `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
+
 ## Example workflows
 
-* [**Post an inline text message**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-text-message)
-* [**Post an inline block message**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-inline-block-message)
-* [**Post blocks found in a file**](/tools/slack-github-action/sending-techniques/sending-data-slack-incoming-webhook/post-blocks-found-in-file)
+<details>
+<summary><strong>Post an inline text message</strong></summary>
+
+This workflow uses incoming webhooks to post a plain text message.
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/text.yml
+```
+
+</details>
+
+<details>
+<summary><strong>Post an inline block message</strong></summary>
+
+This workflow uses incoming webhooks to post a message with Block Kit.
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/blocks.yml
+```
+
+</details>
+
+<details>
+<summary><strong>Post blocks found in a file</strong></summary>
+
+This workflow uses file data when posting to an incoming webhook. It links to the GitHub Actions job in progress.
+
+Payload file being sent
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/saved.data.json
+```
+
+### Workflow 
+
+```js reference
+https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_3_Slack_Incoming_Webhook/saved.gha.yml
+```
+
+</details>
