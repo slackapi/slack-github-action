@@ -15,7 +15,7 @@ Pass a [service token](/authentication/tokens/) via the `token` input. This is a
 By default, the latest version of the Slack CLI is installed. To pin a specific version, use the `version` input:
 
 ```yaml
-- uses: slackapi/slack-github-action/cli@v3.0.1
+- uses: slackapi/slack-github-action/cli@v3.0.2
   with:
     command: "version"
     version: "3.14.0"
@@ -28,7 +28,7 @@ If the `slack` command already exists on `PATH`, installation is skipped entirel
 Provide a `command` input with the Slack CLI command to run, omitting the `slack` prefix.
 
 ```yaml
-- uses: slackapi/slack-github-action/cli@v3.0.1
+- uses: slackapi/slack-github-action/cli@v3.0.2
   with:
     command: "version"
 ```
@@ -38,7 +38,7 @@ Provide a `command` input with the Slack CLI command to run, omitting the `slack
 When a workflow is re-run with **Enable debug logging**, the action automatically appends `--verbose` to the CLI command. You can also include `--verbose` in your `command` input manually at any time.
 
 ```yaml
-- uses: slackapi/slack-github-action/cli@v3.0.1
+- uses: slackapi/slack-github-action/cli@v3.0.2
   with:
     command: "deploy --app ${{ vars.SLACK_APP_ID }} --verbose"
     token: ${{ secrets.SLACK_SERVICE_TOKEN }}
@@ -60,7 +60,7 @@ The following outputs are available after a CLI command runs:
 
 ```yaml
 steps:
-  - uses: slackapi/slack-github-action/cli@v3.0.1
+  - uses: slackapi/slack-github-action/cli@v3.0.2
     id: slack
     with:
       command: "version"
@@ -72,7 +72,7 @@ steps:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: slackapi/slack-github-action/cli@v3.0.1
+  - uses: slackapi/slack-github-action/cli@v3.0.2
     with:
       command: "manifest validate --app ${{ vars.SLACK_APP_ID }}"
       token: ${{ secrets.SLACK_SERVICE_TOKEN }}
@@ -94,7 +94,7 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: slackapi/slack-github-action/cli@v3.0.1
+  - uses: slackapi/slack-github-action/cli@v3.0.2
     with:
       command: "deploy --app ${{ vars.SLACK_APP_ID }} --force"
       token: ${{ secrets.SLACK_SERVICE_TOKEN }}
