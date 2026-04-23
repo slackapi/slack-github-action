@@ -135,3 +135,14 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           SHA: ${{ steps.release.outputs.sha }}
           GH_TOKEN: ${{ steps.credentials.outputs.token }}
+
+      - name: Notify Slack
+        if: steps.check.outputs.exists == 'false'
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95 # v3.0.1
+        with:
+          webhook: ${{ secrets.SLACK_RELEASE_ANNOUNCEMENTS_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload: |
+            action_url: "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
+            message: "Slack GitHub Action ${{ steps.version.outputs.version }}"
+            repository: "${{ github.repository }}"
