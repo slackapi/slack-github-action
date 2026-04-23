@@ -144,5 +144,5 @@ jobs:
           webhook-type: webhook-trigger
           payload: |
             action_url: "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
-            message: "Slack GitHub Action v${{ steps.version.outputs.version }}"
+            message: "Slack GitHub Action ${{ steps.version.outputs.version }}"
             repository: "${{ github.repository }}"
