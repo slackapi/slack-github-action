@@ -91,13 +91,13 @@ When a PR containing changesets is merged to `main`, a different PR is opened or
 
 ### Releases
 
-New versions are published when the release PR created from changesets is merged and the publish workflow completes. Follow these steps to build confidence:
+New versions are published when the release PR created from changesets is merged and the publish workflow is approved. Follow these steps to build confidence:
 
 1. **Check GitHub Milestones**: Before merging the release PR please check the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones). If issues or pull requests are still open either decide to postpone the release or save those changes for a future update.
 
-2. **Review the release PR**: Verify that the version bump matches expectations, `CHANGELOG` entries are clear, and CI checks pass. Use `npm install` to update versions in the `package-lock.json` file.
+2. **Review the release PR**: Verify that the version bump matches expectations, `CHANGELOG` entries are clear, and CI checks pass.
 
-3. **Merge**: Merge the release PR. The release workflow will build the action, push a release branch, create a GitHub Release with the version tag, and update floating version tags.
+3. **Merge and approve**: Merge the release PR, then approve the publish workflow to release the action.
 
 4. **Update Milestones**: Close the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones) and rename these to match the released version. Open a new Milestone for the next version.
 

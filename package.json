@@ -15,10 +15,11 @@
     "changeset": "npx @changesets/cli",
     "check": "tsc --noemit --project ./jsconfig.json",
     "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:24 --container-architecture linux/amd64",
-    "lint:fix": "biome check --write",
+    "docs": "TAG=\"v$(npm pkg get version | jq -r)\" && grep -rl 'slackapi/slack-github-action@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action@v.*|slackapi/slack-github-action@${TAG}|g\" && grep -rl 'slackapi/slack-github-action/cli@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action/cli@v.*|slackapi/slack-github-action/cli@${TAG}|g\"",
     "lint": "biome check",
+    "lint:fix": "biome check --write",
     "test": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/coverage.txt test/*.spec.js",
-    "postversion": "TAG=\"v$(npm pkg get version | jq -r)\" && grep -rl 'slackapi/slack-github-action@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action@v.*|slackapi/slack-github-action@${TAG}|g\" && grep -rl 'slackapi/slack-github-action/cli@v' ./docs ./example-workflows | xargs sed -i \"s|slackapi/slack-github-action/cli@v.*|slackapi/slack-github-action/cli@${TAG}|g\""
+    "version": "npm run changeset version && npm install && npm run docs"
   },
   "repository": {
     "type": "git",
