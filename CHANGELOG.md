@@ -4,4 +4,4 @@
 
 ### Patch Changes
 
-- 0b9c067: fix: resolve url.parse deprecation warning for webhook techniques
+- 79529d7: fix: resolve url.parse deprecation warning for webhook techniques
