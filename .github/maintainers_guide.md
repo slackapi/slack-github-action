@@ -97,7 +97,7 @@ New versions are published when the release PR created from changesets is merged
 
 2. **Review the release PR**: Verify that the version bump matches expectations, `CHANGELOG` entries are clear, and CI checks pass.
 
-3. **Merge and approve**: Merge the release PR, then approve the publish workflow to release the action.
+3. **Merge and approve**: Merge the release PR, then approve the publish workflow to release the action. Update the [release](https://github.com/slackapi/slack-github-action/releases) to share to the [marketplace](https://github.com/marketplace/actions/the-slack-github-action).
 
 4. **Update Milestones**: Close the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones) and rename these to match the released version. Open a new Milestone for the next version.
 
