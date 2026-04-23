@@ -42,41 +42,64 @@ A PR from a forked branch will fail this workflow until a maintainer reviews the
 pull/<NUMBER>/head
 ```
 
-### Releasing
+### Documentation
 
-1. Check the status of this project's GitHub [Milestone](https://github.com/slackapi/slack-github-action/milestones) to be released for issues that should be shipped with the release.
-   - If all issues have been closed, continue with the release.
-   - If issues are still open, discuss with the team about whether the open issues should be moved to a future release or if the release should be held off until the issues are resolved.
-   - Take a look at all issues under the Milestone to make sure that the type of issues included aligns with the Milestone name based on [semantic versioning](https://semver.org/). If the issues do not align with the naming of the Milestone (ex: if the issues are all bug fixes, but the Milestone is labeled as a minor release), then you can tweak the Milestone name to reflect the correct versioning.
-2. Checkout a branch for the release:
+This repo contains two types of docs files:
+
+- markdown files
+- sidebar.json
+
+The private repo containing the docs.slack.dev site pulls these in at build time.
+
+Maintainers need to use the `run workflow` button associated with the `deploy` workflow in that private repo to update the docs with changes from here.
+
+#### Markdown Files
+
+The markdown files here are secretly mdx files in disguise.
+
+If you'd like to add images to pages, add the image files to the same folder the md file is in.
+
+We appreciate markdown edits from anyone!!!
+
+#### Sidebar
+
+`_sidebar.json` sets the slack github action docs sidebar
+
+sidebar values take the form of "slack-github-action/path-within-docs/"
+
+or, in other words - full path but remove "docs":
+path: slack-github-action/docs/sending-variables.md
+value: slack-github-action/sending-variables
+
+for info on syntax see https://docusaurus.io/docs/sidebar
+
+this file is copied into slackapi.github.io/slack-github-action/sidebar.js it is then called in slackapi.github.io/sidebars.js
+
+### Changesets
+
+This project uses [Changesets](https://github.com/changesets/changesets) to track changes and automate releases.
+
+Each changeset describes a change to the package and its [semver](https://semver.org/) impact, and a new changeset should be added when updating the package with some change that affects consumers:
 
 ```sh
-$ git checkout -b v1.2.3
+npm run changeset
 ```
 
-3. Update the version in `package.json` and `package-lock.json` and examples:
+Updates to documentation, tests, or CI might not require new entries.
 
-```sh
-$ npm version <major|minor|patch> --no-git-tag-version
-```
+When a PR containing changesets is merged to `main`, a different PR is opened or updated using [changesets/action](https://github.com/changesets/action) which consumes the pending changesets, bumps the package version, and updates the `CHANGELOG` in preparation to release.
 
-4. Run all tests with the latest dependencies to make sure tests pass:
+### Releases
 
-```sh
-$ npm ci
-$ npm test
-```
+New versions are published when the release PR created from changesets is merged and the publish workflow completes. Follow these steps to build confidence:
 
-5. Commit the changes on your release branch and open a pull request with relevant labels:
+1. **Check GitHub Milestones**: Before merging the release PR please check the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones). If issues or pull requests are still open either decide to postpone the release or save those changes for a future update.
 
-```sh
-$ git commit -m "chore(release): tag version 1.2.3"
-$ git push -u origin v1.2.3
-```
+2. **Review the release PR**: Verify that the version bump matches expectations, `CHANGELOG` entries are clear, and CI checks pass. Use `npm install` to update versions in the `package-lock.json` file.
 
-6. After merging these changes into `main` create a new [release](https://github.com/slackapi/slack-github-action/releases/new) with a new tag - `v1.2.3` - on publish. Include relevant changes in the release notes!
-7. Rebuild [documentation](#docs) with the latest versions.
-8. Once released, make sure to close the relevant GitHub Milestone for the version you released.
+3. **Merge**: Merge the release PR. The release workflow will build the action, push a release branch, create a GitHub Release with the version tag, and update floating version tags.
+
+4. **Update Milestones**: Close the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones) and rename these to match the released version. Open a new Milestone for the next version.
 
 ## Workflow
 
@@ -122,39 +145,6 @@ level of information with labels. An issue should have **one** of the following 
 
 Issues are closed when a resolution has been reached. If for any reason a closed issue seems
 relevant once again, reopening is great and better than creating a duplicate issue.
-
-## Docs
-
-This repo contains two types of docs files:
-
-- markdown files
-- sidebar.json
-
-The private repo containing the docs.slack.dev site pulls these in at build time.
-
-Maintainers need to use the `run workflow` button associated with the `deploy` workflow in that private repo to update the docs with changes from here.
-
-### Markdown Files
-
-The markdown files here are secretly mdx files in disguise.
-
-If you'd like to add images to pages, add the image files to the same folder the md file is in.
-
-We appreciate markdown edits from anyone!!!
-
-### Sidebar
-
-`_sidebar.json` sets the slack github action docs sidebar
-
-sidebar values take the form of "slack-github-action/path-within-docs/"
-
-or, in other words - full path but remove "docs":
-path: slack-github-action/docs/sending-variables.md
-value: slack-github-action/sending-variables
-
-for info on syntax see https://docusaurus.io/docs/sidebar
-
-this file is copied into slackapi.github.io/slack-github-action/sidebar.js it is then called in slackapi.github.io/sidebars.js
 
 ## Everything else
 

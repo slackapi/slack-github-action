@@ -1,11 +1,18 @@
 {
   "name": "slack-github-action",
   "version": "3.0.1",
+  "private": true,
   "description": "The official Slack GitHub Action. Use this to send data into your Slack workspace",
   "main": "dist/index.js",
+  "files": [
+    "action.yml",
+    "cli/",
+    "dist/"
+  ],
   "type": "module",
   "scripts": {
     "build": "ncc build src/index.js --license licenses.txt --source-map",
+    "changeset": "npx @changesets/cli",
     "check": "tsc --noemit --project ./jsconfig.json",
     "dev": "act public --eventpath .github/resources/.actions/event.json --secret-file .github/resources/.env --platform ubuntu-latest=node:24 --container-architecture linux/amd64",
     "lint:fix": "biome check --write",
@@ -47,6 +54,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",
+    "@changesets/cli": "^2.31.0",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
