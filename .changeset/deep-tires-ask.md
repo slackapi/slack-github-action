@@ -2,4 +2,4 @@
 "slack-github-action": patch
 ---
 
-fix: url.parse deprecation warning for webhook techniques
+fix: resolve url.parse deprecation warning for webhook techniques
