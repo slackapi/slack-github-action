@@ -4,6 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "@slack/*"
     ignore:
       - dependency-name: "@types/node"
         versions:
@@ -12,3 +16,5 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
