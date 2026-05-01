@@ -163,7 +163,10 @@ describe("config", () => {
   describe("instrument", () => {
     it("adds metadata to webapi with package name and version", async () => {
       const stub = sinon.stub();
-      const original = Object.getOwnPropertyDescriptor(webapi, "addAppMetadata");
+      const original = Object.getOwnPropertyDescriptor(
+        webapi,
+        "addAppMetadata",
+      );
       Object.defineProperty(webapi, "addAppMetadata", {
         value: stub,
         configurable: true,

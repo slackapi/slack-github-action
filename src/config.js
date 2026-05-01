@@ -1,10 +1,10 @@
 import os from "node:os";
 import webapi from "@slack/web-api";
 import axios from "axios";
+import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
 import Logger from "./logger.js";
-import packageJson from "../package.json" with { type: "json" };
 
 /**
  * Options and settings set as inputs to this action.
