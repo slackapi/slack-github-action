@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update the channel topic
-        uses: slackapi/slack-github-action@v3.0.2
+        uses: slackapi/slack-github-action@v3.0.3
         with:
           payload-delimiter: "_"
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
