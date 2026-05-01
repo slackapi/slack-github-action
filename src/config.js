@@ -1,5 +1,7 @@
+import os from "node:os";
 import webapi from "@slack/web-api";
 import axios from "axios";
+import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
 import Logger from "./logger.js";
@@ -119,11 +121,27 @@ export default class Config {
         core.getInput("webhook") || process.env.SLACK_WEBHOOK_URL || null,
       webhookType: core.getInput("webhook-type"),
     };
+    this.instrument();
     this.mask();
     this.validate(core);
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
     this.content = new Content().get(this);
     core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
+  }
+
+  /**
+   * Add user agent metadata for instrumentation.
+   */
+  instrument() {
+    this.webapi.addAppMetadata({
+      name: packageJson.name,
+      version: packageJson.version,
+    });
+    this.axios.defaults.headers.common["User-Agent"] =
+      `${packageJson.name.replace("/", ":")}/${packageJson.version} ` +
+      `axios/${this.axios.VERSION} ` +
+      `node/${process.version.replace("v", "")} ` +
+      `${os.platform()}/${os.release()}`;
   }
 
   /**

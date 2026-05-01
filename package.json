@@ -1,5 +1,5 @@
 {
-  "name": "slack-github-action",
+  "name": "@slack/slack-github-action",
   "version": "3.0.2",
   "private": true,
   "description": "The official Slack GitHub Action. Use this to send data into your Slack workspace",
