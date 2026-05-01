@@ -1,3 +1,4 @@
+import os from "node:os";
 import webapi from "@slack/web-api";
 import axios from "axios";
 import Content from "./content.js";
@@ -137,7 +138,10 @@ export default class Config {
       version: packageJson.version,
     });
     this.axios.defaults.headers.common["User-Agent"] =
-      `${packageJson.name.replace("/", ":")}/${packageJson.version}`;
+      `${packageJson.name.replace("/", ":")}/${packageJson.version} ` +
+      `axios/${this.axios.VERSION} ` +
+      `node/${process.version.replace("v", "")} ` +
+      `${os.platform()}/${os.release()}`;
   }
 
   /**
