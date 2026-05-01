@@ -136,6 +136,8 @@ export default class Config {
       name: packageJson.name,
       version: packageJson.version,
     });
+    this.axios.defaults.headers.common["User-Agent"] =
+      `${packageJson.name.replace("/", ":")}/${packageJson.version}`;
   }
 
   /**
