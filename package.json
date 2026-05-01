@@ -54,7 +54,7 @@
     "markup-js": "^1.5.21"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.10",
+    "@biomejs/biome": "^2.4.13",
     "@changesets/cli": "^2.31.0",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
