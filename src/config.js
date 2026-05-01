@@ -3,6 +3,7 @@ import axios from "axios";
 import Content from "./content.js";
 import SlackError from "./errors.js";
 import Logger from "./logger.js";
+import packageJson from "../package.json" with { type: "json" };
 
 /**
  * Options and settings set as inputs to this action.
@@ -119,11 +120,22 @@ export default class Config {
         core.getInput("webhook") || process.env.SLACK_WEBHOOK_URL || null,
       webhookType: core.getInput("webhook-type"),
     };
+    this.instrument();
     this.mask();
     this.validate(core);
     core.debug(`Gathered action inputs: ${JSON.stringify(this.inputs)}`);
     this.content = new Content().get(this);
     core.debug(`Parsed request content: ${JSON.stringify(this.content)}`);
+  }
+
+  /**
+   * Add user agent metadata for instrumentation.
+   */
+  instrument() {
+    this.webapi.addAppMetadata({
+      name: packageJson.name,
+      version: packageJson.version,
+    });
   }
 
   /**

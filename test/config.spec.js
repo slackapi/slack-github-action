@@ -1,5 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
+import webapi from "@slack/web-api";
+import sinon from "sinon";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import send from "../src/send.js";
@@ -154,6 +156,28 @@ describe("config", () => {
         } else {
           assert.fail(err);
         }
+      }
+    });
+  });
+
+  describe("instrument", () => {
+    it("adds metadata to webapi with package name and version", async () => {
+      const stub = sinon.stub();
+      const original = Object.getOwnPropertyDescriptor(webapi, "addAppMetadata");
+      Object.defineProperty(webapi, "addAppMetadata", {
+        value: stub,
+        configurable: true,
+      });
+      try {
+        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        new Config(mocks.core);
+        assert.ok(stub.calledOnce);
+        const { name, version } = stub.firstCall.args[0];
+        assert.equal(name, "@slack/slack-github-action");
+        assert.ok(version);
+      } finally {
+        Object.defineProperty(webapi, "addAppMetadata", original);
       }
     });
   });
