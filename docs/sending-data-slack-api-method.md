@@ -123,6 +123,8 @@ Posting [threaded replies to a message](/messaging/#threading) from a past job c
 Calling [a Slack API method](/reference/methods) with [`@slack/web-api`](/tools/node-slack-sdk/web-api/) makes [uploading a file](/messaging/working-with-files#uploading_files) just another API call with all of the convenience of the [`files.uploadV2`](/tools/node-slack-sdk/web-api/#upload-a-file) method:
 
 ```yaml
+- name: Checkout an imagined project
+  uses: actions/checkout@v6
 - name: Share a file to that channel
   uses: slackapi/slack-github-action@v3.0.3
   with:
@@ -134,6 +136,8 @@ Calling [a Slack API method](/reference/methods) with [`@slack/web-api`](/tools/
       file: "./path/to/results.out"
       filename: "results-${{ github.sha }}.out"
 ```
+
+The [checkout](https://github.com/actions/checkout) step makes existing contents available to upload from a workflow.
 
 ## Expected outputs
 
@@ -172,7 +176,6 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 <summary><strong>Invite a usergroup to channel</strong></summary>
 
 This workflow creates a channel after a bug is reported and add members of a usergroup by chaining multiple Slack API method calls together.
-
 
 ```js reference
 https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Technique_2_Slack_API_Method/invite.yml
