@@ -21,7 +21,25 @@ export default class Webhook {
     if (!config.inputs.webhook) {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
-    const webhook = new IncomingWebhook(config.inputs.webhook, {
+    switch (config.inputs.webhookType) {
+      case "incoming-webhook":
+        return await this.postIncomingWebhook(config);
+      case "webhook-trigger":
+        return await this.postWebhookTrigger(config);
+      default:
+        throw new SlackError(
+          config.core,
+          `Unknown webhook type: ${config.inputs.webhookType}`,
+        );
+    }
+  }
+
+  /**
+   * Post using the @slack/webhook IncomingWebhook SDK.
+   * @param {Config} config
+   */
+  async postIncomingWebhook(config) {
+    const webhook = new IncomingWebhook(/** @type {string} */ (config.inputs.webhook), {
       fetch: this.customFetch(config),
     });
     try {
@@ -29,6 +47,30 @@ export default class Webhook {
       config.core.setOutput("ok", true);
       config.core.setOutput("response", response.text);
       config.core.debug(response.text);
+    } catch (/** @type {any} */ err) {
+      config.core.setOutput("ok", false);
+      config.core.setOutput("response", JSON.stringify(err.message));
+      config.core.debug(err);
+      throw new SlackError(config.core, err.message);
+    }
+  }
+
+  /**
+   * Post directly to a webhook trigger URL and parse the JSON response.
+   * @param {Config} config
+   */
+  async postWebhookTrigger(config) {
+    const fetchFn = this.customFetch(config);
+    try {
+      const response = await fetchFn(/** @type {string} */ (config.inputs.webhook), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config.content.values),
+      });
+      const /** @type {any} */ data = await response.json();
+      config.core.setOutput("ok", data.ok ?? response.ok);
+      config.core.setOutput("response", JSON.stringify(data));
+      config.core.debug(JSON.stringify(data));
     } catch (/** @type {any} */ err) {
       config.core.setOutput("ok", false);
       config.core.setOutput("response", JSON.stringify(err.message));
