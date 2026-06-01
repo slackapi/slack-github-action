@@ -207,6 +207,7 @@ describe("config", () => {
     it("treats the provided webhook as a secret", async () => {
       mocks.core.getInput.withArgs("webhook").returns("https://slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("retries").returns("0");
       try {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");

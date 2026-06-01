@@ -55,7 +55,6 @@ export class Mock {
       warning: this.sandbox.stub(),
     };
     this.fetch = this.sandbox.stub(globalThis, "fetch");
-    this.fetch.resolves(new Response("ok", { status: 200 }));
     this.fs = this.sandbox.stub(fs);
     this.webapi = {
       WebClient: function () {
@@ -85,7 +84,6 @@ export class Mock {
     this.core.setSecret.reset();
     this.core.warning.reset();
     this.fetch.reset();
-    this.fetch.resolves(new Response("ok", { status: 200 }));
     this.webapi = {
       WebClient: function () {
         this.apiCall = () => ({
