@@ -1,5 +1,5 @@
 import webapi from "@slack/web-api";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { ProxyAgent } from "undici";
 import Config from "./config.js";
 import SlackError from "./errors.js";
 
@@ -23,7 +23,7 @@ export default class Client {
       throw new SlackError(config.core, "No token was provided to post with");
     }
     const client = new config.webapi.WebClient(config.inputs.token, {
-      agent: this.proxies(config)?.httpsAgent,
+      fetch: this.proxiedFetch(config),
       allowAbsoluteUrls: false,
       logger: config.logger,
       retryConfig: this.retries(config.inputs.retries),
@@ -73,20 +73,19 @@ export default class Client {
   }
 
   /**
-   * Return configurations for https proxy options if these are set.
+   * Return a custom fetch function that routes through a proxy if configured.
    * @param {Config} config
-   * @returns {import("axios").AxiosRequestConfig | undefined}
+   * @returns {((url: string | URL, init?: RequestInit) => Promise<Response>) | undefined}
    * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
    */
-  proxies(config) {
+  proxiedFetch(config) {
     const proxy = config.inputs.proxy;
     try {
       if (!proxy) {
         return undefined;
       }
-      return {
-        httpsAgent: new HttpsProxyAgent(proxy),
-      };
+      const dispatcher = new ProxyAgent(proxy);
+      return (url, init) => fetch(url, { ...init, dispatcher });
     } catch (/** @type {any} */ err) {
       throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
         cause: err,

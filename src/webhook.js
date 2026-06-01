@@ -1,5 +1,4 @@
-import axiosRetry, { exponentialDelay, linearDelay } from "axios-retry";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { ProxyAgent } from "undici";
 import Config from "./config.js";
 import SlackError from "./errors.js";
 
@@ -15,63 +14,111 @@ export default class Webhook {
     if (!config.inputs.webhook) {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
-    /**
-     * @type {import("axios-retry").IAxiosRetryConfig}
-     * @see {@link https://www.npmjs.com/package/axios-retry}
-     */
-    const retries = this.retries(config.inputs.retries);
-    axiosRetry(config.axios, retries);
+    const retryConfig = this.retries(config.inputs.retries);
+    const fetchFn = this.proxiedFetch(config);
     try {
-      const response = await config.axios.post(
+      const response = await this.fetchWithRetry(
         config.inputs.webhook,
-        config.content.values,
         {
-          ...this.proxies(config),
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": config.userAgent,
+          },
+          body: JSON.stringify(config.content.values),
         },
+        retryConfig,
+        fetchFn,
       );
+      const data = await this.parseResponseBody(response);
       config.core.setOutput("ok", response.status === 200);
-      config.core.setOutput("response", JSON.stringify(response.data));
-      config.core.debug(JSON.stringify(response.data));
+      config.core.setOutput("response", JSON.stringify(data));
+      config.core.debug(JSON.stringify(data));
     } catch (/** @type {any} */ err) {
-      const response = err.toJSON();
-      config.core.setOutput("ok", response.status === 200);
-      config.core.setOutput("response", JSON.stringify(response.message));
-      config.core.debug(response);
-      throw new SlackError(config.core, response.message);
+      config.core.setOutput("ok", false);
+      config.core.setOutput("response", JSON.stringify(err.message));
+      config.core.debug(err);
+      throw new SlackError(config.core, err.message);
     }
   }
 
   /**
-   * Return configurations for http proxy options if these are set.
+   * Parse the response body as JSON, falling back to text.
+   * @param {Response} response
+   * @returns {Promise<any>}
+   */
+  async parseResponseBody(response) {
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
+  }
+
+  /**
+   * Perform a fetch request with configurable retries on retryable errors.
+   * @param {string} url
+   * @param {RequestInit} init
+   * @param {{retries: number, retryDelay: (attempt: number) => number, retryCondition: (status: number) => boolean}} retryConfig
+   * @param {(url: string, init?: RequestInit) => Promise<Response>} fetchFn
+   * @returns {Promise<Response>}
+   */
+  async fetchWithRetry(url, init, retryConfig, fetchFn) {
+    let lastError;
+    for (let attempt = 0; attempt <= retryConfig.retries; attempt++) {
+      try {
+        const response = await fetchFn(url, init);
+        if (response.ok || !retryConfig.retryCondition(response.status)) {
+          return response;
+        }
+        if (attempt < retryConfig.retries) {
+          const delay = retryConfig.retryDelay(attempt + 1);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+        return response;
+      } catch (/** @type {any} */ err) {
+        lastError = err;
+        if (attempt < retryConfig.retries) {
+          const delay = retryConfig.retryDelay(attempt + 1);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+        throw err;
+      }
+    }
+    throw lastError;
+  }
+
+  /**
+   * Return a fetch function that routes through a proxy if configured.
    * @param {Config} config
-   * @returns {import("axios").AxiosRequestConfig | undefined}
+   * @returns {(url: string, init?: RequestInit) => Promise<Response>}
    * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
    */
-  proxies(config) {
+  proxiedFetch(config) {
     const { webhook, proxy } = config.inputs;
     if (!webhook) {
       throw new SlackError(config.core, "No webhook was provided to proxy to");
     }
     if (!proxy) {
-      return undefined;
+      return (url, init) => config.fetch(url, init);
     }
     try {
       if (new URL(webhook).protocol !== "https:") {
         config.core.debug(
           "The webhook destination is not HTTPS so skipping the HTTPS proxy",
         );
-        return undefined;
+        return (url, init) => config.fetch(url, init);
       }
-      switch (new URL(proxy).protocol) {
+      const proxyUrl = new URL(proxy);
+      switch (proxyUrl.protocol) {
         case "https:":
-          return {
-            httpsAgent: new HttpsProxyAgent(proxy),
-          };
-        case "http:":
-          return {
-            httpsAgent: new HttpsProxyAgent(proxy),
-            proxy: false,
-          };
+        case "http:": {
+          const dispatcher = new ProxyAgent(proxy);
+          return (url, init) => config.fetch(url, { ...init, dispatcher });
+        }
         default:
           throw new SlackError(
             config.core,
@@ -88,35 +135,37 @@ export default class Webhook {
   /**
    * Return configurations for retry options with different delays.
    * @param {string} option
-   * @returns {import("axios-retry").IAxiosRetryConfig}
+   * @returns {{retries: number, retryDelay: (attempt: number) => number, retryCondition: (status: number) => boolean}}
    */
   retries(option) {
+    /** @param {number} status */
+    const isRetryable = (status) => status >= 500 || status === 429;
     switch (option?.trim().toUpperCase()) {
       case "0":
-        return { retries: 0 };
+        return { retries: 0, retryDelay: () => 0, retryCondition: isRetryable };
       case "5":
         return {
-          retryCondition: axiosRetry.isRetryableError,
+          retryCondition: isRetryable,
           retries: 5,
-          retryDelay: linearDelay(60 * 1000), // 5 minutes
+          retryDelay: (attempt) => attempt * 60 * 1000, // linear 60s
         };
       case "10":
         return {
-          retryCondition: axiosRetry.isRetryableError,
+          retryCondition: isRetryable,
           retries: 10,
-          retryDelay: (count, err) => exponentialDelay(count, err, 2 * 1000), // 34.12 minutes
+          retryDelay: (attempt) => 2000 * 2 ** (attempt - 1), // exponential from 2s
         };
       case "RAPID":
         return {
-          retryCondition: axiosRetry.isRetryableError,
+          retryCondition: isRetryable,
           retries: 12,
-          retryDelay: linearDelay(1 * 1000), // 12 seconds
+          retryDelay: (attempt) => attempt * 1000, // linear 1s
         };
       default:
         return {
-          retryCondition: axiosRetry.isRetryableError,
+          retryCondition: isRetryable,
           retries: 5,
-          retryDelay: linearDelay(60 * 1000), // 5 minutes
+          retryDelay: (attempt) => attempt * 60 * 1000, // linear 60s
         };
     }
   }

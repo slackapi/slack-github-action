@@ -1,6 +1,5 @@
 import os from "node:os";
 import webapi from "@slack/web-api";
-import axios from "axios";
 import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
@@ -61,14 +60,15 @@ export default class Config {
   inputs;
 
   /**
-   * @type {import("axios").AxiosStatic} - The axios client.
-   */
-  axios;
-
-  /**
    * @type {Content} - The parsed payload data to send.
    */
   content;
+
+  /**
+   * The fetch function used for webhook requests.
+   * @type {typeof globalThis.fetch}
+   */
+  fetch;
 
   /**
    * Shared utilities specific to the GitHub action workflow.
@@ -81,6 +81,12 @@ export default class Config {
    * @type {import("@slack/logger").Logger}
    */
   logger;
+
+  /**
+   * User agent string for outgoing requests.
+   * @type {string}
+   */
+  userAgent;
 
   /**
    * @type {import("@slack/web-api")} - Slack API client.
@@ -98,8 +104,8 @@ export default class Config {
    * @param {import("@actions/core")} core - GitHub Actions core utilities.
    */
   constructor(core) {
-    this.axios = axios;
     this.core = core;
+    this.fetch = globalThis.fetch;
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
     this.inputs = {
@@ -137,9 +143,8 @@ export default class Config {
       name: packageJson.name,
       version: packageJson.version,
     });
-    this.axios.defaults.headers.common["User-Agent"] =
+    this.userAgent =
       `${packageJson.name.replace("/", ":")}/${packageJson.version} ` +
-      `axios/${this.axios.VERSION} ` +
       `node/${process.version.replace("v", "")} ` +
       `${os.platform()}/${os.release()}`;
   }

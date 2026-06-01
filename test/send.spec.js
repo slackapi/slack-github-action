@@ -24,8 +24,8 @@ describe("send", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns('"greetings": "hello"');
-      mocks.axios.post.returns(
-        Promise.resolve({ status: 200, data: { ok: true } }),
+      mocks.fetch.resolves(
+        new Response(JSON.stringify({ ok: true }), { status: 200 }),
       );
       await send(mocks.core);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
@@ -64,7 +64,7 @@ describe("send", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
-      mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
+      mocks.fetch.resolves(new Response(JSON.stringify("ok"), { status: 200 }));
       await send(mocks.core);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
