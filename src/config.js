@@ -65,12 +65,6 @@ export default class Config {
   content;
 
   /**
-   * The fetch function used for webhook requests.
-   * @type {typeof globalThis.fetch}
-   */
-  fetch;
-
-  /**
    * Shared utilities specific to the GitHub action workflow.
    * @type {import("@actions/core")}
    */
@@ -105,7 +99,6 @@ export default class Config {
    */
   constructor(core) {
     this.core = core;
-    this.fetch = globalThis.fetch;
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
     this.inputs = {

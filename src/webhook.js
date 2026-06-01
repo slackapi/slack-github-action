@@ -1,3 +1,4 @@
+import { IncomingWebhook } from "@slack/webhook";
 import { ProxyAgent } from "undici";
 import Config from "./config.js";
 import SlackError from "./errors.js";
@@ -5,6 +6,12 @@ import SlackError from "./errors.js";
 /**
  * This Webhook class posts the configured payload to the provided webhook, with
  * whatever additional settings set.
+ *
+ * NOTE: @slack/webhook v8 does not export addAppMetadata so there is no public
+ * way to inject custom app metadata into its User-Agent. The SDK sets its own
+ * User-Agent header internally. We supplement it by prepending our action's
+ * identity in the custom fetch wrapper below.
+ * @see {@link https://github.com/slackapi/node-slack-sdk/blob/webhook-8.0.0-development/packages/webhook/src/instrument.ts}
  */
 export default class Webhook {
   /**
@@ -14,26 +21,14 @@ export default class Webhook {
     if (!config.inputs.webhook) {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
-    const retryConfig = this.retries(config.inputs.retries);
-    const fetchFn = this.proxiedFetch(config);
+    const webhook = new IncomingWebhook(config.inputs.webhook, {
+      fetch: this.customFetch(config),
+    });
     try {
-      const response = await this.fetchWithRetry(
-        config.inputs.webhook,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": config.userAgent,
-          },
-          body: JSON.stringify(config.content.values),
-        },
-        retryConfig,
-        fetchFn,
-      );
-      const data = await this.parseResponseBody(response);
-      config.core.setOutput("ok", response.status === 200);
-      config.core.setOutput("response", JSON.stringify(data));
-      config.core.debug(JSON.stringify(data));
+      const response = await webhook.send(config.content.values);
+      config.core.setOutput("ok", true);
+      config.core.setOutput("response", response.text);
+      config.core.debug(response.text);
     } catch (/** @type {any} */ err) {
       config.core.setOutput("ok", false);
       config.core.setOutput("response", JSON.stringify(err.message));
@@ -43,82 +38,50 @@ export default class Webhook {
   }
 
   /**
-   * Parse the response body as JSON, falling back to text.
-   * @param {Response} response
-   * @returns {Promise<any>}
-   */
-  async parseResponseBody(response) {
-    const text = await response.text();
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
-    }
-  }
-
-  /**
-   * Perform a fetch request with configurable retries on retryable errors.
-   * @param {string} url
-   * @param {RequestInit} init
-   * @param {{retries: number, retryDelay: (attempt: number) => number, retryCondition: (status: number) => boolean}} retryConfig
-   * @param {(url: string, init?: RequestInit) => Promise<Response>} fetchFn
-   * @returns {Promise<Response>}
-   */
-  async fetchWithRetry(url, init, retryConfig, fetchFn) {
-    let lastError;
-    for (let attempt = 0; attempt <= retryConfig.retries; attempt++) {
-      try {
-        const response = await fetchFn(url, init);
-        if (response.ok || !retryConfig.retryCondition(response.status)) {
-          return response;
-        }
-        if (attempt < retryConfig.retries) {
-          const delay = retryConfig.retryDelay(attempt + 1);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          continue;
-        }
-        return response;
-      } catch (/** @type {any} */ err) {
-        lastError = err;
-        if (attempt < retryConfig.retries) {
-          const delay = retryConfig.retryDelay(attempt + 1);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          continue;
-        }
-        throw err;
-      }
-    }
-    throw lastError;
-  }
-
-  /**
-   * Return a fetch function that routes through a proxy if configured.
+   * Return a custom fetch function that injects the User-Agent header and
+   * routes through a proxy if configured.
    * @param {Config} config
-   * @returns {(url: string, init?: RequestInit) => Promise<Response>}
-   * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
+   * @returns {(url: string | URL | Request, init?: any) => Promise<Response>}
    */
-  proxiedFetch(config) {
+  customFetch(config) {
+    const dispatcher = this.proxyDispatcher(config);
+    return (url, init) => {
+      const headers = new Headers(init?.headers);
+      const existing = headers.get("User-Agent") || "";
+      headers.set(
+        "User-Agent",
+        existing ? `${config.userAgent} ${existing}` : config.userAgent,
+      );
+      return fetch(url, {
+        ...init,
+        headers,
+        ...(dispatcher ? { dispatcher } : {}),
+      });
+    };
+  }
+
+  /**
+   * Return a proxy dispatcher if one is configured, or undefined.
+   * @param {Config} config
+   * @returns {any | undefined}
+   */
+  proxyDispatcher(config) {
     const { webhook, proxy } = config.inputs;
-    if (!webhook) {
-      throw new SlackError(config.core, "No webhook was provided to proxy to");
-    }
     if (!proxy) {
-      return (url, init) => config.fetch(url, init);
+      return undefined;
     }
     try {
-      if (new URL(webhook).protocol !== "https:") {
+      if (webhook && new URL(webhook).protocol !== "https:") {
         config.core.debug(
           "The webhook destination is not HTTPS so skipping the HTTPS proxy",
         );
-        return (url, init) => config.fetch(url, init);
+        return undefined;
       }
       const proxyUrl = new URL(proxy);
       switch (proxyUrl.protocol) {
         case "https:":
-        case "http:": {
-          const dispatcher = /** @type {any} */ (new ProxyAgent(proxy));
-          return (url, init) => config.fetch(url, { ...init, dispatcher });
-        }
+        case "http:":
+          return /** @type {any} */ (new ProxyAgent(proxy));
         default:
           throw new SlackError(
             config.core,
@@ -126,47 +89,12 @@ export default class Webhook {
           );
       }
     } catch (/** @type {any} */ err) {
+      if (err instanceof SlackError) {
+        throw err;
+      }
       throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
         cause: err,
       });
-    }
-  }
-
-  /**
-   * Return configurations for retry options with different delays.
-   * @param {string} option
-   * @returns {{retries: number, retryDelay: (attempt: number) => number, retryCondition: (status: number) => boolean}}
-   */
-  retries(option) {
-    /** @param {number} status */
-    const isRetryable = (status) => status >= 500 || status === 429;
-    switch (option?.trim().toUpperCase()) {
-      case "0":
-        return { retries: 0, retryDelay: () => 0, retryCondition: isRetryable };
-      case "5":
-        return {
-          retryCondition: isRetryable,
-          retries: 5,
-          retryDelay: (attempt) => attempt * 60 * 1000, // linear 60s
-        };
-      case "10":
-        return {
-          retryCondition: isRetryable,
-          retries: 10,
-          retryDelay: (attempt) => 2000 * 2 ** (attempt - 1), // exponential from 2s
-        };
-      case "RAPID":
-        return {
-          retryCondition: isRetryable,
-          retries: 12,
-          retryDelay: (attempt) => attempt * 1000, // linear 1s
-        };
-      default:
-        return {
-          retryCondition: isRetryable,
-          retries: 5,
-          retryDelay: (attempt) => attempt * 60 * 1000, // linear 60s
-        };
     }
   }
 }
