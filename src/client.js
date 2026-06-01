@@ -84,7 +84,7 @@ export default class Client {
       if (!proxy) {
         return undefined;
       }
-      const dispatcher = new ProxyAgent(proxy);
+      const dispatcher = /** @type {any} */ (new ProxyAgent(proxy));
       return (url, init) => fetch(url, { ...init, dispatcher });
     } catch (/** @type {any} */ err) {
       throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {

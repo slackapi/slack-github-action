@@ -116,7 +116,7 @@ export default class Webhook {
       switch (proxyUrl.protocol) {
         case "https:":
         case "http:": {
-          const dispatcher = new ProxyAgent(proxy);
+          const dispatcher = /** @type {any} */ (new ProxyAgent(proxy));
           return (url, init) => config.fetch(url, { ...init, dispatcher });
         }
         default:

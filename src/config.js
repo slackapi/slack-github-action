@@ -86,7 +86,7 @@ export default class Config {
    * User agent string for outgoing requests.
    * @type {string}
    */
-  userAgent;
+  userAgent = "";
 
   /**
    * @type {import("@slack/web-api")} - Slack API client.
