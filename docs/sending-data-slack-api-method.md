@@ -137,7 +137,7 @@ Calling [a Slack API method](/reference/methods) with [`@slack/web-api`](/tools/
       filename: "results-${{ github.sha }}.out"
 ```
 
-The [checkout](https://github.com/actions/checkout) step makes existing contents available to upload from a workflow.
+The [checkout](https://github.com/actions/checkout) step makes existing content available to upload from a workflow.
 
 ## Expected outputs
 
