@@ -1,7 +1,11 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
-import webapi from "@slack/web-api";
-import errors from "@slack/web-api/dist/errors.js";
+import webapi, {
+  WebAPIHTTPError,
+  WebAPIPlatformError,
+  WebAPIRateLimitedError,
+  WebAPIRequestError,
+} from "@slack/web-api";
 import sinon from "sinon";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
@@ -90,7 +94,7 @@ describe("client", () => {
       assert.ok(constructors.calledWithNew());
       assert.ok(
         constructors.calledWith("xoxb-example-002", {
-          agent: undefined,
+          fetch: undefined,
           allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.fiveRetriesInFiveMinutes,
@@ -137,7 +141,7 @@ describe("client", () => {
       assert.ok(constructors.calledWithNew());
       assert.ok(
         constructors.calledWith("ollamapassword", {
-          agent: undefined,
+          fetch: undefined,
           allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
@@ -286,23 +290,14 @@ describe("client", () => {
 
   describe("failure", () => {
     it("errors when the request to the api cannot be sent correct", async () => {
-      /**
-       * @type {webapi.WebAPICallError}
-       */
-      const response = {
-        code: "slack_webapi_request_error",
-        data: {
-          error: "unexpected_request_failure",
-          message: "Something bad happened!",
-        },
-      };
+      const original = new Error("Something bad happened!");
       try {
         mocks.core.getInput.reset();
         mocks.core.getBooleanInput.withArgs("errors").returns(true);
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(errors.requestErrorWithOriginal(response, true));
+        mocks.calls.rejects(new WebAPIRequestError(original));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -312,7 +307,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(response),
+          JSON.stringify(original),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
@@ -320,24 +315,19 @@ describe("client", () => {
     });
 
     it("errors when the http portion of the request fails to send", async () => {
-      /**
-       * @type {import("axios").AxiosResponse}
-       */
-      const response = {
-        code: "slack_webapi_http_error",
-        headers: {
+      const err = new WebAPIHTTPError(
+        500,
+        "Internal Server Error",
+        {
           authorization: "none",
         },
-        data: {
-          ok: false,
-          error: "unknown_http_method",
-        },
-      };
+        { ok: false, error: "unknown_http_method" },
+      );
       try {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(errors.httpErrorFromResponse(response));
+        mocks.calls.rejects(err);
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -345,35 +335,22 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        response.body = response.data;
-        response.data = undefined;
-        assert.deepEqual(
-          mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(response),
-        );
+        const parsed = JSON.parse(mocks.core.setOutput.getCall(1).lastArg);
+        assert.equal(parsed.statusCode, 500);
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
     });
 
     it("errors when the payload arguments are invalid for the api", async () => {
-      /**
-       * @type {webapi.WebAPICallError}
-       */
-      const response = {
-        code: "slack_webapi_platform_error",
-        data: {
-          ok: false,
-          error: "missing_channel",
-        },
-      };
+      const data = { ok: false, error: "missing_channel" };
       try {
         mocks.core.getInput.reset();
         mocks.core.getBooleanInput.withArgs("errors").returns(true);
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(errors.platformErrorFromResult(response));
+        mocks.calls.rejects(new WebAPIPlatformError(data));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -383,7 +360,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(response),
+          JSON.stringify(data),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
@@ -391,18 +368,12 @@ describe("client", () => {
     });
 
     it("returns the api error and details without a exit failing", async () => {
-      const response = {
-        code: "slack_webapi_platform_error",
-        data: {
-          ok: false,
-          error: "missing_channel",
-        },
-      };
+      const data = { ok: false, error: "missing_channel" };
       try {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(errors.platformErrorFromResult(response));
+        mocks.calls.rejects(new WebAPIPlatformError(data));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -412,7 +383,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(response),
+          JSON.stringify(data),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
@@ -420,15 +391,11 @@ describe("client", () => {
     });
 
     it("errors if rate limit responses are returned after retries", async () => {
-      const response = {
-        code: "slack_webapi_rate_limited_error",
-        retryAfter: 12,
-      };
       try {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(errors.rateLimitedErrorWithDelay(12));
+        mocks.calls.rejects(new WebAPIRateLimitedError(12));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -436,10 +403,8 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        assert.deepEqual(
-          mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(response),
-        );
+        const parsed = JSON.parse(mocks.core.setOutput.getCall(1).lastArg);
+        assert.equal(parsed.retryAfter, 12);
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
@@ -447,27 +412,35 @@ describe("client", () => {
   });
 
   describe("proxies", () => {
-    it("sets up the proxy agent for the provided https proxy", async () => {
+    it("returns a custom fetch function when proxy is configured", async () => {
       const proxy = "https://example.com";
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
       const client = new Client();
-      const { httpsAgent, proxy: proxying } = client.proxies(config);
-      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
-      assert.notStrictEqual(proxying, false);
+      const fetchFn = client.proxiedFetch(config);
+      assert.strictEqual(typeof fetchFn, "function");
+    });
+
+    it("returns undefined when no proxy is configured", async () => {
+      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      const config = new Config(mocks.core);
+      const client = new Client();
+      const fetchFn = client.proxiedFetch(config);
+      assert.strictEqual(fetchFn, undefined);
     });
 
     it("fails to configure proxies with an invalid proxied url", async () => {
-      const proxy = "https://";
+      const proxy = "not-a-url";
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       try {
         const config = new Config(mocks.core);
         const client = new Client();
-        client.proxies(config);
+        client.proxiedFetch(config);
         assert.fail("An invalid proxy URL was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {
