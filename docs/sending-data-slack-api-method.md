@@ -124,7 +124,7 @@ Calling [a Slack API method](/reference/methods) with [`@slack/web-api`](/tools/
 
 ```yaml
 - name: Checkout an imagined project
-  uses: actions/checkout@v6
+  uses: actions/checkout@v7
 - name: Share a file to that channel
   uses: slackapi/slack-github-action@v3.0.3
   with:
