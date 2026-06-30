@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import webapi from "@slack/web-api";
-import axios, { AxiosError } from "axios";
+import { IncomingWebhook, WebhookTrigger } from "@slack/webhook";
+import { AxiosError } from "axios";
 import sinon from "sinon";
 
 /**
@@ -42,7 +43,8 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
-    this.axios = this.sandbox.stub(axios);
+    this.incomingWebhook = this.sandbox.stub(IncomingWebhook.prototype, "send");
+    this.webhookTrigger = this.sandbox.stub(WebhookTrigger.prototype, "send");
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
     this.core = {
       debug: this.sandbox.stub(),
@@ -73,7 +75,8 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
-    this.axios.post.resetHistory();
+    this.incomingWebhook.resetHistory();
+    this.webhookTrigger.resetHistory();
     this.calls.resetHistory();
     this.core.debug.reset();
     this.core.error.reset();
