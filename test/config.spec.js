@@ -183,7 +183,6 @@ describe("config", () => {
         Object.defineProperty(webapi, "addAppMetadata", original);
       }
     });
-
   });
 
   describe("mask", async () => {
