@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import webapi from "@slack/web-api";
-import axios, { AxiosError } from "axios";
+import { IncomingWebhook, WebhookTrigger } from "@slack/webhook";
 import sinon from "sinon";
 
 /**
@@ -20,21 +20,6 @@ import sinon from "sinon";
  */
 export class Mock {
   /**
-   * @typedef Errors - A collection of mocked errors to use in tests.
-   * @prop {Object.<string, AxiosError>} axios - The mocked axios errors.
-   */
-
-  /**
-   * The mocked errors.
-   * @type {Errors}
-   */
-  errors = {
-    axios: {
-      network_failed: new AxiosError("network_failed"),
-    },
-  };
-
-  /**
    * Setup stubbed dependencies and configure default input arguments for all
    * tests.
    *
@@ -42,7 +27,8 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
-    this.axios = this.sandbox.stub(axios);
+    this.incomingWebhook = this.sandbox.stub(IncomingWebhook.prototype, "send");
+    this.webhookTrigger = this.sandbox.stub(WebhookTrigger.prototype, "send");
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
     this.core = {
       debug: this.sandbox.stub(),
@@ -73,7 +59,8 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
-    this.axios.post.resetHistory();
+    this.incomingWebhook.resetHistory();
+    this.webhookTrigger.resetHistory();
     this.calls.resetHistory();
     this.core.debug.reset();
     this.core.error.reset();
