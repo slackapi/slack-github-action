@@ -8,6 +8,7 @@ updates:
       - dependency-name: "@types/node"
         versions:
           - "25.x"
+          - "26.x"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

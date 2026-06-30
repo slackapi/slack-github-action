@@ -39,9 +39,12 @@ export default class Webhook {
    * @param {Config} config
    */
   async postIncomingWebhook(config) {
-    const webhook = new IncomingWebhook(/** @type {string} */ (config.inputs.webhook), {
-      fetch: this.customFetch(config),
-    });
+    const webhook = new IncomingWebhook(
+      /** @type {string} */ (config.inputs.webhook),
+      {
+        fetch: this.customFetch(config),
+      },
+    );
     try {
       const response = await webhook.send(config.content.values);
       config.core.setOutput("ok", true);
@@ -62,11 +65,14 @@ export default class Webhook {
   async postWebhookTrigger(config) {
     const fetchFn = this.customFetch(config);
     try {
-      const response = await fetchFn(/** @type {string} */ (config.inputs.webhook), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config.content.values),
-      });
+      const response = await fetchFn(
+        /** @type {string} */ (config.inputs.webhook),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(config.content.values),
+        },
+      );
       const /** @type {any} */ data = await response.json();
       config.core.setOutput("ok", data.ok ?? response.ok);
       config.core.setOutput("response", JSON.stringify(data));

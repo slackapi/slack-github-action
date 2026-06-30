@@ -71,7 +71,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
   - uses: slackapi/slack-github-action/cli@v3.0.3
     with:
       command: "manifest validate --app ${{ vars.SLACK_APP_ID }}"
@@ -93,7 +93,7 @@ https://github.com/slackapi/slack-github-action/blob/main/example-workflows/Tech
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
   - uses: slackapi/slack-github-action/cli@v3.0.3
     with:
       command: "deploy --app ${{ vars.SLACK_APP_ID }} --force"
