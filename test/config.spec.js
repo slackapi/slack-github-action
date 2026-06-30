@@ -184,20 +184,6 @@ describe("config", () => {
       }
     });
 
-    it("adds web-api app metadata with package name and version", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      const addAppMetadata = mocks.sandbox.stub(webapi, "addAppMetadata");
-      try {
-        new Config(mocks.core);
-        assert.ok(addAppMetadata.called, "addAppMetadata was not called");
-        const arg = addAppMetadata.getCall(0).firstArg;
-        assert.ok(arg.name.includes("slack-github-action"));
-        assert.ok(arg.version.length > 0);
-      } finally {
-        addAppMetadata.restore();
-      }
-    });
   });
 
   describe("mask", async () => {

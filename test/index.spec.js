@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import webapi from "@slack/web-api";
 import { IncomingWebhook, WebhookTrigger } from "@slack/webhook";
-import { AxiosError } from "axios";
 import sinon from "sinon";
 
 /**
@@ -20,21 +19,6 @@ import sinon from "sinon";
  * The Mock class sets expected behaviors and test listeners for dependencies.
  */
 export class Mock {
-  /**
-   * @typedef Errors - A collection of mocked errors to use in tests.
-   * @prop {Object.<string, AxiosError>} axios - The mocked axios errors.
-   */
-
-  /**
-   * The mocked errors.
-   * @type {Errors}
-   */
-  errors = {
-    axios: {
-      network_failed: new AxiosError("network_failed"),
-    },
-  };
-
   /**
    * Setup stubbed dependencies and configure default input arguments for all
    * tests.

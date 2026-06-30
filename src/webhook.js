@@ -1,11 +1,15 @@
-import axiosRetry, { exponentialDelay, linearDelay } from "axios-retry";
+import webapi from "@slack/web-api";
+import { ErrorCode, IncomingWebhook, WebhookTrigger } from "@slack/webhook";
 import { HttpsProxyAgent } from "https-proxy-agent";
+import pRetry, { AbortError } from "p-retry";
 import Config from "./config.js";
 import SlackError from "./errors.js";
 
 /**
- * This Webhook class posts the configured payload to the provided webhook, with
- * whatever additional settings set.
+ * The Webhook class posts the configured payload to the provided webhook using
+ * the @slack/webhook SDK, choosing the client by the configured webhook type.
+ *
+ * @see {@link https://docs.slack.dev/tools/node-slack-sdk/webhook/}
  */
 export default class Webhook {
   /**
@@ -15,69 +19,121 @@ export default class Webhook {
     if (!config.inputs.webhook) {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
-    /**
-     * @type {import("axios-retry").IAxiosRetryConfig}
-     * @see {@link https://www.npmjs.com/package/axios-retry}
-     */
-    const retries = this.retries(config.inputs.retries);
-    axiosRetry(config.axios, retries);
-    try {
-      const response = await config.axios.post(
-        config.inputs.webhook,
-        config.content.values,
-        {
-          ...this.proxies(config),
-        },
-      );
-      config.core.setOutput("ok", response.status === 200);
-      config.core.setOutput("response", JSON.stringify(response.data));
-      config.core.debug(JSON.stringify(response.data));
-    } catch (/** @type {any} */ err) {
-      const response = err.toJSON();
-      config.core.setOutput("ok", response.status === 200);
-      config.core.setOutput("response", JSON.stringify(response.message));
-      config.core.debug(response);
-      throw new SlackError(config.core, response.message);
+    switch (config.inputs.webhookType) {
+      case "incoming-webhook":
+        return await this.postIncomingWebhook(config);
+      case "webhook-trigger":
+        return await this.postWebhookTrigger(config);
+      default:
+        throw new SlackError(
+          config.core,
+          `Unknown webhook type: ${config.inputs.webhookType}`,
+        );
     }
   }
 
   /**
-   * Return configurations for http proxy options if these are set.
+   * Post using the @slack/webhook IncomingWebhook client.
    * @param {Config} config
-   * @returns {import("axios").AxiosRequestConfig | undefined}
-   * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
+   */
+  async postIncomingWebhook(config) {
+    const webhook = new IncomingWebhook(
+      /** @type {string} */ (config.inputs.webhook),
+      { agent: this.proxies(config)?.httpsAgent },
+    );
+    try {
+      const response = await this.send(config, () =>
+        webhook.send(config.content.values),
+      );
+      config.core.setOutput("ok", true);
+      config.core.setOutput("response", JSON.stringify(response.text));
+      config.core.debug(JSON.stringify(response.text));
+    } catch (/** @type {any} */ err) {
+      config.core.setOutput("ok", false);
+      config.core.setOutput("response", JSON.stringify(err.message));
+      config.core.debug(err);
+      throw new SlackError(config.core, err.message);
+    }
+  }
+
+  /**
+   * Post using the @slack/webhook WebhookTrigger client.
+   * @param {Config} config
+   */
+  async postWebhookTrigger(config) {
+    const trigger = new WebhookTrigger(
+      /** @type {string} */ (config.inputs.webhook),
+      { agent: this.proxies(config)?.httpsAgent },
+    );
+    try {
+      const response = await this.send(config, () =>
+        trigger.send(config.content.values),
+      );
+      config.core.setOutput("ok", response.ok);
+      config.core.setOutput("response", JSON.stringify(response.body));
+      config.core.debug(JSON.stringify(response.body));
+    } catch (/** @type {any} */ err) {
+      config.core.setOutput("ok", false);
+      config.core.setOutput("response", JSON.stringify(err.message));
+      config.core.debug(err);
+      throw new SlackError(config.core, err.message);
+    }
+  }
+
+  /**
+   * Invoke a webhook send with retries, aborting on non-retryable errors.
+   * @template T
+   * @param {Config} config
+   * @param {() => Promise<T>} attempt - the SDK send call to retry.
+   * @returns {Promise<T>}
+   */
+  async send(config, attempt) {
+    return await pRetry(async () => {
+      try {
+        return await attempt();
+      } catch (/** @type {any} */ err) {
+        if (this.retryable(err)) {
+          throw err;
+        }
+        throw new AbortError(err);
+      }
+    }, this.retries(config.inputs.retries));
+  }
+
+  /**
+   * Decide if a @slack/webhook error should be retried.
+   *
+   * Request errors (no response received) are always retried; HTTP errors are
+   * retried only for rate limits and server errors.
+   * @param {any} err
+   * @returns {boolean}
+   */
+  retryable(err) {
+    if (err?.code === ErrorCode.RequestError) {
+      return true;
+    }
+    if (err?.code === ErrorCode.HTTPError) {
+      const status = err?.original?.response?.status;
+      return status === 429 || (status >= 500 && status <= 599);
+    }
+    return true;
+  }
+
+  /**
+   * Return configurations for https proxy options if these are set.
+   * @param {Config} config
+   * @returns {{ httpsAgent: HttpsProxyAgent<string> } | undefined}
+   * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
    */
   proxies(config) {
-    const { webhook, proxy } = config.inputs;
-    if (!webhook) {
-      throw new SlackError(config.core, "No webhook was provided to proxy to");
-    }
-    if (!proxy) {
-      return undefined;
-    }
+    const proxy = config.inputs.proxy;
     try {
-      if (new URL(webhook).protocol !== "https:") {
-        config.core.debug(
-          "The webhook destination is not HTTPS so skipping the HTTPS proxy",
-        );
+      if (!proxy) {
         return undefined;
       }
-      switch (new URL(proxy).protocol) {
-        case "https:":
-          return {
-            httpsAgent: new HttpsProxyAgent(proxy),
-          };
-        case "http:":
-          return {
-            httpsAgent: new HttpsProxyAgent(proxy),
-            proxy: false,
-          };
-        default:
-          throw new SlackError(
-            config.core,
-            `Unsupported URL protocol: ${proxy}`,
-          );
-      }
+      return {
+        httpsAgent: new HttpsProxyAgent(proxy),
+      };
     } catch (/** @type {any} */ err) {
       throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
         cause: err,
@@ -86,38 +142,22 @@ export default class Webhook {
   }
 
   /**
-   * Return configurations for retry options with different delays.
-   * @param {string} option
-   * @returns {import("axios-retry").IAxiosRetryConfig}
+   * Map the retries input to a p-retry / node-retry policy.
+   * @param {string} [option]
+   * @returns {import("@slack/web-api").RetryOptions}
    */
   retries(option) {
     switch (option?.trim().toUpperCase()) {
       case "0":
         return { retries: 0 };
       case "5":
-        return {
-          retryCondition: axiosRetry.isRetryableError,
-          retries: 5,
-          retryDelay: linearDelay(60 * 1000), // 5 minutes
-        };
+        return webapi.retryPolicies.fiveRetriesInFiveMinutes;
       case "10":
-        return {
-          retryCondition: axiosRetry.isRetryableError,
-          retries: 10,
-          retryDelay: (count, err) => exponentialDelay(count, err, 2 * 1000), // 34.12 minutes
-        };
+        return webapi.retryPolicies.tenRetriesInAboutThirtyMinutes;
       case "RAPID":
-        return {
-          retryCondition: axiosRetry.isRetryableError,
-          retries: 12,
-          retryDelay: linearDelay(1 * 1000), // 12 seconds
-        };
+        return webapi.retryPolicies.rapidRetryPolicy;
       default:
-        return {
-          retryCondition: axiosRetry.isRetryableError,
-          retries: 5,
-          retryDelay: linearDelay(60 * 1000), // 5 minutes
-        };
+        return webapi.retryPolicies.fiveRetriesInFiveMinutes;
     }
   }
 }
