@@ -46,12 +46,12 @@
     "@actions/github": "^9.1.1",
     "@slack/logger": "^4.0.1",
     "@slack/web-api": "^7.16.0",
-    "axios": "^1.16.0",
-    "axios-retry": "^4.5.0",
+    "@slack/webhook": "file:../node-slack-sdk/packages/webhook",
     "flat": "^6.0.1",
     "https-proxy-agent": "^9.0.0",
     "js-yaml": "^4.2.0",
-    "markup-js": "^1.5.21"
+    "markup-js": "^1.5.21",
+    "p-retry": "^8.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
