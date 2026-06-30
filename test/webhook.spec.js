@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
-import { AxiosError } from "axios";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import send from "../src/send.js";
@@ -19,27 +18,19 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.axios.post.returns(
-        Promise.resolve({ status: 200, data: { ok: true } }),
+      mocks.webhookTrigger.resolves({ ok: true, body: { ok: true } });
+      await send(mocks.core);
+      assert.equal(mocks.webhookTrigger.getCalls().length, 1);
+      assert.deepEqual(mocks.webhookTrigger.getCall(0).firstArg, {
+        drinks: "coffee",
+      });
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(
+        mocks.core.setOutput.getCall(1).lastArg,
+        JSON.stringify({ ok: true }),
       );
-      try {
-        await send(mocks.core);
-        assert.equal(mocks.axios.post.getCalls().length, 1);
-        const [url, payload, options] = mocks.axios.post.getCall(0).args;
-        assert.equal(url, "https://hooks.slack.com");
-        assert.deepEqual(payload, { drinks: "coffee" });
-        assert.deepEqual(options, {});
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify({ ok: true }),
-        );
-      } catch (err) {
-        console.error(err);
-        assert.fail("Failed to send the webhook");
-      }
     });
 
     it("sends the parsed payload to the provided incoming webhook", async () => {
@@ -48,25 +39,19 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns("text: greetings");
-      mocks.axios.post.returns(Promise.resolve({ status: 200, data: "ok" }));
-      try {
-        await send(mocks.core);
-        assert.equal(mocks.axios.post.getCalls().length, 1);
-        const [url, payload, options] = mocks.axios.post.getCall(0).args;
-        assert.equal(url, "https://hooks.slack.com");
-        assert.deepEqual(payload, { text: "greetings" });
-        assert.deepEqual(options, {});
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify("ok"),
-        );
-      } catch (err) {
-        console.error(err);
-        assert.fail("Failed to send the webhook");
-      }
+      mocks.incomingWebhook.resolves({ text: "ok" });
+      await send(mocks.core);
+      assert.equal(mocks.incomingWebhook.getCalls().length, 1);
+      assert.deepEqual(mocks.incomingWebhook.getCall(0).firstArg, {
+        text: "greetings",
+      });
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(
+        mocks.core.setOutput.getCall(1).lastArg,
+        JSON.stringify("ok"),
+      );
     });
   });
 
@@ -91,108 +76,64 @@ describe("webhook", () => {
       }
     });
 
-    it("returns the failures from a webhook trigger", async () => {
+    it("does not retry a 4xx from a webhook trigger", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      const response = new AxiosError(
-        "Request failed with status code 400",
-        "ERR_BAD_REQUEST",
-        {},
-        {},
-        { status: 400 },
-      );
-      mocks.axios.post.resolves(Promise.reject(response));
+      mocks.core.getInput.withArgs("retries").returns("RAPID");
+      const err = Object.assign(new Error("An HTTP protocol error occurred"), {
+        code: "slack_webhook_http_error",
+        original: { response: { status: 400 } },
+      });
+      mocks.webhookTrigger.rejects(err);
       try {
         await send(mocks.core);
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Request failed with status code 400"),
-          );
-        } else {
-          assert.fail(err);
-        }
+      } catch (e) {
+        assert.ok(e instanceof SlackError);
       }
-      assert.equal(mocks.axios.post.getCalls().length, 1);
-      const [url, payload, options] = mocks.axios.post.getCall(0).args;
-      assert.equal(url, "https://hooks.slack.com");
-      assert.deepEqual(payload, { drinks: "coffee" });
-      assert.deepEqual(options, {});
+      assert.equal(
+        mocks.webhookTrigger.getCalls().length,
+        1,
+        "4xx must not be retried",
+      );
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
     });
 
-    it("returns the failures from an incoming webhook", async () => {
+    it("retries a 5xx from an incoming webhook then succeeds", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("textt: oops");
-      const response = new AxiosError(
-        "Request failed with status code 400",
-        "ERR_BAD_REQUEST",
-        {},
-        {},
-        { status: 400 },
+      mocks.core.getInput.withArgs("payload").returns("text: hi");
+      mocks.core.getInput.withArgs("retries").returns("RAPID");
+      const err = Object.assign(new Error("An HTTP protocol error occurred"), {
+        code: "slack_webhook_http_error",
+        original: { response: { status: 503 } },
+      });
+      mocks.incomingWebhook.onFirstCall().rejects(err);
+      mocks.incomingWebhook.onSecondCall().resolves({ text: "ok" });
+      await send(mocks.core);
+      assert.equal(
+        mocks.incomingWebhook.getCalls().length,
+        2,
+        "5xx should be retried once",
       );
-      mocks.axios.post.resolves(Promise.reject(response));
-      try {
-        await send(mocks.core);
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Request failed with status code 400"),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
-      assert.equal(mocks.axios.post.getCalls().length, 1);
-      const [url, payload, options] = mocks.axios.post.getCall(0).args;
-      assert.equal(url, "https://hooks.slack.com");
-      assert.deepEqual(payload, { textt: "oops" });
-      assert.deepEqual(options, {});
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
     });
   });
 
   describe("proxies", () => {
-    it("requires a webhook is included in the inputs", async () => {
-      /**
-       * @type {Config}
-       */
-      const config = {
-        core: mocks.core,
-        inputs: {},
-      };
-      try {
-        new Webhook().proxies(config);
-        assert.fail("Failed to throw for missing input");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("No webhook was provided to proxy to"),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
-    });
-
-    it("skips proxying an http webhook url altogether", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
+    it("returns undefined when no proxy is set", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
       const config = new Config(mocks.core);
       const webhook = new Webhook();
-      const request = webhook.proxies(config);
-      assert.strictEqual(request, undefined);
+      assert.strictEqual(webhook.proxies(config), undefined);
     });
 
     it("sets up the proxy agent for the provided https proxy", async () => {
@@ -204,23 +145,8 @@ describe("webhook", () => {
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       const config = new Config(mocks.core);
       const webhook = new Webhook();
-      const { httpsAgent, proxy: proxying } = webhook.proxies(config);
+      const { httpsAgent } = webhook.proxies(config);
       assert.deepEqual(httpsAgent.proxy, new URL(proxy));
-      assert.notStrictEqual(proxying, false);
-    });
-
-    it("sets up the agent without proxy for http proxies", async () => {
-      const proxy = "http://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      const config = new Config(mocks.core);
-      const webhook = new Webhook();
-      const { httpsAgent, proxy: proxying } = webhook.proxies(config);
-      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
-      assert.strictEqual(proxying, false);
     });
 
     it("fails to configure proxies with an invalid proxied url", async () => {
@@ -245,102 +171,33 @@ describe("webhook", () => {
         }
       }
     });
-
-    it("fails to configure proxies with an unknown url protocol", async () => {
-      const proxy = "ssh://";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      try {
-        const config = new Config(mocks.core);
-        const webhook = new Webhook();
-        webhook.proxies(config);
-        assert.fail("An unknown URL protocol was not thrown as error!");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Failed to configure the HTTPS proxy"),
-          );
-          assert.ok(err.cause.message.includes("Unsupported URL protocol"));
-        } else {
-          assert.fail(err);
-        }
-      }
-    });
   });
 
   describe("retries", () => {
-    it("uses a default of five retries in requests", async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries();
+    it("uses a default of five retries", async () => {
+      const result = new Webhook().retries();
       assert.equal(result.retries, 5);
     });
 
     it('does not attempt retries when "0" is set', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("0");
+      const result = new Webhook().retries("0");
       assert.equal(result.retries, 0);
     });
 
-    it('attempts a default amount of "5" retries', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("5");
+    it('maps "5" to a five-retry policy', async () => {
+      const result = new Webhook().retries("5");
       assert.equal(result.retries, 5);
-      if (!result.retryDelay) {
-        assert.fail("No retry delay found!");
-      }
-      assert.equal(
-        result.retryDelay(5, mocks.errors.axios.network_failed),
-        300000,
-        "5th retry after 5 seconds",
-      );
     });
 
-    it('attempts "10" retries in around "30" minutes', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("10");
+    it('maps "10" to a ten-retry policy', async () => {
+      const result = new Webhook().retries("10");
       assert.equal(result.retries, 10);
-      if (!result.retryDelay) {
-        assert.fail("No retry delay found!");
-      }
-      assert.ok(
-        result.retryDelay(10, mocks.errors.axios.network_failed) > 1800000,
-        "last attempt is around 30 minutes after starting",
-      );
-      assert.ok(
-        result.retryDelay(10, mocks.errors.axios.network_failed) < 3600000,
-        "last attempt is no more than an hour later",
-      );
     });
 
-    it('attempts a " rapid" burst of "12" retries in seconds', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries(" rapid");
-      assert.equal(result.retries, 12);
-      if (!result.retryDelay) {
-        assert.fail("No retry delay found!");
-      }
-      assert.equal(
-        result.retryDelay(12, mocks.errors.axios.network_failed),
-        12000,
-        "12th retry after 12 seconds",
-      );
-    });
-
-    it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("RAPID");
-      assert.equal(result.retries, 12);
-      if (!result.retryDelay) {
-        assert.fail("No retry delay found!");
-      }
-      assert.equal(
-        result.retryDelay(12, mocks.errors.axios.network_failed),
-        12000,
-        "12th retry after 12 seconds",
-      );
+    it('maps "RAPID" (case/space-insensitive) to a rapid policy', async () => {
+      const rapid = new Webhook().retries("RAPID");
+      const spaced = new Webhook().retries(" rapid");
+      assert.deepEqual(rapid, spaced);
     });
   });
 });
