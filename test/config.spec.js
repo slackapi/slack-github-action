@@ -184,19 +184,19 @@ describe("config", () => {
       }
     });
 
-    it("adds metadata to webhook with package name and version", async () => {
+    it("adds web-api app metadata with package name and version", async () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      const config = new Config(mocks.core);
-      assert.ok(
-        config.axios.defaults.headers.common["User-Agent"].startsWith(
-          "@slack:slack-github-action/",
-        ),
-      );
-      assert.ok(
-        config.axios.defaults.headers.common["User-Agent"].length >
-          "@slack:slack-github-action/".length,
-      );
+      const addAppMetadata = mocks.sandbox.stub(webapi, "addAppMetadata");
+      try {
+        new Config(mocks.core);
+        assert.ok(addAppMetadata.called, "addAppMetadata was not called");
+        const arg = addAppMetadata.getCall(0).firstArg;
+        assert.ok(arg.name.includes("slack-github-action"));
+        assert.ok(arg.version.length > 0);
+      } finally {
+        addAppMetadata.restore();
+      }
     });
   });
 
@@ -225,7 +225,7 @@ describe("config", () => {
 
   describe("validate", () => {
     it('allow the "retries" option with lowercased space', async () => {
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.incomingWebhook.resolves({ text: "LGTM" });
       mocks.core.getInput.withArgs("retries").returns(" rapid ");
       mocks.core.getInput
         .withArgs("webhook")
@@ -247,7 +247,7 @@ describe("config", () => {
     });
 
     it("errors if an invalid retries option is provided", async () => {
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.incomingWebhook.resolves({ text: "LGTM" });
       mocks.core.getInput.withArgs("retries").returns("FOREVER");
       mocks.core.getInput
         .withArgs("webhook")

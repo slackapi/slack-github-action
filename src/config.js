@@ -1,6 +1,4 @@
-import os from "node:os";
 import webapi from "@slack/web-api";
-import axios from "axios";
 import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
@@ -61,11 +59,6 @@ export default class Config {
   inputs;
 
   /**
-   * @type {import("axios").AxiosStatic} - The axios client.
-   */
-  axios;
-
-  /**
    * @type {Content} - The parsed payload data to send.
    */
   content;
@@ -98,7 +91,6 @@ export default class Config {
    * @param {import("@actions/core")} core - GitHub Actions core utilities.
    */
   constructor(core) {
-    this.axios = axios;
     this.core = core;
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
@@ -131,17 +123,15 @@ export default class Config {
 
   /**
    * Add user agent metadata for instrumentation.
+   *
+   * The @slack/webhook and @slack/web-api SDKs set their own User-Agent
+   * headers, so the action only registers app metadata with web-api here.
    */
   instrument() {
     this.webapi.addAppMetadata({
       name: packageJson.name,
       version: packageJson.version,
     });
-    this.axios.defaults.headers.common["User-Agent"] =
-      `${packageJson.name.replace("/", ":")}/${packageJson.version} ` +
-      `axios/${this.axios.VERSION} ` +
-      `node/${process.version.replace("v", "")} ` +
-      `${os.platform()}/${os.release()}`;
   }
 
   /**
