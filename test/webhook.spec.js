@@ -76,52 +76,42 @@ describe("webhook", () => {
       }
     });
 
-    it("does not retry a 4xx from a webhook trigger", async () => {
+    it("returns the failures from a webhook trigger", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.core.getInput.withArgs("retries").returns("RAPID");
-      const err = Object.assign(new Error("An HTTP protocol error occurred"), {
-        code: "slack_webhook_http_error",
-        original: { response: { status: 400 } },
-      });
-      mocks.webhookTrigger.rejects(err);
+      mocks.webhookTrigger.rejects(
+        new Error("An HTTP protocol error occurred"),
+      );
       try {
         await send(mocks.core);
       } catch (e) {
         assert.ok(e instanceof SlackError);
       }
-      assert.equal(
-        mocks.webhookTrigger.getCalls().length,
-        1,
-        "4xx must not be retried",
-      );
+      assert.equal(mocks.webhookTrigger.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
     });
 
-    it("retries a 5xx from an incoming webhook then succeeds", async () => {
+    it("returns the failures from an incoming webhook", async () => {
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns("text: hi");
-      mocks.core.getInput.withArgs("retries").returns("RAPID");
-      const err = Object.assign(new Error("An HTTP protocol error occurred"), {
-        code: "slack_webhook_http_error",
-        original: { response: { status: 503 } },
-      });
-      mocks.incomingWebhook.onFirstCall().rejects(err);
-      mocks.incomingWebhook.onSecondCall().resolves({ text: "ok" });
-      await send(mocks.core);
-      assert.equal(
-        mocks.incomingWebhook.getCalls().length,
-        2,
-        "5xx should be retried once",
+      mocks.incomingWebhook.rejects(
+        new Error("An HTTP protocol error occurred"),
       );
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+      try {
+        await send(mocks.core);
+      } catch (e) {
+        assert.ok(e instanceof SlackError);
+      }
+      assert.equal(mocks.incomingWebhook.getCalls().length, 1);
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
     });
   });
 
