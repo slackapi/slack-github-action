@@ -160,6 +160,32 @@ describe("webhook", () => {
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
     });
+
+    it("handles errors without toJSON", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("\"https://hooks.slack.com\"");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("payload").returns("text: test");
+      mocks.core.getBooleanInput.withArgs("errors").returns(true);
+      mocks.axios.post.returns(Promise.reject(new TypeError("Invalid URL")));
+
+      try {
+        await send(mocks.core);
+        assert.fail("Failed to throw for non-axios error");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.ok(err.message.includes("Invalid URL"));
+        } else {
+          assert.fail(err);
+        }
+      }
+
+      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.equal(mocks.core.setOutput.getCall(1).lastArg, '"Invalid URL"');
+    });
   });
 
   describe("proxies", () => {
