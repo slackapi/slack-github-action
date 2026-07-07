@@ -1,9 +1,7 @@
 import {
   fiveRetriesInFiveMinutes,
-  IncomingWebhook,
   rapidRetryPolicy,
   tenRetriesInAboutThirtyMinutes,
-  WebhookTrigger,
 } from "@slack/webhook";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "./config.js";
@@ -26,61 +24,39 @@ export default class Webhook {
     if (!config.inputs.webhook) {
       throw new SlackError(config.core, "No webhook was provided to post to");
     }
-    switch (config.inputs.webhookType) {
-      case "incoming-webhook":
-        return await this.postIncomingWebhook(config);
-      case "webhook-trigger":
-        return await this.postWebhookTrigger(config);
-      default:
-        throw new SlackError(
-          config.core,
-          `Unknown webhook type: ${config.inputs.webhookType}`,
-        );
-    }
-  }
-
-  /**
-   * Post using the @slack/webhook IncomingWebhook client.
-   * @param {Config} config
-   */
-  async postIncomingWebhook(config) {
-    const webhook = new IncomingWebhook(
-      /** @type {string} */ (config.inputs.webhook),
-      {
-        agent: this.proxies(config)?.httpsAgent,
-        retryConfig: this.retries(config.inputs.retries),
-      },
-    );
+    const url = config.inputs.webhook;
+    const options = {
+      agent: this.proxies(config)?.httpsAgent,
+      retryConfig: this.retries(config.inputs.retries),
+    };
     try {
-      const response = await webhook.send(config.content.values);
-      config.core.setOutput("ok", true);
-      config.core.setOutput("response", JSON.stringify(response.text));
-      config.core.debug(JSON.stringify(response.text));
-    } catch (/** @type {any} */ err) {
-      config.core.setOutput("ok", false);
-      config.core.setOutput("response", JSON.stringify(err.message));
-      config.core.debug(err);
-      throw new SlackError(config.core, err.message);
-    }
-  }
-
-  /**
-   * Post using the @slack/webhook WebhookTrigger client.
-   * @param {Config} config
-   */
-  async postWebhookTrigger(config) {
-    const trigger = new WebhookTrigger(
-      /** @type {string} */ (config.inputs.webhook),
-      {
-        agent: this.proxies(config)?.httpsAgent,
-        retryConfig: this.retries(config.inputs.retries),
-      },
-    );
-    try {
-      const response = await trigger.send(config.content.values);
-      config.core.setOutput("ok", response.ok);
-      config.core.setOutput("response", JSON.stringify(response.body));
-      config.core.debug(JSON.stringify(response.body));
+      switch (config.inputs.webhookType) {
+        case "incoming-webhook": {
+          const response = await new config.webhook.IncomingWebhook(
+            url,
+            options,
+          ).send(config.content.values);
+          config.core.setOutput("ok", true);
+          config.core.setOutput("response", JSON.stringify(response.text));
+          config.core.debug(JSON.stringify(response.text));
+          break;
+        }
+        case "webhook-trigger": {
+          const response = await new config.webhook.WebhookTrigger(
+            url,
+            options,
+          ).send(config.content.values);
+          config.core.setOutput("ok", response.ok);
+          config.core.setOutput("response", JSON.stringify(response.body));
+          config.core.debug(JSON.stringify(response.body));
+          break;
+        }
+        default:
+          throw new SlackError(
+            config.core,
+            `Unknown webhook type: ${config.inputs.webhookType}`,
+          );
+      }
     } catch (/** @type {any} */ err) {
       config.core.setOutput("ok", false);
       config.core.setOutput("response", JSON.stringify(err.message));
