@@ -101,7 +101,7 @@ describe("webhook", () => {
       };
       try {
         await new Webhook().post(config);
-        assert.fail("Failed to throw for an unknown webhook type");
+        assert.fail();
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
