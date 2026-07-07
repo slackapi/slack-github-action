@@ -101,9 +101,18 @@ export default class Webhook {
       if (!proxy) {
         return undefined;
       }
-      return {
-        httpsAgent: new HttpsProxyAgent(proxy),
-      };
+      switch (new URL(proxy).protocol) {
+        case "https:":
+        case "http:":
+          return {
+            httpsAgent: new HttpsProxyAgent(proxy),
+          };
+        default:
+          throw new SlackError(
+            config.core,
+            `Unsupported URL protocol: ${proxy}`,
+          );
+      }
     } catch (/** @type {any} */ err) {
       throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
         cause: err,

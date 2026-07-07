@@ -161,6 +161,30 @@ describe("webhook", () => {
         }
       }
     });
+
+    it("fails to configure proxies with an unsupported protocol", async () => {
+      const proxy = "ftp://example.com";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      try {
+        const config = new Config(mocks.core);
+        const webhook = new Webhook();
+        webhook.proxies(config);
+        assert.fail("An unsupported proxy protocol was not thrown as error!");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.ok(
+            err.message.includes("Failed to configure the HTTPS proxy"),
+          );
+          assert.ok(err.cause?.message?.includes("Unsupported URL protocol"));
+        } else {
+          assert.fail(err);
+        }
+      }
+    });
   });
 
   describe("retries", () => {
