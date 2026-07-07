@@ -108,9 +108,13 @@ describe("webhook", () => {
         }
       }
       assert.equal(mocks.webhook.trigger.getCalls().length, 1);
+      assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
+        drinks: "coffee",
+      });
       assert.ok(mocks.core.setFailed.called);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
     });
 
     it("returns the failures from an incoming webhook", async () => {
@@ -134,9 +138,13 @@ describe("webhook", () => {
         }
       }
       assert.equal(mocks.webhook.incoming.getCalls().length, 1);
+      assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
+        text: "hi",
+      });
       assert.ok(mocks.core.setFailed.called);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
     });
   });
 
