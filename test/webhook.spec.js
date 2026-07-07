@@ -96,12 +96,7 @@ describe("webhook", () => {
       mocks.webhook.trigger.rejects(
         new Error("An HTTP protocol error occurred"),
       );
-      try {
-        await send(mocks.core);
-      } catch (e) {
-        assert.ok(e instanceof SlackError);
-        assert.ok(e.message.includes("An HTTP protocol error occurred"));
-      }
+      await send(mocks.core);
       assert.equal(mocks.webhook.trigger.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
@@ -116,15 +111,33 @@ describe("webhook", () => {
       mocks.webhook.incoming.rejects(
         new Error("An HTTP protocol error occurred"),
       );
-      try {
-        await send(mocks.core);
-      } catch (e) {
-        assert.ok(e instanceof SlackError);
-        assert.ok(e.message.includes("An HTTP protocol error occurred"));
-      }
+      await send(mocks.core);
       assert.equal(mocks.webhook.incoming.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
+    });
+
+    it('throws the failure when the "errors" input is enabled', async () => {
+      mocks.core.getBooleanInput.withArgs("errors").returns(true);
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
+      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
+      mocks.webhook.trigger.rejects(
+        new Error("An HTTP protocol error occurred"),
+      );
+      try {
+        await send(mocks.core);
+        assert.fail("A webhook trigger failure was not thrown as error!");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.ok(err.message.includes("An HTTP protocol error occurred"));
+        } else {
+          assert.fail(err);
+        }
+      }
+      assert.equal(mocks.core.setFailed.getCalls().length, 1);
     });
   });
 
