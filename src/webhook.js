@@ -1,8 +1,4 @@
-import {
-  fiveRetriesInFiveMinutes,
-  rapidRetryPolicy,
-  tenRetriesInAboutThirtyMinutes,
-} from "@slack/webhook";
+import webhook from "@slack/webhook";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "./config.js";
 import SlackError from "./errors.js";
@@ -111,13 +107,13 @@ export default class Webhook {
       case "0":
         return { retries: 0 };
       case "5":
-        return fiveRetriesInFiveMinutes;
+        return webhook.retryPolicies.fiveRetriesInFiveMinutes;
       case "10":
-        return tenRetriesInAboutThirtyMinutes;
+        return webhook.retryPolicies.tenRetriesInAboutThirtyMinutes;
       case "RAPID":
-        return rapidRetryPolicy;
+        return webhook.retryPolicies.rapidRetryPolicy;
       default:
-        return fiveRetriesInFiveMinutes;
+        return webhook.retryPolicies.fiveRetriesInFiveMinutes;
     }
   }
 }
