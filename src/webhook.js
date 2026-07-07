@@ -72,9 +72,18 @@ export default class Webhook {
    * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
    */
   proxies(config) {
-    const proxy = config.inputs.proxy;
+    const { webhook, proxy } = config.inputs;
+    if (!webhook) {
+      throw new SlackError(config.core, "No webhook was provided to proxy to");
+    }
+    if (!proxy) {
+      return undefined;
+    }
     try {
-      if (!proxy) {
+      if (new URL(webhook).protocol !== "https:") {
+        config.core.debug(
+          "The webhook destination is not HTTPS so skipping the HTTPS proxy",
+        );
         return undefined;
       }
       switch (new URL(proxy).protocol) {
