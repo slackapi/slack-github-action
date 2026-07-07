@@ -87,6 +87,32 @@ describe("webhook", () => {
       }
     });
 
+    it("errors when an unknown webhook type is provided", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: mocks.core,
+        inputs: {
+          webhook: "https://hooks.slack.com",
+          webhookType: "unknown-webhook",
+          retries: "5",
+        },
+      };
+      try {
+        await new Webhook().post(config);
+        assert.fail("Failed to throw for an unknown webhook type");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.ok(
+            err.message.includes("Unknown webhook type: unknown-webhook"),
+          );
+        } else {
+          assert.fail(err);
+        }
+      }
+    });
+
     it("returns the failures from a webhook trigger", async () => {
       mocks.core.getBooleanInput.withArgs("errors").returns(true);
       mocks.core.getInput
@@ -182,6 +208,19 @@ describe("webhook", () => {
 
     it("sets up the proxy agent for the provided https proxy", async () => {
       const proxy = "https://example.com";
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.core.getInput.withArgs("proxy").returns(proxy);
+      const config = new Config(mocks.core);
+      const webhook = new Webhook();
+      const httpsAgent = webhook.proxies(config);
+      assert.deepEqual(httpsAgent.proxy, new URL(proxy));
+    });
+
+    it("sets up the proxy agent for the provided http proxy", async () => {
+      const proxy = "http://example.com";
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
