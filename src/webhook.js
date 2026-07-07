@@ -97,8 +97,8 @@ export default class Webhook {
   }
 
   /**
-   * Map the retries input to a @slack/webhook retry policy.
-   * @param {string} [option]
+   * Return configurations for retry options with different delays.
+   * @param {string} option
    * @returns {import("@slack/webhook").RetryOptions}
    */
   retries(option) {
