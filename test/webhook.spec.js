@@ -100,6 +100,7 @@ describe("webhook", () => {
         await send(mocks.core);
       } catch (e) {
         assert.ok(e instanceof SlackError);
+        assert.ok(e.message.includes("An HTTP protocol error occurred"));
       }
       assert.equal(mocks.webhook.trigger.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
@@ -119,6 +120,7 @@ describe("webhook", () => {
         await send(mocks.core);
       } catch (e) {
         assert.ok(e instanceof SlackError);
+        assert.ok(e.message.includes("An HTTP protocol error occurred"));
       }
       assert.equal(mocks.webhook.incoming.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
