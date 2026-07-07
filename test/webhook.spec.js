@@ -19,18 +19,23 @@ describe("webhook", () => {
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
       mocks.webhook.trigger.resolves({ ok: true, body: { ok: true } });
-      await send(mocks.core);
-      assert.equal(mocks.webhook.trigger.getCalls().length, 1);
-      assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
-        drinks: "coffee",
-      });
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-      assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify({ ok: true }),
-      );
+      try {
+        await send(mocks.core);
+        assert.equal(mocks.webhook.trigger.getCalls().length, 1);
+        assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
+          drinks: "coffee",
+        });
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify({ ok: true }),
+        );
+      } catch (err) {
+        console.error(err);
+        assert.fail("Failed to send the webhook");
+      }
     });
 
     it("sends the parsed payload to the provided incoming webhook", async () => {
@@ -40,18 +45,23 @@ describe("webhook", () => {
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns("text: greetings");
       mocks.webhook.incoming.resolves({ text: "ok" });
-      await send(mocks.core);
-      assert.equal(mocks.webhook.incoming.getCalls().length, 1);
-      assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
-        text: "greetings",
-      });
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-      assert.equal(
-        mocks.core.setOutput.getCall(1).lastArg,
-        JSON.stringify("ok"),
-      );
+      try {
+        await send(mocks.core);
+        assert.equal(mocks.webhook.incoming.getCalls().length, 1);
+        assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
+          text: "greetings",
+        });
+        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
+        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
+        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(
+          mocks.core.setOutput.getCall(1).lastArg,
+          JSON.stringify("ok"),
+        );
+      } catch (err) {
+        console.error(err);
+        assert.fail("Failed to send the webhook");
+      }
     });
   });
 
@@ -220,28 +230,33 @@ describe("webhook", () => {
 
   describe("retries", () => {
     it("uses a default of five retries", async () => {
-      const result = new Webhook().retries();
+      const webhook = new Webhook();
+      const result = webhook.retries();
       assert.equal(result.retries, 5);
     });
 
     it('does not attempt retries when "0" is set', async () => {
-      const result = new Webhook().retries("0");
+      const webhook = new Webhook();
+      const result = webhook.retries("0");
       assert.equal(result.retries, 0);
     });
 
     it('maps "5" to a five-retry policy', async () => {
-      const result = new Webhook().retries("5");
+      const webhook = new Webhook();
+      const result = webhook.retries("5");
       assert.equal(result.retries, 5);
     });
 
     it('maps "10" to a ten-retry policy', async () => {
-      const result = new Webhook().retries("10");
+      const webhook = new Webhook();
+      const result = webhook.retries("10");
       assert.equal(result.retries, 10);
     });
 
     it('maps "RAPID" (case/space-insensitive) to a rapid policy', async () => {
-      const rapid = new Webhook().retries("RAPID");
-      const spaced = new Webhook().retries(" rapid");
+      const webhook = new Webhook();
+      const rapid = webhook.retries("RAPID");
+      const spaced = webhook.retries(" rapid");
       assert.deepEqual(rapid, spaced);
     });
   });
