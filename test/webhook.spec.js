@@ -116,6 +116,28 @@ describe("webhook", () => {
   });
 
   describe("proxies", () => {
+    it("requires a webhook is included in the inputs", async () => {
+      /**
+       * @type {Config}
+       */
+      const config = {
+        core: mocks.core,
+        inputs: {},
+      };
+      try {
+        new Webhook().proxies(config);
+        assert.fail("Failed to throw for missing input");
+      } catch (err) {
+        if (err instanceof SlackError) {
+          assert.ok(
+            err.message.includes("No webhook was provided to proxy to"),
+          );
+        } else {
+          assert.fail(err);
+        }
+      }
+    });
+
     it("returns undefined when no proxy is set", async () => {
       mocks.core.getInput
         .withArgs("webhook")
