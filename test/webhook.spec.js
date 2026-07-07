@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
+import webhook from "@slack/webhook";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import send from "../src/send.js";
@@ -230,34 +231,43 @@ describe("webhook", () => {
 
   describe("retries", () => {
     it("uses a default of five retries in requests", async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries();
-      assert.equal(result.retries, 5);
+      const result = new Webhook().retries();
+      assert.equal(result.retries, webhook.fiveRetriesInFiveMinutes.retries);
     });
 
     it('does not attempt retries when "0" is set', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("0");
+      const result = new Webhook().retries("0");
       assert.equal(result.retries, 0);
     });
 
     it('attempts a default amount of "5" retries', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("5");
-      assert.equal(result.retries, 5);
+      const result = new Webhook().retries("5");
+      assert.equal(result.retries, webhook.fiveRetriesInFiveMinutes.retries);
+      assert.equal(result.factor, webhook.fiveRetriesInFiveMinutes.factor);
     });
 
     it('attempts "10" retries in around "30" minutes', async () => {
-      const webhook = new Webhook();
-      const result = webhook.retries("10");
-      assert.equal(result.retries, 10);
+      const result = new Webhook().retries("10");
+      assert.equal(
+        result.retries,
+        webhook.tenRetriesInAboutThirtyMinutes.retries,
+      );
+      assert.equal(
+        result.factor,
+        webhook.tenRetriesInAboutThirtyMinutes.factor,
+      );
     });
 
-    it('attempts a " rapid" burst of "RAPID" retries in seconds', async () => {
-      const webhook = new Webhook();
-      const rapid = webhook.retries("RAPID");
-      const spaced = webhook.retries(" rapid");
-      assert.deepEqual(rapid, spaced);
+    it('attempts a "rapid " burst of "12" retries in seconds', async () => {
+      const result = new Webhook().retries("rapid ");
+      assert.equal(result.retries, webhook.rapidRetryPolicy.retries);
+      assert.equal(result.factor, webhook.rapidRetryPolicy.factor);
+    });
+
+    it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
+      const result = new Webhook().retries("RAPID");
+      assert.equal(result.retries, webhook.rapidRetryPolicy.retries);
+      assert.equal(result.factor, webhook.rapidRetryPolicy.factor);
     });
   });
 });

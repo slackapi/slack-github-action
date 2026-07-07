@@ -50,8 +50,7 @@
     "flat": "^6.0.1",
     "https-proxy-agent": "^9.0.0",
     "js-yaml": "^4.2.0",
-    "markup-js": "^1.5.21",
-    "p-retry": "^8.0.0"
+    "markup-js": "^1.5.21"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
