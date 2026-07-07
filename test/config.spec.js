@@ -196,8 +196,12 @@ describe("config", () => {
         configurable: true,
       });
       try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.core.getInput
+          .withArgs("webhook")
+          .returns("https://hooks.slack.com");
+        mocks.core.getInput
+          .withArgs("webhook-type")
+          .returns("incoming-webhook");
         new Config(mocks.core);
         assert.ok(stub.calledOnce);
         const { name, version } = stub.firstCall.args[0];
