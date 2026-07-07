@@ -203,8 +203,8 @@ describe("webhook", () => {
       }
     });
 
-    it("fails to configure proxies with an unsupported protocol", async () => {
-      const proxy = "ftp://example.com";
+    it("fails to configure proxies with an unknown url protocol", async () => {
+      const proxy = "ssh://";
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
@@ -214,7 +214,7 @@ describe("webhook", () => {
         const config = new Config(mocks.core);
         const webhook = new Webhook();
         webhook.proxies(config);
-        assert.fail("An unsupported proxy protocol was not thrown as error!");
+        assert.fail("An unknown URL protocol was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(
