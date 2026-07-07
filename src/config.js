@@ -1,4 +1,5 @@
 import webapi from "@slack/web-api";
+import webhook from "@slack/webhook";
 import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
@@ -81,6 +82,11 @@ export default class Config {
   webapi;
 
   /**
+   * @type {import("@slack/webhook")} - Slack webhook client.
+   */
+  webhook;
+
+  /**
    * Gather values from the job inputs and use defaults or error for the missing
    * ones.
    *
@@ -94,6 +100,7 @@ export default class Config {
     this.core = core;
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
+    this.webhook = webhook;
     this.inputs = {
       api: core.getInput("api"),
       errors: core.getBooleanInput("errors"),
@@ -123,12 +130,13 @@ export default class Config {
 
   /**
    * Add user agent metadata for instrumentation.
-   *
-   * The @slack/webhook and @slack/web-api SDKs set their own User-Agent
-   * headers, so the action only registers app metadata with web-api here.
    */
   instrument() {
     this.webapi.addAppMetadata({
+      name: packageJson.name,
+      version: packageJson.version,
+    });
+    this.webhook.addAppMetadata({
       name: packageJson.name,
       version: packageJson.version,
     });
