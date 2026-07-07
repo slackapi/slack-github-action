@@ -229,7 +229,7 @@ describe("webhook", () => {
   });
 
   describe("retries", () => {
-    it("uses a default of five retries", async () => {
+    it("uses a default of five retries in requests", async () => {
       const webhook = new Webhook();
       const result = webhook.retries();
       assert.equal(result.retries, 5);
@@ -241,19 +241,19 @@ describe("webhook", () => {
       assert.equal(result.retries, 0);
     });
 
-    it('maps "5" to a five-retry policy', async () => {
+    it('attempts a default amount of "5" retries', async () => {
       const webhook = new Webhook();
       const result = webhook.retries("5");
       assert.equal(result.retries, 5);
     });
 
-    it('maps "10" to a ten-retry policy', async () => {
+    it('attempts "10" retries in around "30" minutes', async () => {
       const webhook = new Webhook();
       const result = webhook.retries("10");
       assert.equal(result.retries, 10);
     });
 
-    it('maps "RAPID" (case/space-insensitive) to a rapid policy', async () => {
+    it('attempts a " rapid" burst of "RAPID" retries in seconds', async () => {
       const webhook = new Webhook();
       const rapid = webhook.retries("RAPID");
       const spaced = webhook.retries(" rapid");
