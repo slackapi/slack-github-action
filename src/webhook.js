@@ -8,9 +8,8 @@ import Config from "./config.js";
 import SlackError from "./errors.js";
 
 /**
- * The Webhook class posts the configured payload to the provided webhook using
- * the @slack/webhook package, choosing the client by the configured webhook
- * type, with whatever additional settings set.
+ * This Webhook class posts the configured payload to the provided webhook, with
+ * whatever additional settings set.
  *
  * @see {@link https://docs.slack.dev/tools/node-slack-sdk/webhook/}
  */
