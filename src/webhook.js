@@ -39,7 +39,7 @@ export default class Webhook {
           config.core.setOutput("ok", true);
           config.core.setOutput("response", JSON.stringify(response.text));
           config.core.debug(JSON.stringify(response.text));
-          break;
+          return;
         }
         case "webhook-trigger": {
           const response = await new config.webhook.WebhookTrigger(
@@ -49,7 +49,7 @@ export default class Webhook {
           config.core.setOutput("ok", response.ok);
           config.core.setOutput("response", JSON.stringify(response.body));
           config.core.debug(JSON.stringify(response.body));
-          break;
+          return;
         }
         default:
           throw new SlackError(
