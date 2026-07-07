@@ -123,7 +123,7 @@ describe("webhook", () => {
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("text: hi");
+      mocks.core.getInput.withArgs("payload").returns("textt: oops");
       mocks.webhook.incoming.rejects(
         new Error("An HTTP protocol error occurred"),
       );
@@ -139,7 +139,7 @@ describe("webhook", () => {
       }
       assert.equal(mocks.webhook.incoming.getCalls().length, 1);
       assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
-        text: "hi",
+        textt: "oops",
       });
       assert.ok(mocks.core.setFailed.called);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
