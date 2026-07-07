@@ -180,16 +180,6 @@ describe("webhook", () => {
       assert.strictEqual(webhook.proxies(config), undefined);
     });
 
-    it("returns undefined when no proxy is set", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      const config = new Config(mocks.core);
-      const webhook = new Webhook();
-      assert.strictEqual(webhook.proxies(config), undefined);
-    });
-
     it("sets up the proxy agent for the provided https proxy", async () => {
       const proxy = "https://example.com";
       mocks.core.getInput
@@ -201,6 +191,16 @@ describe("webhook", () => {
       const webhook = new Webhook();
       const httpsAgent = webhook.proxies(config);
       assert.deepEqual(httpsAgent.proxy, new URL(proxy));
+    });
+
+    it("returns undefined when no proxy is set", async () => {
+      mocks.core.getInput
+        .withArgs("webhook")
+        .returns("https://hooks.slack.com");
+      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      const config = new Config(mocks.core);
+      const webhook = new Webhook();
+      assert.strictEqual(webhook.proxies(config), undefined);
     });
 
     it("fails to configure proxies with an invalid proxied url", async () => {
