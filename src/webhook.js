@@ -66,7 +66,7 @@ export default class Webhook {
   }
 
   /**
-   * Return an https proxy agent if a proxy is set.
+   * Return configurations for http proxy options if these are set.
    * @param {Config} config
    * @returns {HttpsProxyAgent<string> | undefined}
    * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
