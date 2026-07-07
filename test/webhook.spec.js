@@ -258,8 +258,8 @@ describe("webhook", () => {
       );
     });
 
-    it('attempts a "rapid " burst of "12" retries in seconds', async () => {
-      const result = new Webhook().retries("rapid ");
+    it('attempts a " rapid" burst of "12" retries in seconds', async () => {
+      const result = new Webhook().retries(" rapid");
       assert.equal(result.retries, webhook.rapidRetryPolicy.retries);
       assert.equal(result.factor, webhook.rapidRetryPolicy.factor);
     });
