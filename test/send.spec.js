@@ -24,7 +24,7 @@ describe("send", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns('"greetings": "hello"');
-      mocks.webhookTrigger.resolves({ ok: true, body: { ok: true } });
+      mocks.webhook.trigger.resolves({ ok: true, body: { ok: true } });
       await send(mocks.core);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
@@ -62,7 +62,7 @@ describe("send", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns('"text": "hello"');
-      mocks.incomingWebhook.resolves({ text: "ok" });
+      mocks.webhook.incoming.resolves({ text: "ok" });
       await send(mocks.core);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);

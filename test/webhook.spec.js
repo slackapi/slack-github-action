@@ -18,10 +18,10 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.webhookTrigger.resolves({ ok: true, body: { ok: true } });
+      mocks.webhook.trigger.resolves({ ok: true, body: { ok: true } });
       await send(mocks.core);
-      assert.equal(mocks.webhookTrigger.getCalls().length, 1);
-      assert.deepEqual(mocks.webhookTrigger.getCall(0).firstArg, {
+      assert.equal(mocks.webhook.trigger.getCalls().length, 1);
+      assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
         drinks: "coffee",
       });
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
@@ -39,10 +39,10 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns("text: greetings");
-      mocks.incomingWebhook.resolves({ text: "ok" });
+      mocks.webhook.incoming.resolves({ text: "ok" });
       await send(mocks.core);
-      assert.equal(mocks.incomingWebhook.getCalls().length, 1);
-      assert.deepEqual(mocks.incomingWebhook.getCall(0).firstArg, {
+      assert.equal(mocks.webhook.incoming.getCalls().length, 1);
+      assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
         text: "greetings",
       });
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
@@ -82,7 +82,7 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.webhookTrigger.rejects(
+      mocks.webhook.trigger.rejects(
         new Error("An HTTP protocol error occurred"),
       );
       try {
@@ -90,7 +90,7 @@ describe("webhook", () => {
       } catch (e) {
         assert.ok(e instanceof SlackError);
       }
-      assert.equal(mocks.webhookTrigger.getCalls().length, 1);
+      assert.equal(mocks.webhook.trigger.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
     });
@@ -101,7 +101,7 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
       mocks.core.getInput.withArgs("payload").returns("text: hi");
-      mocks.incomingWebhook.rejects(
+      mocks.webhook.incoming.rejects(
         new Error("An HTTP protocol error occurred"),
       );
       try {
@@ -109,7 +109,7 @@ describe("webhook", () => {
       } catch (e) {
         assert.ok(e instanceof SlackError);
       }
-      assert.equal(mocks.incomingWebhook.getCalls().length, 1);
+      assert.equal(mocks.webhook.incoming.getCalls().length, 1);
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
     });

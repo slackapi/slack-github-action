@@ -234,7 +234,7 @@ describe("config", () => {
 
   describe("validate", () => {
     it('allow the "retries" option with lowercased space', async () => {
-      mocks.incomingWebhook.resolves({ text: "LGTM" });
+      mocks.webhook.incoming.resolves({ text: "LGTM" });
       mocks.core.getInput.withArgs("retries").returns(" rapid ");
       mocks.core.getInput
         .withArgs("webhook")
@@ -256,7 +256,7 @@ describe("config", () => {
     });
 
     it("errors if an invalid retries option is provided", async () => {
-      mocks.incomingWebhook.resolves({ text: "LGTM" });
+      mocks.webhook.incoming.resolves({ text: "LGTM" });
       mocks.core.getInput.withArgs("retries").returns("FOREVER");
       mocks.core.getInput
         .withArgs("webhook")

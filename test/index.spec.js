@@ -27,8 +27,10 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
-    this.incomingWebhook = this.sandbox.stub(IncomingWebhook.prototype, "send");
-    this.webhookTrigger = this.sandbox.stub(WebhookTrigger.prototype, "send");
+    this.webhook = {
+      incoming: this.sandbox.stub(IncomingWebhook.prototype, "send"),
+      trigger: this.sandbox.stub(WebhookTrigger.prototype, "send"),
+    };
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
     this.core = {
       debug: this.sandbox.stub(),
@@ -59,8 +61,8 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
-    this.incomingWebhook.resetHistory();
-    this.webhookTrigger.resetHistory();
+    this.webhook.incoming.resetHistory();
+    this.webhook.trigger.resetHistory();
     this.calls.resetHistory();
     this.core.debug.reset();
     this.core.error.reset();
