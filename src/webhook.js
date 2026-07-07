@@ -26,7 +26,7 @@ export default class Webhook {
     }
     const url = config.inputs.webhook;
     const options = {
-      agent: this.proxies(config)?.httpsAgent,
+      agent: this.proxies(config),
       retryConfig: this.retries(config.inputs.retries),
     };
     try {
@@ -66,9 +66,9 @@ export default class Webhook {
   }
 
   /**
-   * Return configurations for https proxy options if these are set.
+   * Return an https proxy agent if a proxy is set.
    * @param {Config} config
-   * @returns {{ httpsAgent: HttpsProxyAgent<string> } | undefined}
+   * @returns {HttpsProxyAgent<string> | undefined}
    * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
    * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
    */
@@ -90,9 +90,7 @@ export default class Webhook {
       switch (new URL(proxy).protocol) {
         case "https:":
         case "http:":
-          return {
-            httpsAgent: new HttpsProxyAgent(proxy),
-          };
+          return new HttpsProxyAgent(proxy);
         default:
           throw new SlackError(
             config.core,

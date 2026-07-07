@@ -135,7 +135,7 @@ describe("webhook", () => {
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       const config = new Config(mocks.core);
       const webhook = new Webhook();
-      const { httpsAgent } = webhook.proxies(config);
+      const httpsAgent = webhook.proxies(config);
       assert.deepEqual(httpsAgent.proxy, new URL(proxy));
     });
 
