@@ -27,10 +27,6 @@ export class Mock {
    */
   constructor() {
     this.sandbox = sinon.createSandbox();
-    this.webhook = {
-      incoming: this.sandbox.stub(webhook.IncomingWebhook.prototype, "send"),
-      trigger: this.sandbox.stub(webhook.WebhookTrigger.prototype, "send"),
-    };
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
     this.core = {
       debug: this.sandbox.stub(),
@@ -52,6 +48,10 @@ export class Mock {
         });
       },
     };
+    this.webhook = {
+      incoming: this.sandbox.stub(webhook.IncomingWebhook.prototype, "send"),
+      trigger: this.sandbox.stub(webhook.WebhookTrigger.prototype, "send"),
+    };
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
   }
@@ -61,8 +61,6 @@ export class Mock {
    */
   reset() {
     this.sandbox.reset();
-    this.webhook.incoming.resetHistory();
-    this.webhook.trigger.resetHistory();
     this.calls.resetHistory();
     this.core.debug.reset();
     this.core.error.reset();
@@ -81,6 +79,8 @@ export class Mock {
         });
       },
     };
+    this.webhook.incoming.resetHistory();
+    this.webhook.trigger.resetHistory();
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
     process.env.SLACK_TOKEN = "";
