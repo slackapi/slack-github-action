@@ -99,7 +99,7 @@ describe("webhook", () => {
       );
       try {
         await send(mocks.core);
-        assert.fail("A webhook trigger failure was not thrown as error!");
+        assert.fail();
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(err.message.includes("An HTTP protocol error occurred"));
@@ -125,7 +125,7 @@ describe("webhook", () => {
       );
       try {
         await send(mocks.core);
-        assert.fail("An incoming webhook failure was not thrown as error!");
+        assert.fail();
       } catch (err) {
         if (err instanceof SlackError) {
           assert.ok(err.message.includes("An HTTP protocol error occurred"));
