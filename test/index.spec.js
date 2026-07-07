@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import webapi from "@slack/web-api";
-import { IncomingWebhook, WebhookTrigger } from "@slack/webhook";
+import webhook from "@slack/webhook";
 import sinon from "sinon";
 
 /**
@@ -28,8 +28,8 @@ export class Mock {
   constructor() {
     this.sandbox = sinon.createSandbox();
     this.webhook = {
-      incoming: this.sandbox.stub(IncomingWebhook.prototype, "send"),
-      trigger: this.sandbox.stub(WebhookTrigger.prototype, "send"),
+      incoming: this.sandbox.stub(webhook.IncomingWebhook.prototype, "send"),
+      trigger: this.sandbox.stub(webhook.WebhookTrigger.prototype, "send"),
     };
     this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
     this.core = {
