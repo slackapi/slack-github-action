@@ -19,7 +19,7 @@ describe("webhook", () => {
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
       mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.webhook.trigger.resolves({ ok: true, body: { ok: true } });
+      mocks.webhook.trigger.resolves({ ok: true });
       try {
         await send(mocks.core);
         assert.equal(mocks.webhook.trigger.getCalls().length, 1);

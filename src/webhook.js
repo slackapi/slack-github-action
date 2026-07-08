@@ -40,8 +40,8 @@ export default class Webhook {
             options,
           ).send(config.content.values);
           config.core.setOutput("ok", response.ok);
-          config.core.setOutput("response", JSON.stringify(response.body));
-          config.core.debug(JSON.stringify(response.body));
+          config.core.setOutput("response", JSON.stringify(response));
+          config.core.debug(JSON.stringify(response));
           return;
         }
         default:
