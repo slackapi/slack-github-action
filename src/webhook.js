@@ -33,11 +33,20 @@ export default class Webhook {
       config.core.setOutput("response", JSON.stringify(response.data));
       config.core.debug(JSON.stringify(response.data));
     } catch (/** @type {any} */ err) {
-      const response = err.toJSON();
+      const response =
+        typeof err?.toJSON === "function"
+          ? err.toJSON()
+          : {
+              message: err?.message,
+              status: err?.response?.status,
+            };
+
       config.core.setOutput("ok", response.status === 200);
       config.core.setOutput("response", JSON.stringify(response.message));
-      config.core.debug(response);
-      throw new SlackError(config.core, response.message);
+      config.core.debug(JSON.stringify(response));
+      throw new SlackError(config.core, response.message ?? "Request failed", {
+        cause: err,
+      });
     }
   }
 
