@@ -1,5 +1,11 @@
 # slack-github-action
 
+## 3.0.4
+
+### Patch Changes
+
+- fa03fe4: refactor: send webhooks with the [`@slack/webhook`](https://docs.slack.dev/tools/node-slack-sdk/webhook) package
+
 ## 3.0.3
 
 ### Patch Changes

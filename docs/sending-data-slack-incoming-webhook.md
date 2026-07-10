@@ -27,7 +27,7 @@ Add the collected webhook from above to a GitHub workflow and configure the step
 
 ```yaml
 - name: Post a message in a channel
-  uses: slackapi/slack-github-action@v3.0.3
+  uses: slackapi/slack-github-action@v3.0.4
   with:
     webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
     webhook-type: incoming-webhook

@@ -16,13 +16,13 @@ jobs:
           persist-credentials: false
 
       - name: Deploy the app
-        uses: slackapi/slack-github-action/cli@v3.0.3
+        uses: slackapi/slack-github-action/cli@v3.0.4
         with:
           command: "deploy --app ${{ vars.SLACK_APP_ID }} --force"
           token: ${{ secrets.SLACK_SERVICE_TOKEN }}
 
       - name: Post a deployment message
-        uses: slackapi/slack-github-action@v3.0.3
+        uses: slackapi/slack-github-action@v3.0.4
         with:
           errors: true
           method: chat.postMessage
