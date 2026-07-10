@@ -492,14 +492,14 @@ describe("client", () => {
     });
 
     it('does not attempt retries when "0" is set', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("0");
+      const client = new Client();
+      const result = client.retries("0");
       assert.equal(result.retries, 0);
     });
 
     it('attempts a default amount of "5" retries', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("5");
+      const client = new Client();
+      const result = client.retries("5");
       assert.equal(
         result.retries,
         webapi.retryPolicies.fiveRetriesInFiveMinutes.retries,
@@ -511,8 +511,8 @@ describe("client", () => {
     });
 
     it('attempts "10" retries in around "30" minutes', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("10");
+      const client = new Client();
+      const result = client.retries("10");
       assert.equal(
         result.retries,
         webapi.retryPolicies.tenRetriesInAboutThirtyMinutes.retries,
@@ -524,8 +524,8 @@ describe("client", () => {
     });
 
     it('attempts a "rapid " burst of "12" retries in seconds', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("rapid ");
+      const client = new Client();
+      const result = client.retries("rapid ");
       assert.equal(
         result.retries,
         webapi.retryPolicies.rapidRetryPolicy.retries,
@@ -534,8 +534,8 @@ describe("client", () => {
     });
 
     it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("RAPID");
+      const client = new Client();
+      const result = client.retries("RAPID");
       assert.equal(
         result.retries,
         webapi.retryPolicies.rapidRetryPolicy.retries,
