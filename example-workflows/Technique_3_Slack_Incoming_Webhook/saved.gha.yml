@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
 
       - name: Forward a saved message
-        uses: slackapi/slack-github-action@v3.0.4
+        uses: slackapi/slack-github-action@v3.0.5
         with:
           payload-file-path: "./example-workflows/Technique_3_Slack_Incoming_Webhook/saved.data.json"
           payload-templated: true

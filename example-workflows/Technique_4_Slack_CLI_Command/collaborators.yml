@@ -25,7 +25,7 @@ jobs:
 
       - name: Look up the Slack user by email
         id: email
-        uses: slackapi/slack-github-action@v3.0.4
+        uses: slackapi/slack-github-action@v3.0.5
         with:
           method: users.lookupByEmail # https://docs.slack.dev/reference/methods/users.lookupByEmail/
           token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -42,14 +42,14 @@ jobs:
 
       - name: Add or remove the collaborator
         if: ${{ steps.email.outputs.ok }}
-        uses: slackapi/slack-github-action/cli@v3.0.4
+        uses: slackapi/slack-github-action/cli@v3.0.5
         with:
           command: "collaborators ${{ inputs.add && 'add' || 'remove' }} ${{ inputs.email }} --app ${{ vars.SLACK_APP_ID }}"
           token: ${{ secrets.SLACK_SERVICE_TOKEN }}
 
       - name: Post a confirmation message
         if: ${{ steps.email.outputs.ok }}
-        uses: slackapi/slack-github-action@v3.0.4
+        uses: slackapi/slack-github-action@v3.0.5
         with:
           errors: true
           method: chat.postMessage # https://docs.slack.dev/reference/methods/chat.postMessage/
