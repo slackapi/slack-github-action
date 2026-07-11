@@ -103,7 +103,7 @@ jobs:
         env:
           MESSAGE_OUTPUT_TS: ${{ steps.message.outputs.ts }}
 
-      - name: "test(api): post a multiline message"
+      - name: "test(api): post a multiline message" # https://github.com/slackapi/slack-github-action/issues/637
         id: multiline
         uses: ./
         with:

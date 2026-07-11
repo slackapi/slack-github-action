@@ -74,7 +74,7 @@ describe("content", () => {
     /**
      * @see {@link https://github.com/slackapi/slack-github-action/issues/637}
      */
-    it("parses multiline YAML strings from the input payload", async () => {
+    it("parses multiline YAML from the input payload", async () => {
       mocks.core.getInput
         .withArgs("payload")
         .returns('channel: C0123456789\ntext: "first line\n\nsecond line"');
