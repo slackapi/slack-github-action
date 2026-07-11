@@ -103,6 +103,24 @@ jobs:
         env:
           MESSAGE_OUTPUT_TS: ${{ steps.message.outputs.ts }}
 
+      - name: "test(api): post a multiline message"
+        id: multiline
+        uses: ./
+        with:
+          errors: true
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: ":checkered_flag: A multiline message wraps across lines
+
+            with a blank line before <https://github.com/${{ github.repository }}|a link>"
+
+      - name: "test(api): confirm the multiline message was posted"
+        run: test -n "$MULTILINE_OUTPUT_TS"
+        env:
+          MULTILINE_OUTPUT_TS: ${{ steps.multiline.outputs.ts }}
+
       - name: "test(api): post a message with blocks"
         id: blocks
         uses: ./
