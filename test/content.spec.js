@@ -71,6 +71,21 @@ describe("content", () => {
       assert.deepEqual(config.content.values, expected);
     });
 
+    /**
+     * @see {@link https://github.com/slackapi/slack-github-action/issues/637}
+     */
+    it("parses multiline YAML from the input payload", async () => {
+      mocks.core.getInput
+        .withArgs("payload")
+        .returns('channel: C0123456789\ntext: "first line\n\nsecond line"');
+      const config = new Config(mocks.core);
+      const expected = {
+        channel: "C0123456789",
+        text: "first line\nsecond line",
+      };
+      assert.deepEqual(config.content.values, expected);
+    });
+
     it("parses complete JSON from the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`{
           "message": "this is wrapped",
