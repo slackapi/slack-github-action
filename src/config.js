@@ -1,5 +1,5 @@
-import os from "node:os";
 import webapi from "@slack/web-api";
+import webhook from "@slack/webhook";
 import packageJson from "../package.json" with { type: "json" };
 import Content from "./content.js";
 import SlackError from "./errors.js";
@@ -77,15 +77,14 @@ export default class Config {
   logger;
 
   /**
-   * User agent string for outgoing requests.
-   * @type {string}
-   */
-  userAgent = "";
-
-  /**
    * @type {import("@slack/web-api")} - Slack API client.
    */
   webapi;
+
+  /**
+   * @type {import("@slack/webhook")} - Slack webhook client.
+   */
+  webhook;
 
   /**
    * Gather values from the job inputs and use defaults or error for the missing
@@ -101,6 +100,7 @@ export default class Config {
     this.core = core;
     this.logger = new Logger(core).logger;
     this.webapi = webapi;
+    this.webhook = webhook;
     this.inputs = {
       api: core.getInput("api"),
       errors: core.getBooleanInput("errors"),
@@ -136,10 +136,10 @@ export default class Config {
       name: packageJson.name,
       version: packageJson.version,
     });
-    this.userAgent =
-      `${packageJson.name.replace("/", ":")}/${packageJson.version} ` +
-      `node/${process.version.replace("v", "")} ` +
-      `${os.platform()}/${os.release()}`;
+    this.webhook.addAppMetadata({
+      name: packageJson.name,
+      version: packageJson.version,
+    });
   }
 
   /**

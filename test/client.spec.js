@@ -11,6 +11,7 @@ import Client from "../src/client.js";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import Logger from "../src/logger.js";
+import { proxiedFetch } from "../src/proxies.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -418,8 +419,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
-      const client = new Client();
-      const fetchFn = client.proxiedFetch(config);
+      const fetchFn = proxiedFetch(config);
       assert.strictEqual(typeof fetchFn, "function");
     });
 
@@ -427,8 +427,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
-      const client = new Client();
-      const fetchFn = client.proxiedFetch(config);
+      const fetchFn = proxiedFetch(config);
       assert.strictEqual(fetchFn, undefined);
     });
 
@@ -439,8 +438,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       try {
         const config = new Config(mocks.core);
-        const client = new Client();
-        client.proxiedFetch(config);
+        proxiedFetch(config);
         assert.fail("An invalid proxy URL was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {
@@ -465,14 +463,14 @@ describe("client", () => {
     });
 
     it('does not attempt retries when "0" is set', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("0");
+      const client = new Client();
+      const result = client.retries("0");
       assert.equal(result.retries, 0);
     });
 
     it('attempts a default amount of "5" retries', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("5");
+      const client = new Client();
+      const result = client.retries("5");
       assert.equal(
         result.retries,
         webapi.retryPolicies.fiveRetriesInFiveMinutes.retries,
@@ -484,8 +482,8 @@ describe("client", () => {
     });
 
     it('attempts "10" retries in around "30" minutes', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("10");
+      const client = new Client();
+      const result = client.retries("10");
       assert.equal(
         result.retries,
         webapi.retryPolicies.tenRetriesInAboutThirtyMinutes.retries,
@@ -497,8 +495,8 @@ describe("client", () => {
     });
 
     it('attempts a "rapid " burst of "12" retries in seconds', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("rapid ");
+      const client = new Client();
+      const result = client.retries("rapid ");
       assert.equal(
         result.retries,
         webapi.retryPolicies.rapidRetryPolicy.retries,
@@ -507,8 +505,8 @@ describe("client", () => {
     });
 
     it('attempts a "RAPID" burst of "12" retries in seconds', async () => {
-      const webhook = new Client();
-      const result = webhook.retries("RAPID");
+      const client = new Client();
+      const result = client.retries("RAPID");
       assert.equal(
         result.retries,
         webapi.retryPolicies.rapidRetryPolicy.retries,

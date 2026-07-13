@@ -1,7 +1,7 @@
 import webapi from "@slack/web-api";
-import { ProxyAgent } from "undici";
 import Config from "./config.js";
 import SlackError from "./errors.js";
+import { proxiedFetch } from "./proxies.js";
 
 /**
  * The Client class creates a WebClient from @slack/web-api for use when calling
@@ -23,7 +23,7 @@ export default class Client {
       throw new SlackError(config.core, "No token was provided to post with");
     }
     const client = new config.webapi.WebClient(config.inputs.token, {
-      fetch: this.proxiedFetch(config),
+      fetch: proxiedFetch(config),
       allowAbsoluteUrls: false,
       logger: config.logger,
       retryConfig: this.retries(config.inputs.retries),
@@ -69,27 +69,6 @@ export default class Client {
           break;
       }
       throw new SlackError(config.core, err);
-    }
-  }
-
-  /**
-   * Return a custom fetch function that routes through a proxy if configured.
-   * @param {Config} config
-   * @returns {((url: string | URL, init?: RequestInit) => Promise<Response>) | undefined}
-   * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
-   */
-  proxiedFetch(config) {
-    const proxy = config.inputs.proxy;
-    try {
-      if (!proxy) {
-        return undefined;
-      }
-      const dispatcher = /** @type {any} */ (new ProxyAgent(proxy));
-      return (url, init) => fetch(url, { ...init, dispatcher });
-    } catch (/** @type {any} */ err) {
-      throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
-        cause: err,
-      });
     }
   }
 

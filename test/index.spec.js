@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import webapi from "@slack/web-api";
+import webhook from "@slack/webhook";
 import sinon from "sinon";
 
 /**
@@ -18,21 +19,6 @@ import sinon from "sinon";
  * The Mock class sets expected behaviors and test listeners for dependencies.
  */
 export class Mock {
-  /**
-   * @typedef Errors - A collection of mocked errors to use in tests.
-   * @prop {Object.<string, Error>} fetch - The mocked fetch errors.
-   */
-
-  /**
-   * The mocked errors.
-   * @type {Errors}
-   */
-  errors = {
-    fetch: {
-      network_failed: new Error("network_failed"),
-    },
-  };
-
   /**
    * Setup stubbed dependencies and configure default input arguments for all
    * tests.
@@ -63,6 +49,10 @@ export class Mock {
         });
       },
     };
+    this.webhook = {
+      incoming: this.sandbox.stub(webhook.IncomingWebhook.prototype, "send"),
+      trigger: this.sandbox.stub(webhook.WebhookTrigger.prototype, "send"),
+    };
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
   }
@@ -91,6 +81,8 @@ export class Mock {
         });
       },
     };
+    this.webhook.incoming.resetHistory();
+    this.webhook.trigger.resetHistory();
     this.core.getInput.withArgs("errors").returns("false");
     this.core.getInput.withArgs("retries").returns("5");
     process.env.SLACK_TOKEN = "";

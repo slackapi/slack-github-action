@@ -1,6 +1,6 @@
 {
   "name": "@slack/slack-github-action",
-  "version": "3.0.3",
+  "version": "3.0.5",
   "private": true,
   "description": "The official Slack GitHub Action. Use this to send data into your Slack workspace",
   "main": "dist/index.js",
@@ -45,23 +45,23 @@
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
     "@slack/logger": "^5.0.0-rc.1",
-    "@slack/web-api": "^8.0.0-rc.1",
-    "@slack/webhook": "^8.0.0-rc.1",
+    "@slack/web-api": "^8.0.0-rc.2",
+    "@slack/webhook": "^8.0.0-rc.2",
     "flat": "^6.0.1",
     "js-yaml": "^4.2.0",
     "markup-js": "^1.5.21",
     "undici": "^7.10.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
+    "@biomejs/biome": "^2.5.1",
     "@changesets/cli": "^2.31.0",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
-    "@types/node": "^24.12.4",
+    "@types/node": "^24.13.2",
     "@types/sinon": "^21.0.0",
     "@vercel/ncc": "^0.38.4",
     "sinon": "^21.0.3",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
