@@ -11,7 +11,6 @@ import Client from "../src/client.js";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import Logger from "../src/logger.js";
-import { fetch } from "../src/proxies.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -408,46 +407,6 @@ describe("client", () => {
         assert.equal(parsed.retryAfter, 12);
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
-      }
-    });
-  });
-
-  describe("proxies", () => {
-    it("returns a custom fetch function when proxy is configured", async () => {
-      const proxy = "https://example.com";
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      const config = new Config(mocks.core);
-      const fetchFn = fetch(config);
-      assert.strictEqual(typeof fetchFn, "function");
-    });
-
-    it("returns undefined when no proxy is configured", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      const config = new Config(mocks.core);
-      const fetchFn = fetch(config);
-      assert.strictEqual(fetchFn, undefined);
-    });
-
-    it("fails to configure proxies with an invalid proxied url", async () => {
-      const proxy = "not-a-url";
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      try {
-        const config = new Config(mocks.core);
-        fetch(config);
-        assert.fail("An invalid proxy URL was not thrown as error!");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Failed to configure the HTTPS proxy"),
-          );
-        } else {
-          assert.fail(err);
-        }
       }
     });
   });

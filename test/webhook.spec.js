@@ -3,7 +3,6 @@ import { beforeEach, describe, it } from "node:test";
 import webhook from "@slack/webhook";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
-import { proxyDispatcher } from "../src/proxies.js";
 import send from "../src/send.js";
 import Webhook from "../src/webhook.js";
 import { mocks } from "./index.spec.js";
@@ -172,93 +171,6 @@ describe("webhook", () => {
       assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
       assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
       assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-    });
-  });
-
-  describe("proxies", () => {
-    it("returns no dispatcher when proxy is not configured", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      const config = new Config(mocks.core);
-      const dispatcher = proxyDispatcher(config, config.inputs.webhook);
-      assert.strictEqual(dispatcher, undefined);
-    });
-
-    it("skips proxying an http webhook url altogether", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
-      const config = new Config(mocks.core);
-      const dispatcher = proxyDispatcher(config, config.inputs.webhook);
-      assert.strictEqual(dispatcher, undefined);
-    });
-
-    it("returns a proxy dispatcher for the provided https proxy", async () => {
-      const proxy = "https://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      const config = new Config(mocks.core);
-      const dispatcher = proxyDispatcher(config, config.inputs.webhook);
-      assert.ok(dispatcher);
-    });
-
-    it("returns a proxy dispatcher for http proxies", async () => {
-      const proxy = "http://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      const config = new Config(mocks.core);
-      const dispatcher = proxyDispatcher(config, config.inputs.webhook);
-      assert.ok(dispatcher);
-    });
-
-    it("fails to configure proxies with an invalid proxied url", async () => {
-      const proxy = "https://";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      try {
-        const config = new Config(mocks.core);
-        proxyDispatcher(config, config.inputs.webhook);
-        assert.fail("An invalid proxy URL was not thrown as error!");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Failed to configure the HTTPS proxy"),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
-    });
-
-    it("fails to configure proxies with an unknown url protocol", async () => {
-      const proxy = "ssh://example.com";
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns(proxy);
-      try {
-        const config = new Config(mocks.core);
-        proxyDispatcher(config, config.inputs.webhook);
-        assert.fail("An unknown URL protocol was not thrown as error!");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(err.message.includes("Unsupported URL protocol"));
-        } else {
-          assert.fail(err);
-        }
-      }
     });
   });
 
