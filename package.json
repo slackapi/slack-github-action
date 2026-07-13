@@ -48,7 +48,7 @@
     "@slack/web-api": "^7.19.0",
     "@slack/webhook": "^7.2.0",
     "flat": "^6.0.1",
-    "https-proxy-agent": "^9.0.0",
+    "https-proxy-agent": "^9.1.0",
     "js-yaml": "^4.2.0",
     "markup-js": "^1.5.21"
   },
