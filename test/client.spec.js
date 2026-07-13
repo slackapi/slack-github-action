@@ -1,11 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
-import webapi, {
-  WebAPIHTTPError,
-  WebAPIPlatformError,
-  WebAPIRateLimitedError,
-  WebAPIRequestError,
-} from "@slack/web-api";
+import webapi from "@slack/web-api";
 import sinon from "sinon";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
@@ -297,7 +292,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIRequestError(response));
+        mocks.calls.rejects(new webapi.WebAPIRequestError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -315,7 +310,7 @@ describe("client", () => {
     });
 
     it("errors when the http portion of the request fails to send", async () => {
-      const response = new WebAPIHTTPError(
+      const response = new webapi.WebAPIHTTPError(
         500,
         "Internal Server Error",
         {
@@ -352,7 +347,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIPlatformError(response));
+        mocks.calls.rejects(new webapi.WebAPIPlatformError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -375,7 +370,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIPlatformError(response));
+        mocks.calls.rejects(new webapi.WebAPIPlatformError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -397,7 +392,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIRateLimitedError(12));
+        mocks.calls.rejects(new webapi.WebAPIRateLimitedError(12));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
