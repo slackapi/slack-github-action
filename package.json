@@ -45,7 +45,7 @@
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
     "@slack/logger": "^4.0.1",
-    "@slack/web-api": "^7.16.0",
+    "@slack/web-api": "^7.19.0",
     "@slack/webhook": "^7.2.0",
     "flat": "^6.0.1",
     "https-proxy-agent": "^9.0.0",
