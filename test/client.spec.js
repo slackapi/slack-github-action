@@ -335,8 +335,10 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        const parsed = JSON.parse(mocks.core.setOutput.getCall(1).lastArg);
-        assert.equal(parsed.statusCode, 500);
+        assert.equal(
+          JSON.parse(mocks.core.setOutput.getCall(1).lastArg).statusCode,
+          500,
+        );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
@@ -403,8 +405,10 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
         assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
-        const parsed = JSON.parse(mocks.core.setOutput.getCall(1).lastArg);
-        assert.equal(parsed.retryAfter, 12);
+        assert.equal(
+          JSON.parse(mocks.core.setOutput.getCall(1).lastArg).retryAfter,
+          12,
+        );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
       }
