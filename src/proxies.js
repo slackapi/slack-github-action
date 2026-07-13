@@ -23,7 +23,7 @@ import SlackError from "./errors.js";
  * @returns {((url: string | URL, init?: any) => Promise<Response>) | undefined}
  */
 export function fetch(config, destination) {
-  const dispatcher = proxyDispatcher(config, destination);
+  const dispatcher = proxies(config, destination);
   if (!dispatcher) {
     return undefined;
   }
@@ -38,7 +38,7 @@ export function fetch(config, destination) {
  * @param {string?} [destination] - The request destination to proxy towards.
  * @returns {ProxyAgent | undefined}
  */
-export function proxyDispatcher(config, destination) {
+export function proxies(config, destination) {
   const proxy = config.inputs.proxy;
   if (!proxy) {
     return undefined;
