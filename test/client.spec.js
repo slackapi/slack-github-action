@@ -11,7 +11,7 @@ import Client from "../src/client.js";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import Logger from "../src/logger.js";
-import { proxiedFetch } from "../src/proxies.js";
+import { fetch } from "../src/proxies.js";
 import send from "../src/send.js";
 import { mocks } from "./index.spec.js";
 
@@ -419,7 +419,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("proxy").returns(proxy);
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
-      const fetchFn = proxiedFetch(config);
+      const fetchFn = fetch(config);
       assert.strictEqual(typeof fetchFn, "function");
     });
 
@@ -427,7 +427,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
-      const fetchFn = proxiedFetch(config);
+      const fetchFn = fetch(config);
       assert.strictEqual(fetchFn, undefined);
     });
 
@@ -438,7 +438,7 @@ describe("client", () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       try {
         const config = new Config(mocks.core);
-        proxiedFetch(config);
+        fetch(config);
         assert.fail("An invalid proxy URL was not thrown as error!");
       } catch (err) {
         if (err instanceof SlackError) {

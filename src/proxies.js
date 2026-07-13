@@ -22,12 +22,12 @@ import SlackError from "./errors.js";
  *   proxy applies; a non-HTTPS destination skips the proxy.
  * @returns {((url: string | URL, init?: any) => Promise<Response>) | undefined}
  */
-export function proxiedFetch(config, destination) {
+export function fetch(config, destination) {
   const dispatcher = proxyDispatcher(config, destination);
   if (!dispatcher) {
     return undefined;
   }
-  return (url, init) => fetch(url, { ...init, dispatcher });
+  return (url, init) => globalThis.fetch(url, { ...init, dispatcher });
 }
 
 /**

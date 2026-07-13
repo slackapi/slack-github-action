@@ -1,7 +1,7 @@
 import webapi from "@slack/web-api";
 import Config from "./config.js";
 import SlackError from "./errors.js";
-import { proxiedFetch } from "./proxies.js";
+import { fetch } from "./proxies.js";
 
 /**
  * The Client class creates a WebClient from @slack/web-api for use when calling
@@ -23,7 +23,7 @@ export default class Client {
       throw new SlackError(config.core, "No token was provided to post with");
     }
     const client = new config.webapi.WebClient(config.inputs.token, {
-      fetch: proxiedFetch(config),
+      fetch: fetch(config),
       allowAbsoluteUrls: false,
       logger: config.logger,
       retryConfig: this.retries(config.inputs.retries),

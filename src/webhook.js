@@ -1,7 +1,7 @@
 import webhook from "@slack/webhook";
 import Config from "./config.js";
 import SlackError from "./errors.js";
-import { proxiedFetch } from "./proxies.js";
+import { fetch } from "./proxies.js";
 
 /**
  * This Webhook class posts the configured payload to the provided webhook, with
@@ -19,7 +19,7 @@ export default class Webhook {
     }
     const url = config.inputs.webhook;
     const options = {
-      fetch: proxiedFetch(config, url),
+      fetch: fetch(config, url),
       retryConfig: this.retries(config.inputs.retries),
     };
     try {
