@@ -2,37 +2,29 @@ import { ProxyAgent } from "undici";
 import SlackError from "./errors.js";
 
 /**
- * Proxy support is shared between the API method client and the webhook clients
- * by injecting a custom fetch. Both @slack/web-api and @slack/webhook accept a
- * "fetch" option and fall back to the global fetch otherwise, so routing
- * requests through an undici ProxyAgent dispatcher keeps proxying opt-in and
- * free of any global side effects.
- *
- * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
- * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
- */
-
-/**
- * Return a fetch function that routes requests through the configured proxy, or
- * undefined when no proxy applies. The returned function is injected into the
- * Slack clients so that proxying stays testable without touching global state.
+ * Return a fetch function that routes requests through a configured proxy.
  *
  * @param {import("./config.js").default} config
- * @param {string?} [destination] - The request destination used to decide if a
- *   proxy applies; a non-HTTPS destination skips the proxy.
- * @returns {((url: string | URL, init?: any) => Promise<Response>) | undefined}
+ * @param {string?} [destination] - A provided request destination.
+ * @returns {typeof globalThis.fetch | undefined}
  */
 export function fetch(config, destination) {
   const dispatcher = proxies(config, destination);
   if (!dispatcher) {
     return undefined;
   }
-  return (url, init) => globalThis.fetch(url, { ...init, dispatcher });
+  return (url, init) =>
+    globalThis.fetch(url, {
+      ...init,
+      dispatcher: /** @type {any} */ (dispatcher),
+    });
 }
 
 /**
- * Return an undici ProxyAgent dispatcher when a proxy is configured for an
- * HTTPS destination, or undefined otherwise.
+ * Return a configured proxy agent dispatcher to the request destination.
+ *
+ * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
+ * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
  *
  * @param {import("./config.js").default} config
  * @param {string?} [destination] - The request destination to proxy towards.
