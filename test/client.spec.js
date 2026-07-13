@@ -290,14 +290,14 @@ describe("client", () => {
 
   describe("failure", () => {
     it("errors when the request to the api cannot be sent correct", async () => {
-      const original = new Error("Something bad happened!");
+      const response = new Error("Something bad happened!");
       try {
         mocks.core.getInput.reset();
         mocks.core.getBooleanInput.withArgs("errors").returns(true);
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIRequestError(original));
+        mocks.calls.rejects(new WebAPIRequestError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -307,7 +307,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(original),
+          JSON.stringify(response),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
@@ -315,7 +315,7 @@ describe("client", () => {
     });
 
     it("errors when the http portion of the request fails to send", async () => {
-      const err = new WebAPIHTTPError(
+      const response = new WebAPIHTTPError(
         500,
         "Internal Server Error",
         {
@@ -327,7 +327,7 @@ describe("client", () => {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(err);
+        mocks.calls.rejects(response);
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -345,14 +345,14 @@ describe("client", () => {
     });
 
     it("errors when the payload arguments are invalid for the api", async () => {
-      const data = { ok: false, error: "missing_channel" };
+      const response = { ok: false, error: "missing_channel" };
       try {
         mocks.core.getInput.reset();
         mocks.core.getBooleanInput.withArgs("errors").returns(true);
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIPlatformError(data));
+        mocks.calls.rejects(new WebAPIPlatformError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -362,7 +362,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(data),
+          JSON.stringify(response),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
@@ -370,12 +370,12 @@ describe("client", () => {
     });
 
     it("returns the api error and details without a exit failing", async () => {
-      const data = { ok: false, error: "missing_channel" };
+      const response = { ok: false, error: "missing_channel" };
       try {
         mocks.core.getInput.withArgs("method").returns("chat.postMessage");
         mocks.core.getInput.withArgs("token").returns("xoxb-example");
         mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new WebAPIPlatformError(data));
+        mocks.calls.rejects(new WebAPIPlatformError(response));
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
@@ -385,7 +385,7 @@ describe("client", () => {
         assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
         assert.deepEqual(
           mocks.core.setOutput.getCall(1).lastArg,
-          JSON.stringify(data),
+          JSON.stringify(response),
         );
         assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
         assert.equal(mocks.core.setOutput.getCalls().length, 3);
