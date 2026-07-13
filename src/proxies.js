@@ -13,11 +13,7 @@ export function fetch(config, destination) {
   if (!dispatcher) {
     return undefined;
   }
-  return (url, init) =>
-    globalThis.fetch(url, {
-      ...init,
-      dispatcher: /** @type {any} */ (dispatcher),
-    });
+  return (url, init) => globalThis.fetch(url, { ...init, dispatcher });
 }
 
 /**

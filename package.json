@@ -52,6 +52,9 @@
     "markup-js": "^1.5.21",
     "undici": "^7.10.0"
   },
+  "overrides": {
+    "undici-types": "^7.28.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",
     "@changesets/cli": "^2.31.0",
