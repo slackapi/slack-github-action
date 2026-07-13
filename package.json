@@ -53,14 +53,14 @@
     "undici": "^7.10.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.1",
+    "@biomejs/biome": "^2.5.3",
     "@changesets/cli": "^2.31.0",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
     "@types/markup-js": "^1.5.0",
     "@types/node": "^24.13.2",
     "@types/sinon": "^21.0.0",
-    "@vercel/ncc": "^0.38.4",
+    "@vercel/ncc": "^0.44.1",
     "sinon": "^21.0.3",
     "typescript": "^6.0.3"
   }
