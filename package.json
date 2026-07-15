@@ -65,6 +65,6 @@
     "@types/sinon": "^22.0.0",
     "@vercel/ncc": "^0.44.1",
     "sinon": "^22.0.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

@@ -5,7 +5,7 @@ import Webhook from "./webhook.js";
 
 /**
  * Orchestrate the action job happenings from inputs to logic to outputs.
- * @param {import("@actions/core")} core - GitHub Actions core utilities.
+ * @param {typeof import("@actions/core")} core - GitHub Actions core utilities.
  * @throws if an error happens but might not cause the job to fail.
  */
 export default async function send(core) {
