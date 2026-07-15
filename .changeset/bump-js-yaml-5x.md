@@ -9,3 +9,10 @@ scalar that are not indented to the node level. Multiline payloads that relied
 on the prior leniency must indent continuation lines or use a block scalar. See
 the YAML [line prefixes](https://yaml.org/spec/1.2.2/#63-line-prefixes) spec for
 the `s-flow-line-prefix(n)` indentation rule.
+
+```diff
+  text: "first line
+
+- second line"
++   second line"
+```
