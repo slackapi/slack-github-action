@@ -56,7 +56,7 @@
     "undici-types": "^7.28.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.3",
+    "@biomejs/biome": "^2.5.4",
     "@changesets/cli": "^2.31.0",
     "@types/flat": "^5.0.5",
     "@types/js-yaml": "^4.0.9",
