@@ -4,6 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      undici:
+        patterns:
+          - "undici"
+          - "undici-types"
     ignore:
       - dependency-name: "@types/node"
         versions:

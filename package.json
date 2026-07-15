@@ -44,13 +44,16 @@
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
-    "@slack/logger": "^4.0.1",
-    "@slack/web-api": "^7.19.0",
-    "@slack/webhook": "^7.2.0",
+    "@slack/logger": "^5.0.0",
+    "@slack/web-api": "^8.0.0",
+    "@slack/webhook": "^8.0.0",
     "flat": "^6.0.1",
-    "https-proxy-agent": "^9.1.0",
     "js-yaml": "^4.2.0",
-    "markup-js": "^1.5.21"
+    "markup-js": "^1.5.21",
+    "undici": "^7.28.0"
+  },
+  "overrides": {
+    "undici-types": "^7.28.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",

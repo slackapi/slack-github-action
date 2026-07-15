@@ -1,7 +1,7 @@
 import webhook from "@slack/webhook";
-import { HttpsProxyAgent } from "https-proxy-agent";
 import Config from "./config.js";
 import SlackError from "./errors.js";
+import { fetch } from "./proxies.js";
 
 /**
  * This Webhook class posts the configured payload to the provided webhook, with
@@ -19,7 +19,7 @@ export default class Webhook {
     }
     const url = config.inputs.webhook;
     const options = {
-      agent: this.proxies(config),
+      fetch: fetch(config, url),
       retryConfig: this.retries(config.inputs.retries),
     };
     try {
@@ -55,45 +55,6 @@ export default class Webhook {
       config.core.setOutput("response", JSON.stringify(err.message));
       config.core.debug(err);
       throw new SlackError(config.core, err.message);
-    }
-  }
-
-  /**
-   * Return configurations for http proxy options if these are set.
-   * @param {Config} config
-   * @returns {HttpsProxyAgent<string> | undefined}
-   * @see {@link https://github.com/slackapi/slack-github-action/pull/132}
-   * @see {@link https://github.com/slackapi/slack-github-action/pull/205}
-   */
-  proxies(config) {
-    const { webhook, proxy } = config.inputs;
-    if (!webhook) {
-      throw new SlackError(config.core, "No webhook was provided to proxy to");
-    }
-    if (!proxy) {
-      return undefined;
-    }
-    try {
-      if (new URL(webhook).protocol !== "https:") {
-        config.core.debug(
-          "The webhook destination is not HTTPS so skipping the HTTPS proxy",
-        );
-        return undefined;
-      }
-      switch (new URL(proxy).protocol) {
-        case "https:":
-        case "http:":
-          return new HttpsProxyAgent(proxy);
-        default:
-          throw new SlackError(
-            config.core,
-            `Unsupported URL protocol: ${proxy}`,
-          );
-      }
-    } catch (/** @type {any} */ err) {
-      throw new SlackError(config.core, "Failed to configure the HTTPS proxy", {
-        cause: err,
-      });
     }
   }
 

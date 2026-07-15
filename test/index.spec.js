@@ -40,6 +40,7 @@ export class Mock {
       setSecret: this.sandbox.stub(),
       warning: this.sandbox.stub(),
     };
+    this.fetch = this.sandbox.stub(globalThis, "fetch");
     this.fs = this.sandbox.stub(fs);
     this.webapi = {
       WebClient: function () {
@@ -72,6 +73,7 @@ export class Mock {
     this.core.setOutput.reset();
     this.core.setSecret.reset();
     this.core.warning.reset();
+    this.fetch.reset();
     this.webapi = {
       WebClient: function () {
         this.apiCall = () => ({
