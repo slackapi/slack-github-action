@@ -13,7 +13,7 @@ export default class SlackError extends Error {
    */
 
   /**
-   * @param {import("@actions/core")} _core - GitHub Actions core utilities.
+   * @param {typeof import("@actions/core")} _core - GitHub Actions core utilities.
    * @param {any} error - The error message to throw.
    * @param {Options} options - configurations of erroring.
    */

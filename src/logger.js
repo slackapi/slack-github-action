@@ -14,7 +14,7 @@ export default class Logger {
 
   /**
    * Shared utilities specific to the GitHub action workflow.
-   * @param {import("@actions/core")} core - GitHub Actions core utilities.
+   * @param {typeof import("@actions/core")} core - GitHub Actions core utilities.
    */
   constructor(core) {
     this.logger = {

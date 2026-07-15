@@ -13,6 +13,12 @@ import SlackError from "./errors.js";
  */
 export default class Content {
   /**
+   * Provided inputs as values to be sent from content provided to the action.
+   * @type {any}
+   */
+  values;
+
+  /**
    * Gather content from the provided payload or payload file path with parsings.
    * @param {Config} config
    * @returns {this} - An instance of this Content class.

@@ -48,7 +48,7 @@ export default class Config {
    * @property {string?} payloadFilePath - Location of a JSON request payload.
    * @property {boolean} payloadTemplated - If templated values are replaced.
    * @property {string?} proxy - An optional proxied connection for requests.
-   * @property {Retries} retries - The retries method to use for failed requests.
+   * @property {string} retries - The retries method to use for failed requests.
    * @property {string?} token - The authentication value used with the Slack API.
    * @property {string?} webhook - A location for posting request payloads.
    * @property {string?} webhookType - Posting method to use with the webhook.
@@ -66,7 +66,7 @@ export default class Config {
 
   /**
    * Shared utilities specific to the GitHub action workflow.
-   * @type {import("@actions/core")}
+   * @type {typeof import("@actions/core")}
    */
   core;
 
@@ -77,12 +77,12 @@ export default class Config {
   logger;
 
   /**
-   * @type {import("@slack/web-api")} - Slack API client.
+   * @type {typeof import("@slack/web-api")} - Slack API client.
    */
   webapi;
 
   /**
-   * @type {import("@slack/webhook")} - Slack webhook client.
+   * @type {typeof import("@slack/webhook")} - Slack webhook client.
    */
   webhook;
 
@@ -94,7 +94,7 @@ export default class Config {
    * kept for later use.
    *
    * @constructor
-   * @param {import("@actions/core")} core - GitHub Actions core utilities.
+   * @param {typeof import("@actions/core")} core - GitHub Actions core utilities.
    */
   constructor(core) {
     this.core = core;
@@ -158,7 +158,7 @@ export default class Config {
 
   /**
    * Confirm the configurations are correct enough to continue.
-   * @param {import("@actions/core")} core - GitHub Actions core utilities.
+   * @param {typeof import("@actions/core")} core - GitHub Actions core utilities.
    */
   validate(core) {
     switch (this.inputs.retries.trim().toUpperCase()) {
