@@ -114,7 +114,7 @@ jobs:
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: ":checkered_flag: A multiline message wraps across lines
 
-            with a blank line before <https://github.com/${{ github.repository }}|a link>"
+              with a blank line before <https://github.com/${{ github.repository }}|a link>"
 
       - name: "test(api): confirm the multiline message was posted"
         run: test -n "$MULTILINE_OUTPUT_TS"

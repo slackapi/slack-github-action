@@ -77,7 +77,7 @@ describe("content", () => {
     it("parses multiline YAML from the input payload", async () => {
       mocks.core.getInput
         .withArgs("payload")
-        .returns('channel: C0123456789\ntext: "first line\n\nsecond line"');
+        .returns('channel: C0123456789\ntext: "first line\n\n  second line"');
       const config = new Config(mocks.core);
       const expected = {
         channel: "C0123456789",
