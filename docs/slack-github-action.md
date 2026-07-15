@@ -15,7 +15,7 @@ The Slack GitHub Action offers four different techniques for sending data to and
 
 We recommend using the latest version of this GitHub Action for the most recent updates and fixes.
 
-Changes are logged in the [release notes](https://github.com/slackapi/slack-github-action/releases) with migration guides available for updating from `@v1` to the [`@v2`](https://github.com/slackapi/slack-github-action/releases/tag/v2.0.0) and [`@v3`](https://github.com/slackapi/slack-github-action/releases/tag/v3.0.0) releases.
+Changes are logged in the [release notes](https://github.com/slackapi/slack-github-action/releases) with migration guides available for updating from `@v1` to the [`@v2`](https://github.com/slackapi/slack-github-action/releases/tag/v2.0.0) and [`@v3`](https://github.com/slackapi/slack-github-action/releases/tag/v3.0.0) or [`@v4`](https://github.com/slackapi/slack-github-action/releases/tag/v4.0.0) releases.
 
 ## License
 
