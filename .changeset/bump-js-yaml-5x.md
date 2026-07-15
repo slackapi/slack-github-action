@@ -2,15 +2,14 @@
 "@slack/slack-github-action": major
 ---
 
-build(deps): bump js-yaml from 4.2.0 to 5.2.1
+build: parse yaml with more strict multiline indentation rules
 
-The stricter, spec-compliant parser rejects continuation lines within a quoted
-scalar that are not indented to the node level. Multiline payloads that relied
-on the prior leniency must indent continuation lines or use a block scalar. See
-the YAML [line prefixes](https://yaml.org/spec/1.2.2/#63-line-prefixes) spec for
-the `s-flow-line-prefix(n)` indentation rule.
+Internal dependencies of [`js-yaml@v5`](https://github.com/nodeca/js-yaml/blob/master/CHANGELOG.md#500---2026-06-20) make YAML parsing more strict and compliant with the YAML specification. Indentation is now required for values that span multiple lines against the base value.
+
+See the YAML [line prefixes](https://yaml.org/spec/1.2.2/#63-line-prefixes) spec for the `s-flow-line-prefix(n)` indentation rule.
 
 ```diff
+  channel: "C0123"
   text: "first line
 
 - second line"
