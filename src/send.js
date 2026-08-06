@@ -33,6 +33,8 @@ async function post(config) {
     case !!config.inputs.webhook:
       return await new Webhook().post(config);
     default:
+      // NOTE: This code is unreachable. The Config constructor will have
+      // already thrown before this code can be reached.
       throw new SlackError(config.core, "No technique given to post content");
   }
 }

@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { beforeEach, describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 import webapi from "@slack/web-api";
 import sinon from "sinon";
 import Config from "../src/config.js";
@@ -64,127 +64,86 @@ describe("config", () => {
       assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
     });
 
-    it("errors when both the token and webhook is provided", async () => {
+    it("errors when both the token and webhook is provided", () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
-      try {
-        new Config(mocks.core);
-        assert.fail("Failed to error when invalid inputs are provided");
-      } catch (err) {
-        if (err instanceof SlackError) {
+      assert.throws(
+        () => new Config(mocks.core),
+        (err) => {
+          assert.ok(err instanceof SlackError);
           assert.ok(
-            err.message.includes(
-              "Invalid input! Either the token or webhook is required - not both.",
-            ),
+            err.message,
+            "Invalid input! Either the token or webhook is required - not both.",
           );
           assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
           assert.ok(
             mocks.core.setSecret.withArgs("https://example.com").called,
           );
-        } else {
-          assert.fail(err);
-        }
-      }
+          return true;
+        },
+      );
     });
 
-    it("errors if the method is provided without a token", async () => {
+    it("errors if the method is provided without a token", () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      try {
-        new Config(mocks.core);
-        assert.fail("Failed to error when invalid inputs are provided");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Missing input! A token must be provided to use the method decided.",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      assert.throws(() => new Config(mocks.core), {
+        message:
+          "Missing input! A token must be provided to use the method decided.",
+        name: "SlackError",
+      });
     });
 
-    it("errors if neither the token or webhook is provided", async () => {
-      try {
-        new Config(mocks.core);
-        assert.fail("Failed to error when invalid inputs are provided");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Missing input! Either a method or webhook is required to take action.",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+    it("errors if neither the token or webhook is provided", () => {
+      assert.throws(() => new Config(mocks.core), {
+        message:
+          "Missing input! Either a method or webhook is required to take action.",
+        name: "SlackError",
+      });
     });
 
-    it("errors if a webhook is provided without the type", async () => {
+    it("errors if a webhook is provided without the type", () => {
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
-      try {
-        new Config(mocks.core);
-        assert.fail("Failed to error when invalid inputs are provided");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      assert.throws(() => new Config(mocks.core), {
+        message:
+          "Missing input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+        name: "SlackError",
+      });
     });
 
     it("errors if the webhook type does not match techniques", async () => {
       mocks.core.getInput.withArgs("webhook").returns("https://example.com");
       mocks.core.getInput.withArgs("webhook-type").returns("post");
-      try {
-        new Config(mocks.core);
-        assert.fail("Failed to error when invalid inputs are provided");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      assert.throws(() => new Config(mocks.core), {
+        message:
+          "Invalid input! The webhook type must be 'incoming-webhook' or 'webhook-trigger'.",
+        name: "SlackError",
+      });
     });
   });
 
   describe("instrument", () => {
-    it("adds metadata to webapi with package name and version", async () => {
+    const original = Object.getOwnPropertyDescriptor(webapi, "addAppMetadata");
+
+    afterEach(() => {
+      Object.defineProperty(webapi, "addAppMetadata", original);
+    });
+
+    it("adds metadata to webapi with package name and version", () => {
       const stub = sinon.stub();
-      const original = Object.getOwnPropertyDescriptor(
-        webapi,
-        "addAppMetadata",
-      );
       Object.defineProperty(webapi, "addAppMetadata", {
         value: stub,
         configurable: true,
       });
-      try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        new Config(mocks.core);
-        assert.ok(stub.calledOnce);
-        const { name, version } = stub.firstCall.args[0];
-        assert.equal(name, "@slack/slack-github-action");
-        assert.ok(version);
-      } finally {
-        Object.defineProperty(webapi, "addAppMetadata", original);
-      }
+      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      new Config(mocks.core);
+      assert.ok(stub.calledOnce);
+      const { name, version } = stub.firstCall.args[0];
+      assert.equal(name, "@slack/slack-github-action");
+      assert.ok(version);
     });
 
-    it("adds metadata to webhook with package name and version", async () => {
+    it("adds metadata to webhook with package name and version", () => {
       mocks.core.getInput.withArgs("method").returns("chat.postMessage");
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
       const config = new Config(mocks.core);
@@ -200,72 +159,49 @@ describe("config", () => {
     });
   });
 
-  describe("mask", async () => {
+  describe("mask", () => {
     it("treats the provided token as a secret", async () => {
       mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to error for incomplete inputs while testing");
-      } catch {
-        assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
-      }
+      await assert.rejects(
+        () => send(mocks.core),
+        (_) => {
+          assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+          return true;
+        },
+      );
     });
 
     it("treats the provided webhook as a secret", async () => {
       mocks.core.getInput.withArgs("webhook").returns("https://slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to error for incomplete inputs while testing");
-      } catch {
-        assert.ok(mocks.core.setSecret.withArgs("https://slack.com").called);
-      }
+      await send(mocks.core);
+      assert.ok(mocks.core.setSecret.withArgs("https://slack.com").called);
     });
   });
 
   describe("validate", () => {
     it('allow the "retries" option with lowercased space', async () => {
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.axios.post.resolves("LGTM");
       mocks.core.getInput.withArgs("retries").returns(" rapid ");
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      try {
-        await send(mocks.core);
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              'Invalid input! An unknown "retries" value was used: FOREVER',
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+
+      await send(mocks.core);
     });
 
     it("errors if an invalid retries option is provided", async () => {
-      mocks.axios.post.returns(Promise.resolve("LGTM"));
+      mocks.axios.post.resolves("LGTM");
       mocks.core.getInput.withArgs("retries").returns("FOREVER");
       mocks.core.getInput
         .withArgs("webhook")
         .returns("https://hooks.slack.com");
       mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      try {
-        await send(mocks.core);
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              'Invalid input! An unknown "retries" value was used: FOREVER',
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      await assert.rejects(() => send(mocks.core), {
+        message: 'Invalid input! An unknown "retries" value was used: FOREVER',
+        name: "SlackError",
+      });
     });
   });
 });

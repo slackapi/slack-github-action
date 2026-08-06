@@ -40,24 +40,16 @@ describe("content", () => {
     it("errors if both a payload and file path are provided", async () => {
       mocks.core.getInput.withArgs("payload").returns(`"message"="hello"`);
       mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for invalid input");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! Just the payload or payload file path is required.",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+
+      await assert.rejects(() => send(mocks.core), {
+        message:
+          "Invalid input! Just the payload or payload file path is required.",
+        name: "SlackError",
+      });
     });
   });
 
-  describe("payload", async () => {
+  describe("payload", () => {
     it("parses complete YAML from the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns(`
           message: "this is wrapped"
@@ -274,47 +266,35 @@ describe("content", () => {
           payloadFilePath: "unknown.json",
         },
       };
-      try {
-        new Content().getContentPayload(config);
-        assert.fail("Failed to throw for missing payload content");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! No payload content was provided",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      assert.throws(() => new Content().getContentPayload(config), {
+        message: "Invalid input! No payload content was provided",
+        name: "SlackError",
+      });
     });
 
     it("fails if invalid JSON exists in the input payload", async () => {
       mocks.core.getInput.withArgs("payload").returns("{");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for invalid JSON");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! Failed to parse contents of the provided payload",
-            ),
+      await assert.rejects(
+        () => send(mocks.core),
+        (err) => {
+          assert.ok(err instanceof SlackError);
+          assert.equal(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload",
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 2);
           const [jsonError, yamlError] = err.cause.values;
           assert.ok(jsonError instanceof SyntaxError);
           assert.ok(yamlError instanceof YAMLException);
-        } else {
-          assert.fail(err);
-        }
-      }
+
+          return true;
+        },
+      );
     });
   });
 
-  describe("payload file", async () => {
+  describe("payload file", () => {
     it("parses complete YAML from the input payload file", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
       mocks.fs.readFileSync
@@ -538,61 +518,41 @@ describe("content", () => {
           payload: "LGTM",
         },
       };
-      try {
-        new Content().getContentPayloadFilePath(config);
-        assert.fail("Failed to throw for the wrong payload type");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes("Invalid input! No payload found for content"),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      assert.throws(() => new Content().getContentPayloadFilePath(config), {
+        message: "Invalid input! No payload found for content",
+        name: "SlackError",
+      });
     });
 
     it("fails to parse a file path that does not exist", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("unknown.json");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for nonexistent files");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! Failed to parse contents of the provided payload file",
-            ),
-          );
-        } else {
-          assert.fail(err);
-        }
-      }
+      await assert.rejects(() => send(mocks.core), {
+        message:
+          "Invalid input! Failed to parse contents of the provided payload file",
+        name: "SlackError",
+      });
     });
 
     it("fails to parse a file with an unknown extension", async () => {
       mocks.core.getInput.withArgs("payload-file-path").returns("unknown.md");
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for an unknown extension");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! Failed to parse contents of the provided payload file",
-            ),
+
+      await assert.rejects(
+        () => send(mocks.core),
+        (err) => {
+          assert.ok(err instanceof SlackError);
+          assert.equal(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
-          assert.ok(
-            err.cause.values[0].message.includes(
-              "Invalid input! Failed to parse file extension unknown.md",
-            ),
+          assert.equal(
+            err.cause.values[0].message,
+            "Invalid input! Failed to parse file extension unknown.md",
           );
-        } else {
-          assert.fail(err);
-        }
-      }
+          return true;
+        },
+      );
     });
 
     it("fails if invalid JSON exists in the input payload", async () => {
@@ -601,23 +561,21 @@ describe("content", () => {
         .withArgs(path.resolve("example.json"), "utf-8")
         .returns(`{
             "message": "a truncated file without an end`);
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for invalid JSON");
-      } catch (err) {
-        if (err instanceof SlackError) {
-          assert.ok(
-            err.message.includes(
-              "Invalid input! Failed to parse contents of the provided payload file",
-            ),
+
+      await assert.rejects(
+        () => send(mocks.core),
+        (err) => {
+          assert.ok(err instanceof SlackError);
+          assert.equal(
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
           assert.ok(err.cause.values[0] instanceof SyntaxError);
-        } else {
-          assert.fail(err);
-        }
-      }
+          return true;
+        },
+      );
     });
 
     it("fails if invalid YAML exists in the input payload", async () => {
@@ -625,23 +583,21 @@ describe("content", () => {
       mocks.fs.readFileSync
         .withArgs(path.resolve("example.yaml"), "utf-8")
         .returns(`- "message": "assigned": "values"`);
-      try {
-        await send(mocks.core);
-        assert.fail("Failed to throw for invalid YAML");
-      } catch (err) {
-        if (err instanceof SlackError) {
+
+      await assert.rejects(
+        () => send(mocks.core),
+        (err) => {
+          assert.ok(err instanceof SlackError);
           assert.ok(
-            err.message.includes(
-              "Invalid input! Failed to parse contents of the provided payload file",
-            ),
+            err.message,
+            "Invalid input! Failed to parse contents of the provided payload file",
           );
           assert.notStrictEqual(err.cause?.values, undefined);
           assert.equal(err.cause.values.length, 1);
           assert.ok(err.cause.values[0] instanceof YAMLException);
-        } else {
-          assert.fail(err);
-        }
-      }
+          return true;
+        },
+      );
     });
   });
 });
