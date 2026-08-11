@@ -6,9 +6,7 @@ There are some additional, possibly useful, customization options for workflows.
 
 Invalid API requests or unexpected webhook payloads cause a failing response that can be used to fail the GitHub Actions step with the `errors` option.
 
-The `errors` option defaults to `false` so failed requests do not cause the step to fail. This result can still be gathered from the `ok` output.
-
-A step that continues after a failed request writes the reason for the failure, such as an `invalid_auth` error, to the step logs as a warning. Failures are logged as errors when the `errors` option is `true`.
+The `errors` option defaults to `false` so failed requests log a warning but don't cause the step to fail. The step's result can still be gathered from the `ok` output.
 
 ```yaml
 - name: Attempt to call an unknown method
