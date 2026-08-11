@@ -19,6 +19,9 @@ export default async function send(core) {
       core.setFailed(error);
       throw new SlackError(core, error);
     }
+    core.warning(
+      `Failed to send the request: ${error.message}. Set the "errors" input to "true" to fail this step for these errors.`,
+    );
   }
 }
 
