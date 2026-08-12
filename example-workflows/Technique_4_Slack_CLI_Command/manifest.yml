@@ -14,7 +14,7 @@ jobs:
           persist-credentials: false
 
       - name: Validate the manifest
-        uses: slackapi/slack-github-action/cli@v4.0.0
+        uses: slackapi/slack-github-action/cli@v4.1.0
         with:
           command: "manifest validate --app ${{ vars.SLACK_APP_ID }}"
           token: ${{ secrets.SLACK_SERVICE_TOKEN }}
