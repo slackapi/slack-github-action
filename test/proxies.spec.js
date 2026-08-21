@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
+import { errors as undiciErrors } from "undici";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import { fetch, proxies } from "../src/proxies.js";
@@ -18,6 +19,24 @@ describe("proxies", () => {
       const config = new Config(mocks.core);
       const fetchFn = fetch(config);
       assert.strictEqual(typeof fetchFn, "function");
+    });
+
+    it("dispatches requests through the proxy without a request handler mismatch", async () => {
+      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.core.getInput.withArgs("proxy").returns("http://127.0.0.1:1");
+      const config = new Config(mocks.core);
+      const fetchFn = fetch(config);
+      await assert.rejects(
+        // ".invalid" is reserved by RFC 2606 to never resolve.
+        fetchFn("https://slack-github-action.invalid/api/chat.postMessage", {
+          method: "POST",
+        }),
+        (err) => {
+          assert.ok(!(err.cause instanceof undiciErrors.InvalidArgumentError));
+          return true;
+        },
+      );
     });
 
     it("returns undefined when no proxy is configured", async () => {
