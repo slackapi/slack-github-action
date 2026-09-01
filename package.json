@@ -63,7 +63,7 @@
     "@types/markup-js": "^1.5.0",
     "@types/node": "^24.13.2",
     "@types/sinon": "^22.0.0",
-    "@vercel/ncc": "^0.44.1",
+    "@vercel/ncc": "^0.45.0",
     "sinon": "^22.1.0",
     "typescript": "^7.0.2"
   }
