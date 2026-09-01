@@ -46,7 +46,7 @@
     "@actions/github": "^9.1.1",
     "@slack/logger": "^5.0.0",
     "@slack/web-api": "^8.1.1",
-    "@slack/webhook": "^8.0.0",
+    "@slack/webhook": "^8.0.2",
     "flat": "^6.0.1",
     "js-yaml": "^5.2.2",
     "markup-js": "^1.5.21",
