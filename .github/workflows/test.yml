@@ -48,7 +48,7 @@ jobs:
         run: npm run build
 
       - name: "chore(health): check up on recent changes to the health score"
-        uses: slackapi/slack-health-score@d58a419f15cdaff97e9aa7f09f95772830ab66f7 # v0.1.1
+        uses: slackapi/slack-health-score@9554f2581c198cdf168c7724ced9d7022c5c4cff # v0.2.1
         with:
           codecov_token: ${{ secrets.CODECOV_API_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
