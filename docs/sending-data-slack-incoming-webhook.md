@@ -46,11 +46,11 @@ The technique, like all Slack Github Action techniques, [outputs values](https:/
 
 The following outputs are returned with each of the techniques:
 
-| Output | Type  | Description|
-|---|---|---|
-|`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
-| `ok` | `boolean` | If the request completed with success.
-| `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
+| Output     | Type      | Description                                                                             |
+| ---------- | --------- | --------------------------------------------------------------------------------------- |
+| `time`     | `number`  | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed. |
+| `ok`       | `boolean` | If the request completed with success.                                                  |
+| `response` | `string`  | The [response](/apis/web-api/#responses) from the request as stringified JSON.          |
 
 ## Example workflows
 
