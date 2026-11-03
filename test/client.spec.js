@@ -1,7 +1,6 @@
 import assert from "node:assert";
-import { beforeEach, describe, it } from "node:test";
+import { beforeEach, describe, it, mock } from "node:test";
 import webapi from "@slack/web-api";
-import sinon from "sinon";
 import Client from "../src/client.js";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
@@ -47,7 +46,7 @@ describe("client", () => {
           method: "chat.postMessage",
         },
       };
-      mocks.core.getInput.withArgs("token").returns("xoxb-example-001");
+      mocks.inputs.set("token", "xoxb-example-001");
       try {
         await new Client().post(config);
         assert.fail("Failed to throw for missing input");
@@ -63,10 +62,10 @@ describe("client", () => {
 
   describe("api", async () => {
     it("uses arguments to send to a slack api method", async () => {
-      const apis = sinon.stub().resolves({ ok: true });
-      const constructors = sinon
-        .stub(mocks.webapi, "WebClient")
-        .returns({ apiCall: apis });
+      const apis = mock.fn(async () => ({ ok: true }));
+      const constructors = mock.method(mocks.webapi, "WebClient", function () {
+        this.apiCall = apis;
+      });
       /**
        * @type {Config}
        */
@@ -86,31 +85,36 @@ describe("client", () => {
         webapi: mocks.webapi,
       };
       await new Client().post(config);
-      assert.ok(constructors.calledWithNew());
-      assert.ok(
-        constructors.calledWith("xoxb-example-002", {
+      assert.ok(constructors.mock.calls[0].target);
+      assert.deepEqual(constructors.mock.calls[0].arguments, [
+        "xoxb-example-002",
+        {
           fetch: undefined,
           allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.fiveRetriesInFiveMinutes,
           slackApiUrl: undefined,
-        }),
-      );
-      assert.ok(apis.calledOnce);
-      assert.ok(
-        apis.calledWith("pins.add", {
+        },
+      ]);
+      assert.equal(apis.mock.callCount(), 1);
+      assert.deepEqual(apis.mock.calls[0].arguments, [
+        "pins.add",
+        {
           channel: "CHANNELHERE",
           timestamp: "1234567890.000000",
-        }),
-      );
-      assert.ok(config.core.setOutput.calledWith("ok", true));
+        },
+      ]);
+      assert.deepEqual(config.core.setOutput.mock.calls[0].arguments, [
+        "ok",
+        true,
+      ]);
     });
 
     it("uses arguments to send to a custom api method", async () => {
-      const apis = sinon.stub().resolves({ done: true, response: "Infinite" });
-      const constructors = sinon
-        .stub(mocks.webapi, "WebClient")
-        .returns({ apiCall: apis });
+      const apis = mock.fn(async () => ({ done: true, response: "Infinite" }));
+      const constructors = mock.method(mocks.webapi, "WebClient", function () {
+        this.apiCall = apis;
+      });
       /**
        * @type {Config}
        */
@@ -133,31 +137,34 @@ describe("client", () => {
         webapi: mocks.webapi,
       };
       await new Client().post(config);
-      assert.ok(constructors.calledWithNew());
-      assert.ok(
-        constructors.calledWith("ollamapassword", {
+      assert.ok(constructors.mock.calls[0].target);
+      assert.deepEqual(constructors.mock.calls[0].arguments, [
+        "ollamapassword",
+        {
           fetch: undefined,
           allowAbsoluteUrls: false,
           logger: config.logger,
           retryConfig: webapi.retryPolicies.tenRetriesInAboutThirtyMinutes,
           slackApiUrl: "http://localhost:11434/api/",
-        }),
-      );
-      assert.ok(apis.calledOnce);
-      assert.ok(
-        apis.calledWith("generate", {
+        },
+      ]);
+      assert.equal(apis.mock.callCount(), 1);
+      assert.deepEqual(apis.mock.calls[0].arguments, [
+        "generate",
+        {
           model: "llama3.2",
           prompt: "How many sides does a circle have?",
           stream: false,
-        }),
-      );
-      assert.ok(config.core.setOutput.calledWith("ok", undefined));
-      assert.ok(
-        config.core.setOutput.calledWith(
-          "response",
-          JSON.stringify({ done: true, response: "Infinite" }),
-        ),
-      );
+        },
+      ]);
+      assert.deepEqual(config.core.setOutput.mock.calls[0].arguments, [
+        "ok",
+        undefined,
+      ]);
+      assert.deepEqual(config.core.setOutput.mock.calls[1].arguments, [
+        "response",
+        JSON.stringify({ done: true, response: "Infinite" }),
+      ]);
     });
   });
 
@@ -177,34 +184,49 @@ describe("client", () => {
             thread_ts: "1234567890.000001",
           },
         };
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.calls.resolves(response);
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", JSON.stringify(args));
+        mocks.calls.mock.mockImplementation(async () => response);
         await send(mocks.core);
-        assert.deepEqual(mocks.calls.getCall(0).firstArg, "chat.postMessage");
-        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.deepEqual(
+          mocks.calls.mock.calls[0].arguments[0],
+          "chat.postMessage",
+        );
+        assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "channel_id");
-        assert.equal(mocks.core.setOutput.getCall(2).lastArg, "C0123456789");
-        assert.equal(mocks.core.setOutput.getCall(3).firstArg, "thread_ts");
         assert.equal(
-          mocks.core.setOutput.getCall(3).lastArg,
+          mocks.core.setOutput.mock.calls[2].arguments[0],
+          "channel_id",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[2].arguments[1],
+          "C0123456789",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[3].arguments[0],
+          "thread_ts",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[3].arguments[1],
           "1234567890.000001",
         );
-        assert.equal(mocks.core.setOutput.getCall(4).firstArg, "ts");
+        assert.equal(mocks.core.setOutput.mock.calls[4].arguments[0], "ts");
         assert.equal(
-          mocks.core.setOutput.getCall(4).lastArg,
+          mocks.core.setOutput.mock.calls[4].arguments[1],
           "1234567890.000002",
         );
-        assert.equal(mocks.core.setOutput.getCall(5).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 6);
+        assert.equal(mocks.core.setOutput.mock.calls[5].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 6);
       } catch (err) {
         console.error(err);
         assert.fail("Unexpected error when calling the method");
@@ -225,24 +247,36 @@ describe("client", () => {
             created: 1730425428,
           },
         };
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.calls.resolves(response);
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", JSON.stringify(args));
+        mocks.calls.mock.mockImplementation(async () => response);
         await send(mocks.core);
-        assert.deepEqual(mocks.calls.getCall(0).firstArg, "chat.postMessage");
-        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.deepEqual(
+          mocks.calls.mock.calls[0].arguments[0],
+          "chat.postMessage",
+        );
+        assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "channel_id");
-        assert.equal(mocks.core.setOutput.getCall(2).lastArg, "C0101010101");
-        assert.equal(mocks.core.setOutput.getCall(3).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 4);
+        assert.equal(
+          mocks.core.setOutput.mock.calls[2].arguments[0],
+          "channel_id",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[2].arguments[1],
+          "C0101010101",
+        );
+        assert.equal(mocks.core.setOutput.mock.calls[3].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 4);
       } catch (err) {
         console.error(err);
         assert.fail("Unexpected error when calling the method");
@@ -261,21 +295,24 @@ describe("client", () => {
           ok: true,
           files: [{ id: "F0000000001", created: 1234567890 }],
         };
-        mocks.core.getInput.withArgs("method").returns("files.uploadV2");
-        mocks.core.getInput.withArgs("token").returns("xoxp-example");
-        mocks.core.getInput.withArgs("payload").returns(JSON.stringify(args));
-        mocks.calls.resolves(response);
+        mocks.inputs.set("method", "files.uploadV2");
+        mocks.inputs.set("token", "xoxp-example");
+        mocks.inputs.set("payload", JSON.stringify(args));
+        mocks.calls.mock.mockImplementation(async () => response);
         await send(mocks.core);
-        assert.deepEqual(mocks.calls.getCall(0).lastArg, args);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.deepEqual(mocks.calls.mock.calls[0].arguments[1], args);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       } catch (err) {
         console.error(err);
         assert.fail("Unexpected error when calling the method");
@@ -287,25 +324,30 @@ describe("client", () => {
     it("errors when the request to the api cannot be sent correct", async () => {
       const response = new Error("Something bad happened!");
       try {
-        mocks.core.getInput.reset();
-        mocks.core.getBooleanInput.withArgs("errors").returns(true);
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new webapi.WebAPIRequestError(response));
+        mocks.inputs.clear();
+        mocks.booleanInputs.set("errors", true);
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", `"text": "hello"`);
+        mocks.calls.mock.mockImplementation(async () => {
+          throw new webapi.WebAPIRequestError(response);
+        });
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.ok(mocks.core.setFailed.called);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.ok(mocks.core.setFailed.mock.callCount() > 0);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
         assert.deepEqual(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       }
     });
 
@@ -319,93 +361,115 @@ describe("client", () => {
         { ok: false, error: "unknown_http_method" },
       );
       try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(response);
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", `"text": "hello"`);
+        mocks.calls.mock.mockImplementation(async () => {
+          throw response;
+        });
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.strictEqual(mocks.core.setFailed.called, false);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.strictEqual(mocks.core.setFailed.mock.callCount(), 0);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
         assert.equal(
-          JSON.parse(mocks.core.setOutput.getCall(1).lastArg).statusCode,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          JSON.parse(mocks.core.setOutput.mock.calls[1].arguments[1])
+            .statusCode,
           500,
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       }
     });
 
     it("errors when the payload arguments are invalid for the api", async () => {
       const response = { ok: false, error: "missing_channel" };
       try {
-        mocks.core.getInput.reset();
-        mocks.core.getBooleanInput.withArgs("errors").returns(true);
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new webapi.WebAPIPlatformError(response));
+        mocks.inputs.clear();
+        mocks.booleanInputs.set("errors", true);
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", `"text": "hello"`);
+        mocks.calls.mock.mockImplementation(async () => {
+          throw new webapi.WebAPIPlatformError(response);
+        });
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.ok(mocks.core.setFailed.called);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.ok(mocks.core.setFailed.mock.callCount() > 0);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
         assert.deepEqual(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       }
     });
 
     it("returns the api error and details without a exit failing", async () => {
       const response = { ok: false, error: "missing_channel" };
       try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new webapi.WebAPIPlatformError(response));
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", `"text": "hello"`);
+        mocks.calls.mock.mockImplementation(async () => {
+          throw new webapi.WebAPIPlatformError(response);
+        });
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.strictEqual(mocks.core.setFailed.called, false);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.strictEqual(mocks.core.setFailed.mock.callCount(), 0);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
         assert.deepEqual(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify(response),
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       }
     });
 
     it("errors if rate limit responses are returned after retries", async () => {
       try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
-        mocks.core.getInput.withArgs("payload").returns(`"text": "hello"`);
-        mocks.calls.rejects(new webapi.WebAPIRateLimitedError(12));
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
+        mocks.inputs.set("payload", `"text": "hello"`);
+        mocks.calls.mock.mockImplementation(async () => {
+          throw new webapi.WebAPIRateLimitedError(12);
+        });
         await send(mocks.core);
         assert.fail("Expected an error but none was found");
       } catch (_err) {
-        assert.strictEqual(mocks.core.setFailed.called, false);
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.strictEqual(mocks.core.setFailed.mock.callCount(), 0);
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
         assert.equal(
-          JSON.parse(mocks.core.setOutput.getCall(1).lastArg).retryAfter,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          JSON.parse(mocks.core.setOutput.mock.calls[1].arguments[1])
+            .retryAfter,
           12,
         );
-        assert.equal(mocks.core.setOutput.getCall(2).firstArg, "time");
-        assert.equal(mocks.core.setOutput.getCalls().length, 3);
+        assert.equal(mocks.core.setOutput.mock.calls[2].arguments[0], "time");
+        assert.equal(mocks.core.setOutput.mock.callCount(), 3);
       }
     });
   });

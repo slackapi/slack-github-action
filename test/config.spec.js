@@ -1,8 +1,7 @@
 import assert from "node:assert";
-import { beforeEach, describe, it } from "node:test";
+import { beforeEach, describe, it, mock } from "node:test";
 import webapi from "@slack/web-api";
 import webhook from "@slack/webhook";
-import sinon from "sinon";
 import Config from "../src/config.js";
 import SlackError from "../src/errors.js";
 import send from "../src/send.js";
@@ -23,13 +22,13 @@ describe("config", () => {
 
   describe("inputs", () => {
     it("valid values are collected from the action inputs", async () => {
-      mocks.core.getInput.withArgs("api").returns("http://localhost:8080");
-      mocks.core.getBooleanInput.withArgs("errors").returns(true);
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("payload").returns('"hello": "world"');
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
-      mocks.core.getInput.withArgs("retries").returns("0");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("api", "http://localhost:8080");
+      mocks.booleanInputs.set("errors", true);
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("payload", '"hello": "world"');
+      mocks.inputs.set("proxy", "https://example.com");
+      mocks.inputs.set("retries", "0");
+      mocks.inputs.set("token", "xoxb-example");
       const config = new Config(mocks.core);
       assert.equal(config.inputs.api, "http://localhost:8080");
       assert.equal(config.inputs.errors, true);
@@ -38,36 +37,56 @@ describe("config", () => {
       assert.equal(config.inputs.proxy, "https://example.com");
       assert.equal(config.inputs.retries, config.Retries.ZERO);
       assert.equal(config.inputs.token, "xoxb-example");
-      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+      assert.ok(
+        mocks.core.setSecret.mock.calls.some(
+          (call) => call.arguments[0] === "xoxb-example",
+        ),
+      );
     });
 
     it("allows token environment variables with a webhook", async () => {
       process.env.SLACK_TOKEN = "xoxb-example";
-      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.inputs.set("webhook", "https://example.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
       const config = new Config(mocks.core);
       assert.equal(config.inputs.token, "xoxb-example");
       assert.equal(config.inputs.webhook, "https://example.com");
       assert.equal(config.inputs.webhookType, "incoming-webhook");
-      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
+      assert.ok(
+        mocks.core.setSecret.mock.calls.some(
+          (call) => call.arguments[0] === "xoxb-example",
+        ),
+      );
+      assert.ok(
+        mocks.core.setSecret.mock.calls.some(
+          (call) => call.arguments[0] === "https://example.com",
+        ),
+      );
     });
 
     it("allows webhook environment variables with a token", async () => {
       process.env.SLACK_WEBHOOK_URL = "https://example.com";
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("token", "xoxb-example");
       const config = new Config(mocks.core);
       assert.equal(config.inputs.method, "chat.postMessage");
       assert.equal(config.inputs.token, "xoxb-example");
       assert.equal(config.inputs.webhook, "https://example.com");
-      assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
-      assert.ok(mocks.core.setSecret.withArgs("https://example.com").called);
+      assert.ok(
+        mocks.core.setSecret.mock.calls.some(
+          (call) => call.arguments[0] === "xoxb-example",
+        ),
+      );
+      assert.ok(
+        mocks.core.setSecret.mock.calls.some(
+          (call) => call.arguments[0] === "https://example.com",
+        ),
+      );
     });
 
     it("errors when both the token and webhook is provided", async () => {
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
+      mocks.inputs.set("token", "xoxb-example");
+      mocks.inputs.set("webhook", "https://example.com");
       try {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
@@ -78,9 +97,15 @@ describe("config", () => {
               "Invalid input! Either the token or webhook is required - not both.",
             ),
           );
-          assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
           assert.ok(
-            mocks.core.setSecret.withArgs("https://example.com").called,
+            mocks.core.setSecret.mock.calls.some(
+              (call) => call.arguments[0] === "xoxb-example",
+            ),
+          );
+          assert.ok(
+            mocks.core.setSecret.mock.calls.some(
+              (call) => call.arguments[0] === "https://example.com",
+            ),
           );
         } else {
           assert.fail(err);
@@ -89,7 +114,7 @@ describe("config", () => {
     });
 
     it("errors if the method is provided without a token", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
+      mocks.inputs.set("method", "chat.postMessage");
       try {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
@@ -124,7 +149,7 @@ describe("config", () => {
     });
 
     it("errors if a webhook is provided without the type", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
+      mocks.inputs.set("webhook", "https://example.com");
       try {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
@@ -142,8 +167,8 @@ describe("config", () => {
     });
 
     it("errors if the webhook type does not match techniques", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("https://example.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("post");
+      mocks.inputs.set("webhook", "https://example.com");
+      mocks.inputs.set("webhook-type", "post");
       try {
         new Config(mocks.core);
         assert.fail("Failed to error when invalid inputs are provided");
@@ -163,7 +188,7 @@ describe("config", () => {
 
   describe("instrument", () => {
     it("adds metadata to webapi with package name and version", async () => {
-      const stub = sinon.stub();
+      const stub = mock.fn();
       const original = Object.getOwnPropertyDescriptor(
         webapi,
         "addAppMetadata",
@@ -173,11 +198,11 @@ describe("config", () => {
         configurable: true,
       });
       try {
-        mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-        mocks.core.getInput.withArgs("token").returns("xoxb-example");
+        mocks.inputs.set("method", "chat.postMessage");
+        mocks.inputs.set("token", "xoxb-example");
         new Config(mocks.core);
-        assert.ok(stub.calledOnce);
-        const { name, version } = stub.firstCall.args[0];
+        assert.equal(stub.mock.callCount(), 1);
+        const { name, version } = stub.mock.calls[0].arguments[0];
         assert.equal(name, "@slack/slack-github-action");
         assert.ok(version);
       } finally {
@@ -186,7 +211,7 @@ describe("config", () => {
     });
 
     it("adds metadata to webhook with package name and version", async () => {
-      const stub = sinon.stub();
+      const stub = mock.fn();
       const original = Object.getOwnPropertyDescriptor(
         webhook,
         "addAppMetadata",
@@ -196,15 +221,11 @@ describe("config", () => {
         configurable: true,
       });
       try {
-        mocks.core.getInput
-          .withArgs("webhook")
-          .returns("https://hooks.slack.com");
-        mocks.core.getInput
-          .withArgs("webhook-type")
-          .returns("incoming-webhook");
+        mocks.inputs.set("webhook", "https://hooks.slack.com");
+        mocks.inputs.set("webhook-type", "incoming-webhook");
         new Config(mocks.core);
-        assert.ok(stub.calledOnce);
-        const { name, version } = stub.firstCall.args[0];
+        assert.equal(stub.mock.callCount(), 1);
+        const { name, version } = stub.mock.calls[0].arguments[0];
         assert.equal(name, "@slack/slack-github-action");
         assert.ok(version);
       } finally {
@@ -215,35 +236,43 @@ describe("config", () => {
 
   describe("mask", async () => {
     it("treats the provided token as a secret", async () => {
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("token", "xoxb-example");
       try {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
-        assert.ok(mocks.core.setSecret.withArgs("xoxb-example").called);
+        assert.ok(
+          mocks.core.setSecret.mock.calls.some(
+            (call) => call.arguments[0] === "xoxb-example",
+          ),
+        );
       }
     });
 
     it("treats the provided webhook as a secret", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("https://slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.inputs.set("webhook", "https://slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
       try {
         await send(mocks.core);
         assert.fail("Failed to error for incomplete inputs while testing");
       } catch {
-        assert.ok(mocks.core.setSecret.withArgs("https://slack.com").called);
+        assert.ok(
+          mocks.core.setSecret.mock.calls.some(
+            (call) => call.arguments[0] === "https://slack.com",
+          ),
+        );
       }
     });
   });
 
   describe("validate", () => {
     it('allow the "retries" option with lowercased space', async () => {
-      mocks.webhook.incoming.resolves({ text: "LGTM" });
-      mocks.core.getInput.withArgs("retries").returns(" rapid ");
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.webhook.incoming.mock.mockImplementation(async () => ({
+        text: "LGTM",
+      }));
+      mocks.inputs.set("retries", " rapid ");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
       try {
         await send(mocks.core);
       } catch (err) {
@@ -260,12 +289,12 @@ describe("config", () => {
     });
 
     it("errors if an invalid retries option is provided", async () => {
-      mocks.webhook.incoming.resolves({ text: "LGTM" });
-      mocks.core.getInput.withArgs("retries").returns("FOREVER");
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.webhook.incoming.mock.mockImplementation(async () => ({
+        text: "LGTM",
+      }));
+      mocks.inputs.set("retries", "FOREVER");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
       try {
         await send(mocks.core);
       } catch (err) {
