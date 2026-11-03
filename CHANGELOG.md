@@ -1,5 +1,11 @@
 # slack-github-action
 
+## 4.1.0
+
+### Minor Changes
+
+- c28a16b: feat: log a warning with the reason a request failed when the "errors" option is not true
+
 ## 4.0.0
 
 ### Major Changes
