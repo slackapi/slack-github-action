@@ -60,10 +60,12 @@ runs:
         runner.os != 'Windows'
       shell: bash
       run: |
+        installer="$(mktemp)"
+        curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh -o "$installer"
         if [ -n "$SLACK_CLI_VERSION" ]; then
-          curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s -- -v "$SLACK_CLI_VERSION"
+          bash "$installer" -v "$SLACK_CLI_VERSION"
         else
-          curl -fsSL https://downloads.slack-edge.com/slack-cli/install.sh | bash -s
+          bash "$installer"
         fi
       env:
         SLACK_CLI_VERSION: ${{ inputs.version }}
