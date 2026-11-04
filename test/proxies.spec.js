@@ -12,26 +12,26 @@ describe("proxies", () => {
 
   describe("fetch", () => {
     it("returns a custom fetch function when a proxy is configured", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("proxy", "https://example.com");
+      mocks.inputs.set("token", "xoxb-example");
       const config = new Config(mocks.core);
       const fetchFn = fetch(config);
       assert.strictEqual(typeof fetchFn, "function");
     });
 
     it("returns undefined when no proxy is configured", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("token", "xoxb-example");
       const config = new Config(mocks.core);
       const fetchFn = fetch(config);
       assert.strictEqual(fetchFn, undefined);
     });
 
     it("fails to configure a fetch with an invalid proxied url", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("proxy").returns("not-a-url");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("proxy", "not-a-url");
+      mocks.inputs.set("token", "xoxb-example");
       try {
         const config = new Config(mocks.core);
         fetch(config);
@@ -50,52 +50,44 @@ describe("proxies", () => {
 
   describe("dispatcher", () => {
     it("returns no dispatcher when a proxy is not configured", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
       const config = new Config(mocks.core);
       const dispatcher = proxies(config, config.inputs.webhook);
       assert.strictEqual(dispatcher, undefined);
     });
 
     it("skips proxying a non-https destination altogether", async () => {
-      mocks.core.getInput.withArgs("webhook").returns("http://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
+      mocks.inputs.set("webhook", "http://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("proxy", "https://example.com");
       const config = new Config(mocks.core);
       const dispatcher = proxies(config, config.inputs.webhook);
       assert.strictEqual(dispatcher, undefined);
     });
 
     it("returns a proxy dispatcher for the provided https proxy", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://example.com");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("proxy", "https://example.com");
       const config = new Config(mocks.core);
       const dispatcher = proxies(config, config.inputs.webhook);
       assert.ok(dispatcher);
     });
 
     it("returns a proxy dispatcher for http proxies", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("http://example.com");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("proxy", "http://example.com");
       const config = new Config(mocks.core);
       const dispatcher = proxies(config, config.inputs.webhook);
       assert.ok(dispatcher);
     });
 
     it("fails to configure a dispatcher with an invalid proxied url", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("https://");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("proxy", "https://");
       try {
         const config = new Config(mocks.core);
         proxies(config, config.inputs.webhook);
@@ -112,11 +104,9 @@ describe("proxies", () => {
     });
 
     it("fails to configure a dispatcher with an unknown url protocol", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("proxy").returns("ssh://example.com");
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("proxy", "ssh://example.com");
       try {
         const config = new Config(mocks.core);
         proxies(config, config.inputs.webhook);
