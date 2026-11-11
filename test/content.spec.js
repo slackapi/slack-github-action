@@ -14,19 +14,22 @@ import { mocks } from "./index.spec.js";
 describe("content", () => {
   beforeEach(() => {
     mocks.reset();
-    mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-    mocks.core.getInput.withArgs("token").returns("xoxb-example");
+    mocks.inputs.set("method", "chat.postMessage");
+    mocks.inputs.set("token", "xoxb-example");
   });
 
   describe("flatten", () => {
     it("flattens nested payloads provided with delimiter", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
+      mocks.inputs.set(
+        "payload",
+        `
         "apples": "tree",
         "bananas": {
           "truthiness": true
         }
-      `);
-      mocks.core.getInput.withArgs("payload-delimiter").returns("_");
+      `,
+      );
+      mocks.inputs.set("payload-delimiter", "_");
       const config = new Config(mocks.core);
       const expected = {
         apples: "tree",
@@ -38,8 +41,8 @@ describe("content", () => {
 
   describe("get", () => {
     it("errors if both a payload and file path are provided", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`"message"="hello"`);
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
+      mocks.inputs.set("payload", `"message"="hello"`);
+      mocks.inputs.set("payload-file-path", "example.json");
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid input");
@@ -59,10 +62,13 @@ describe("content", () => {
 
   describe("payload", async () => {
     it("parses complete YAML from the input payload", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
+      mocks.inputs.set(
+        "payload",
+        `
           message: "this is wrapped"
           channel: "C0123456789"
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "this is wrapped",
@@ -75,9 +81,10 @@ describe("content", () => {
      * @see {@link https://github.com/slackapi/slack-github-action/issues/637}
      */
     it("parses multiline YAML from the input payload", async () => {
-      mocks.core.getInput
-        .withArgs("payload")
-        .returns('channel: C0123456789\ntext: "first line\n\n  second line"');
+      mocks.inputs.set(
+        "payload",
+        'channel: C0123456789\ntext: "first line\n\n  second line"',
+      );
       const config = new Config(mocks.core);
       const expected = {
         channel: "C0123456789",
@@ -87,11 +94,14 @@ describe("content", () => {
     });
 
     it("parses complete JSON from the input payload", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`{
+      mocks.inputs.set(
+        "payload",
+        `{
           "message": "this is wrapped",
           "channel": "C0123456789"
         }
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "this is wrapped",
@@ -101,11 +111,14 @@ describe("content", () => {
     });
 
     it("templatizes variables requires configuration", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`{
+      mocks.inputs.set(
+        "payload",
+        `{
           "message": "this matches an existing variable: \${{ github.apiUrl }}",
           "channel": "C0123456789"
         }
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
       const expected = {
@@ -117,7 +130,9 @@ describe("content", () => {
     });
 
     it("templatizes variables with matching variables", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
+      mocks.inputs.set(
+        "payload",
+        `
           channel: C0123456789
           reply_broadcast: false
           message: Served \${{ env.NUMBER }} items
@@ -151,8 +166,9 @@ describe("content", () => {
                     type: plain_text
                     text: "\${{ github.graphqlUrl }}"
                   value: graphql
-        `);
-      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+        `,
+      );
+      mocks.booleanInputs.set("payload-templated", true);
       process.env.DETAILS = `
 -fri
 -sat
@@ -225,11 +241,12 @@ describe("content", () => {
      */
     it("templatizes variables with missing variables", async () => {
       // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
-      mocks.core.getInput
-        .withArgs("payload")
-        .returns("message: What makes ${{ env.TREASURE }} a secret");
+      mocks.inputs.set(
+        "payload",
+        "message: What makes ${{ env.TREASURE }} a secret",
+      );
       // biome-ignore-end lint/suspicious/noTemplateCurlyInString: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#using-contexts-to-access-variable-values
-      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+      mocks.booleanInputs.set("payload-templated", true);
       const config = new Config(mocks.core);
       const expected = {
         message: "What makes ??? a secret",
@@ -238,10 +255,13 @@ describe("content", () => {
     });
 
     it("trims last comma JSON with the input payload", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
+      mocks.inputs.set(
+        "payload",
+        `
         "message": "LGTM!",
         "channel": "C0123456789",
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "LGTM!",
@@ -251,7 +271,9 @@ describe("content", () => {
     });
 
     it("wraps incomplete JSON from the input payload", async () => {
-      mocks.core.getInput.withArgs("payload").returns(`
+      mocks.inputs.set(
+        "payload",
+        `
         "message": "LGTM!",
         "channel": "C0123456789",
         "blocks": [
@@ -262,7 +284,8 @@ describe("content", () => {
             }
           }
         ]
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "LGTM!",
@@ -306,7 +329,7 @@ describe("content", () => {
     });
 
     it("fails if invalid JSON exists in the input payload", async () => {
-      mocks.core.getInput.withArgs("payload").returns("{");
+      mocks.inputs.set("payload", "{");
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid JSON");
@@ -331,13 +354,14 @@ describe("content", () => {
 
   describe("payload file", async () => {
     it("parses complete YAML from the input payload file", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.yaml"), "utf-8")
-        .returns(`
+      mocks.inputs.set("payload-file-path", "example.yaml");
+      mocks.files.set(
+        path.resolve("example.yaml"),
+        `
             message: "drink water"
             channel: "C6H12O6H2O2"
-          `);
+          `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "drink water",
@@ -347,13 +371,14 @@ describe("content", () => {
     });
 
     it("parses complete YML from the input payload file", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.yml");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.yml"), "utf-8")
-        .returns(`
+      mocks.inputs.set("payload-file-path", "example.yml");
+      mocks.files.set(
+        path.resolve("example.yml"),
+        `
             message: "drink coffee"
             channel: "C0FFEEEEEEEE"
-          `);
+          `,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "drink coffee",
@@ -363,13 +388,14 @@ describe("content", () => {
     });
 
     it("parses complete JSON from the input payload file", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
+      mocks.inputs.set("payload-file-path", "example.json");
+      mocks.files.set(
+        path.resolve("example.json"),
+        `{
             "message": "drink water",
             "channel": "C6H12O6H2O2"
-          }`);
+          }`,
+      );
       const config = new Config(mocks.core);
       const expected = {
         message: "drink water",
@@ -379,14 +405,15 @@ describe("content", () => {
     });
 
     it("templatizes variables requires configuration", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
+      mocks.inputs.set("payload-file-path", "example.json");
+      mocks.files.set(
+        path.resolve("example.json"),
+        `{
           "message": "this matches an existing variable: \${{ github.apiUrl }}",
           "channel": "C0123456789"
         }
-      `);
+      `,
+      );
       const config = new Config(mocks.core);
       // biome-ignore-start lint/suspicious/noTemplateCurlyInString: GitHub Action YAML variable syntax
       const expected = {
@@ -398,10 +425,10 @@ describe("content", () => {
     });
 
     it("templatizes variables with matching variables", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
+      mocks.inputs.set("payload-file-path", "example.json");
+      mocks.files.set(
+        path.resolve("example.json"),
+        `{
             "channel": "C0123456789",
             "reply_broadcast": false,
             "message": "Served \${{ env.NUMBER }} items",
@@ -456,8 +483,9 @@ describe("content", () => {
                 }
               }
             ]
-          }`);
-      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+          }`,
+      );
+      mocks.booleanInputs.set("payload-templated", true);
       process.env.DETAILS = `
 -fri
 -sat
@@ -529,13 +557,14 @@ describe("content", () => {
      * @see {@link https://github.com/slackapi/slack-github-action/issues/203}
      */
     it("templatizes variables with missing variables", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
+      mocks.inputs.set("payload-file-path", "example.json");
+      mocks.files.set(
+        path.resolve("example.json"),
+        `{
             "message": "What makes $\{{ env.TREASURE }} a secret"
-          }`);
-      mocks.core.getBooleanInput.withArgs("payload-templated").returns(true);
+          }`,
+      );
+      mocks.booleanInputs.set("payload-templated", true);
       const config = new Config(mocks.core);
       const expected = {
         message: "What makes ??? a secret",
@@ -568,7 +597,7 @@ describe("content", () => {
     });
 
     it("fails to parse a file path that does not exist", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("unknown.json");
+      mocks.inputs.set("payload-file-path", "unknown.json");
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for nonexistent files");
@@ -586,7 +615,7 @@ describe("content", () => {
     });
 
     it("fails to parse a file with an unknown extension", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("unknown.md");
+      mocks.inputs.set("payload-file-path", "unknown.md");
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for an unknown extension");
@@ -611,11 +640,12 @@ describe("content", () => {
     });
 
     it("fails if invalid JSON exists in the input payload", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.json");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.json"), "utf-8")
-        .returns(`{
-            "message": "a truncated file without an end`);
+      mocks.inputs.set("payload-file-path", "example.json");
+      mocks.files.set(
+        path.resolve("example.json"),
+        `{
+            "message": "a truncated file without an end`,
+      );
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid JSON");
@@ -636,10 +666,11 @@ describe("content", () => {
     });
 
     it("fails if invalid YAML exists in the input payload", async () => {
-      mocks.core.getInput.withArgs("payload-file-path").returns("example.yaml");
-      mocks.fs.readFileSync
-        .withArgs(path.resolve("example.yaml"), "utf-8")
-        .returns(`- "message": "assigned": "values"`);
+      mocks.inputs.set("payload-file-path", "example.yaml");
+      mocks.files.set(
+        path.resolve("example.yaml"),
+        `- "message": "assigned": "values"`,
+      );
       try {
         await send(mocks.core);
         assert.fail("Failed to throw for invalid YAML");
