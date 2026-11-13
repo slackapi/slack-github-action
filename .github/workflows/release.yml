@@ -63,6 +63,9 @@ jobs:
     if: needs.changelog.outputs.hasChangesets == 'false' && needs.changelog.outputs.releaseExists == 'false'
     runs-on: ubuntu-latest
     environment: publish
+    outputs:
+      releaseExists: ${{ steps.check.outputs.exists }}
+      version: ${{ steps.version.outputs.version }}
     permissions:
       contents: write
     steps:
@@ -150,13 +153,21 @@ jobs:
           SHA: ${{ steps.release.outputs.sha }}
           GH_TOKEN: ${{ steps.credentials.outputs.token }}
 
+  notify:
+    name: Notify
+    if: needs.publish.outputs.releaseExists == 'false' && github.repository == 'slackapi/slack-github-action'
+    runs-on: ubuntu-latest
+    needs: publish
+    permissions:
+      contents: read
+    steps:
       - name: Notify Slack
-        if: steps.check.outputs.exists == 'false'
         uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
+          errors: true
           webhook: ${{ secrets.SLACK_RELEASE_ANNOUNCEMENTS_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
-            action_url: "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
-            message: "Slack GitHub Action ${{ steps.version.outputs.version }}"
+            action_url: "https://github.com/${{ github.repository }}/releases/tag/${{ needs.publish.outputs.version }}"
+            message: "Slack GitHub Action ${{ needs.publish.outputs.version }}"
             repository: "${{ github.repository }}"
