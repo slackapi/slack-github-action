@@ -22,9 +22,10 @@ describe("proxies", () => {
     });
 
     it("dispatches requests through the proxy without a request handler mismatch", async () => {
-      mocks.core.getInput.withArgs("method").returns("chat.postMessage");
-      mocks.core.getInput.withArgs("token").returns("xoxb-example");
-      mocks.core.getInput.withArgs("proxy").returns("http://127.0.0.1:1");
+      mocks.inputs.set("method", "chat.postMessage");
+      mocks.inputs.set("proxy", "http://127.0.0.1:1");
+      mocks.inputs.set("token", "xoxb-example");
+      mocks.fetch.mock.restore();
       const config = new Config(mocks.core);
       const fetchFn = fetch(config);
       await assert.rejects(
