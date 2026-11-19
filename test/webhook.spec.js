@@ -14,23 +14,24 @@ describe("webhook", () => {
 
   describe("success", () => {
     it("sends the parsed payload to the provided webhook trigger", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.webhook.trigger.resolves({ ok: true });
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "webhook-trigger");
+      mocks.inputs.set("payload", "drinks: coffee");
+      mocks.webhook.trigger.mock.mockImplementation(async () => ({ ok: true }));
       try {
         await send(mocks.core);
-        assert.equal(mocks.webhook.trigger.getCalls().length, 1);
-        assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
+        assert.equal(mocks.webhook.trigger.mock.callCount(), 1);
+        assert.deepEqual(mocks.webhook.trigger.mock.calls[0].arguments[0], {
           drinks: "coffee",
         });
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify({ ok: true }),
         );
       } catch (err) {
@@ -40,23 +41,26 @@ describe("webhook", () => {
     });
 
     it("sends the parsed payload to the provided incoming webhook", async () => {
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("text: greetings");
-      mocks.webhook.incoming.resolves({ text: "ok" });
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("payload", "text: greetings");
+      mocks.webhook.incoming.mock.mockImplementation(async () => ({
+        text: "ok",
+      }));
       try {
         await send(mocks.core);
-        assert.equal(mocks.webhook.incoming.getCalls().length, 1);
-        assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
+        assert.equal(mocks.webhook.incoming.mock.callCount(), 1);
+        assert.deepEqual(mocks.webhook.incoming.mock.calls[0].arguments[0], {
           text: "greetings",
         });
-        assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-        assert.equal(mocks.core.setOutput.getCall(0).lastArg, true);
-        assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+        assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], true);
         assert.equal(
-          mocks.core.setOutput.getCall(1).lastArg,
+          mocks.core.setOutput.mock.calls[1].arguments[0],
+          "response",
+        );
+        assert.equal(
+          mocks.core.setOutput.mock.calls[1].arguments[1],
           JSON.stringify("ok"),
         );
       } catch (err) {
@@ -114,15 +118,13 @@ describe("webhook", () => {
     });
 
     it("returns the failures from a webhook trigger", async () => {
-      mocks.core.getBooleanInput.withArgs("errors").returns(true);
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("webhook-trigger");
-      mocks.core.getInput.withArgs("payload").returns("drinks: coffee");
-      mocks.webhook.trigger.rejects(
-        new Error("An HTTP protocol error occurred"),
-      );
+      mocks.booleanInputs.set("errors", true);
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "webhook-trigger");
+      mocks.inputs.set("payload", "drinks: coffee");
+      mocks.webhook.trigger.mock.mockImplementation(async () => {
+        throw new Error("An HTTP protocol error occurred");
+      });
       try {
         await send(mocks.core);
         assert.fail();
@@ -133,26 +135,24 @@ describe("webhook", () => {
           assert.fail(err);
         }
       }
-      assert.equal(mocks.webhook.trigger.getCalls().length, 1);
-      assert.deepEqual(mocks.webhook.trigger.getCall(0).firstArg, {
+      assert.equal(mocks.webhook.trigger.mock.callCount(), 1);
+      assert.deepEqual(mocks.webhook.trigger.mock.calls[0].arguments[0], {
         drinks: "coffee",
       });
-      assert.ok(mocks.core.setFailed.called);
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.ok(mocks.core.setFailed.mock.callCount() > 0);
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
     });
 
     it("returns the failures from an incoming webhook", async () => {
-      mocks.core.getBooleanInput.withArgs("errors").returns(true);
-      mocks.core.getInput
-        .withArgs("webhook")
-        .returns("https://hooks.slack.com");
-      mocks.core.getInput.withArgs("webhook-type").returns("incoming-webhook");
-      mocks.core.getInput.withArgs("payload").returns("textt: oops");
-      mocks.webhook.incoming.rejects(
-        new Error("An HTTP protocol error occurred"),
-      );
+      mocks.booleanInputs.set("errors", true);
+      mocks.inputs.set("webhook", "https://hooks.slack.com");
+      mocks.inputs.set("webhook-type", "incoming-webhook");
+      mocks.inputs.set("payload", "textt: oops");
+      mocks.webhook.incoming.mock.mockImplementation(async () => {
+        throw new Error("An HTTP protocol error occurred");
+      });
       try {
         await send(mocks.core);
         assert.fail();
@@ -163,14 +163,14 @@ describe("webhook", () => {
           assert.fail(err);
         }
       }
-      assert.equal(mocks.webhook.incoming.getCalls().length, 1);
-      assert.deepEqual(mocks.webhook.incoming.getCall(0).firstArg, {
+      assert.equal(mocks.webhook.incoming.mock.callCount(), 1);
+      assert.deepEqual(mocks.webhook.incoming.mock.calls[0].arguments[0], {
         textt: "oops",
       });
-      assert.ok(mocks.core.setFailed.called);
-      assert.equal(mocks.core.setOutput.getCall(0).firstArg, "ok");
-      assert.equal(mocks.core.setOutput.getCall(0).lastArg, false);
-      assert.equal(mocks.core.setOutput.getCall(1).firstArg, "response");
+      assert.ok(mocks.core.setFailed.mock.callCount() > 0);
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[0], "ok");
+      assert.equal(mocks.core.setOutput.mock.calls[0].arguments[1], false);
+      assert.equal(mocks.core.setOutput.mock.calls[1].arguments[0], "response");
     });
   });
 

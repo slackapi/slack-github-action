@@ -1,7 +1,7 @@
 import fs from "node:fs";
+import { mock } from "node:test";
 import webapi from "@slack/web-api";
 import webhook from "@slack/webhook";
-import sinon from "sinon";
 
 /**
  * Hello experimenter! These tests are here to confirm that the happy paths keep
@@ -26,22 +26,47 @@ export class Mock {
    * @see {@link ../action.yml}
    */
   constructor() {
-    this.sandbox = sinon.createSandbox();
-    this.calls = this.sandbox.stub(webapi.WebClient.prototype, "apiCall");
+    this.reset();
+  }
+
+  /**
+   * Testing interface that restores existing mocks and replaces these with new
+   * mocks without internal state.
+   *
+   * Values returned from inputs and files are matched to the arguments of the
+   * call using the "inputs", "booleanInputs", and "files" maps.
+   */
+  reset() {
+    mock.reset();
+    this.booleanInputs = new Map();
+    this.files = new Map();
+    this.inputs = new Map([
+      ["errors", "false"],
+      ["retries", "5"],
+    ]);
+    this.calls = mock.method(
+      webapi.WebClient.prototype,
+      "apiCall",
+      () => undefined,
+    );
     this.core = {
-      debug: this.sandbox.stub(),
-      error: this.sandbox.stub(),
-      getInput: this.sandbox.stub(),
-      getBooleanInput: this.sandbox.stub(),
-      info: this.sandbox.stub(),
-      isDebug: this.sandbox.stub(),
-      setFailed: this.sandbox.stub(),
-      setOutput: this.sandbox.stub(),
-      setSecret: this.sandbox.stub(),
-      warning: this.sandbox.stub(),
+      debug: mock.fn(),
+      error: mock.fn(),
+      getInput: mock.fn((name) => this.inputs.get(name)),
+      getBooleanInput: mock.fn((name) => this.booleanInputs.get(name)),
+      info: mock.fn(),
+      isDebug: mock.fn(),
+      setFailed: mock.fn(),
+      setOutput: mock.fn(),
+      setSecret: mock.fn(),
+      warning: mock.fn(),
     };
-    this.fetch = this.sandbox.stub(globalThis, "fetch");
-    this.fs = this.sandbox.stub(fs);
+    this.fetch = mock.method(globalThis, "fetch", () => undefined);
+    this.fs = {
+      readFileSync: mock.method(fs, "readFileSync", (file, encoding) =>
+        encoding === "utf-8" ? this.files.get(file) : undefined,
+      ),
+    };
     this.webapi = {
       WebClient: function () {
         this.apiCall = () => ({
@@ -50,41 +75,17 @@ export class Mock {
       },
     };
     this.webhook = {
-      incoming: this.sandbox.stub(webhook.IncomingWebhook.prototype, "send"),
-      trigger: this.sandbox.stub(webhook.WebhookTrigger.prototype, "send"),
+      incoming: mock.method(
+        webhook.IncomingWebhook.prototype,
+        "send",
+        () => undefined,
+      ),
+      trigger: mock.method(
+        webhook.WebhookTrigger.prototype,
+        "send",
+        () => undefined,
+      ),
     };
-    this.core.getInput.withArgs("errors").returns("false");
-    this.core.getInput.withArgs("retries").returns("5");
-  }
-
-  /**
-   * Testing interface that removes internal state from existing stubs.
-   */
-  reset() {
-    this.sandbox.reset();
-    this.calls.resetHistory();
-    this.core.debug.reset();
-    this.core.error.reset();
-    this.core.getInput.reset();
-    this.core.getBooleanInput.reset();
-    this.core.info.reset();
-    this.core.isDebug.reset();
-    this.core.setFailed.reset();
-    this.core.setOutput.reset();
-    this.core.setSecret.reset();
-    this.core.warning.reset();
-    this.fetch.reset();
-    this.webapi = {
-      WebClient: function () {
-        this.apiCall = () => ({
-          ok: true,
-        });
-      },
-    };
-    this.webhook.incoming.resetHistory();
-    this.webhook.trigger.resetHistory();
-    this.core.getInput.withArgs("errors").returns("false");
-    this.core.getInput.withArgs("retries").returns("5");
     process.env.SLACK_TOKEN = "";
     process.env.SLACK_WEBHOOK_URL = "";
   }

@@ -145,19 +145,19 @@ The technique, like all Slack Github Action techniques, [outputs values](https:/
 
 The following outputs are returned with each of the techniques:
 
-| Output | Type  | Description|
-|---|---|---|
-|`time` | `number` | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed.
-| `ok` | `boolean` | If the request completed with success.
-| `response` | `string` | The [response](/apis/web-api/#responses) from the request as stringified JSON.
+| Output     | Type      | Description                                                                             |
+| ---------- | --------- | --------------------------------------------------------------------------------------- |
+| `time`     | `number`  | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed. |
+| `ok`       | `boolean` | If the request completed with success.                                                  |
+| `response` | `string`  | The [response](/apis/web-api/#responses) from the request as stringified JSON.          |
 
 While these outputs are returned with certain Slack API methods:
 
-| Output | Type  | Description|
-|---|---|---|
-|`channel_id` | `string` | The [channel ID](/reference/objects/conversation-object) included in the response.
-| `ts`| `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of the Slack event or message.
-| `thread_ts` | `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of a parent Slack message with [threaded replies](/messaging/retrieving-messages#pulling_threads).
+| Output       | Type     | Description                                                                                                                                                            |
+| ------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `channel_id` | `string` | The [channel ID](/reference/objects/conversation-object) included in the response.                                                                                     |
+| `ts`         | `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of the Slack event or message.                                                                     |
+| `thread_ts`  | `string` | The [timestamp](/messaging/retrieving-messages#individual_messages) of a parent Slack message with [threaded replies](/messaging/retrieving-messages#pulling_threads). |
 
 ## Example workflows
 
