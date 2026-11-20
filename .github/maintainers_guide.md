@@ -112,7 +112,7 @@ Update the following places to the new version:
 - `action.yml`: `runs.using`
 - `.nvmrc`: the version each workflow sets up with `node-version-file`
 - `package.json`: `engines.node` to the new minimum and `engines.npm` to the npm it bundles, the `node:NN` image of the `dev` script, and `@types/node` to the matching major
-- `.github/dependabot.yml`: the `@types/node` majors ignored above the new version
+- `.github/dependabot.yml`: the `@types/node` and `undici` majors ignored above the new version
 - `undici`: the major bundled with the new Node.js version, listed in the [long-term support](https://undici.nodejs.org/#long-term-support) table
 
 ## Workflow
