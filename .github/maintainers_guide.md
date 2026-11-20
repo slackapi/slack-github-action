@@ -101,6 +101,22 @@ New versions are published when the release PR created from changesets is merged
 
 4. **Update Milestones**: Close the relevant [Milestones](https://github.com/slackapi/slack-github-action/milestones) and rename these to match the released version. Open a new Milestone for the next version.
 
+### Updating the Node version
+
+This action runs on the Node.js runtime set with `runs.using` in `action.yml`, which accepts only the [`nodeNN` values](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax#runsusing-for-javascript-actions) that GitHub supports. When a Node.js version nears end-of-life, GitHub announces a date to deprecate it on runners in the [changelog](https://github.blog/changelog/), such as the [deprecation of Node 20](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/). Update the runtime before that date.
+
+Changing the runtime is a breaking change for workflows on runners without the new runtime, such as older self-hosted runners, so it ships as a major version with a `build!:` title and a `major` changeset. The most recent example is [#567](https://github.com/slackapi/slack-github-action/pull/567), which moved from `node20` to `node24` for `v3.0.0`.
+
+Update the following places to the new version:
+
+- `action.yml`: `runs.using`
+- `.nvmrc`: the version each workflow sets up with `node-version-file`
+- `package.json`: `engines.node` to the new minimum and `engines.npm` to the npm it bundles, the `node:NN` image of the `dev` script, and `@types/node` to the matching major
+- `.github/dependabot.yml`: the `@types/node` majors ignored above the new version
+- `undici`: the major bundled with the new Node.js version, listed in the [long-term support](https://undici.nodejs.org/#long-term-support) table, and the majors ignored above it in `.github/dependabot.yml`
+
+The `proxy` input passes a dispatcher from the `undici` package to the global `fetch` of the runtime, and a mismatched major fails every request sent through the proxy. Confirm `npm test` passes on the new version with a test that sends a request through the proxy dispatcher, since tests that stub `fetch` won't catch this. Missing this check let `v4.0.0` ship with a broken `proxy` input ([#675](https://github.com/slackapi/slack-github-action/pull/675)).
+
 ## Workflow
 
 ### Versioning and Tags
