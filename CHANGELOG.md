@@ -1,5 +1,15 @@
 # slack-github-action
 
+## 4.1.0
+
+### Minor Changes
+
+- c28a16b: feat: log a warning with the reason a request failed when the "errors" option is not true
+
+### Patch Changes
+
+- 7eee320: fix: send requests through the configured proxy using the undici version that matches the node runtime
+
 ## 4.0.0
 
 ### Major Changes
