@@ -70,7 +70,7 @@ jobs:
 
       - name: "test(wfb): send a payload to workflow builder via webhook trigger"
         id: wfb
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           webhook: ${{ secrets.SLACK_WEBHOOK_TRIGGER }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: "test(api): post a message to channel"
         id: message
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.postMessage
@@ -105,7 +105,7 @@ jobs:
 
       - name: "test(api): post a multiline message" # https://github.com/slackapi/slack-github-action/issues/637
         id: multiline
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.postMessage
@@ -123,7 +123,7 @@ jobs:
 
       - name: "test(api): post a message with blocks"
         id: blocks
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.postMessage
@@ -145,7 +145,7 @@ jobs:
 
       - name: "test(api): post a threaded message"
         id: timer
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.postMessage
@@ -165,7 +165,7 @@ jobs:
 
       - name: "test(api): update the original message"
         id: finished
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.update
@@ -183,7 +183,7 @@ jobs:
 
       - name: "test(api): post another threaded message"
         id: done
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: chat.postMessage
@@ -195,7 +195,7 @@ jobs:
 
       - name: "test(api): post a file into a channel"
         id: file
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: files.uploadV2
@@ -207,7 +207,7 @@ jobs:
             filename: integration.yml
 
       - name: "test(api): react to the completed update message"
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           method: reactions.add
@@ -224,7 +224,7 @@ jobs:
 
       - name: "test(incoming): post a message via incoming webhook"
         id: incoming
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK }}
@@ -250,7 +250,7 @@ jobs:
 
       - name: "test(incoming): post a message via payload file"
         id: payload_file
-        uses: $/
+        uses: ./ # zizmor: ignore[self-repository]
         with:
           errors: true
           payload-file-path: ./.github/resources/.slack/incoming-webhook.json
