@@ -1,0 +1,6 @@
+rules:
+  self-repository:
+    ignore:
+      # these workflows build dist/ at runtime and test the checked out ref
+      - develop.yml
+      - integration.yml

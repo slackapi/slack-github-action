@@ -59,9 +59,9 @@ jobs:
 
   publish:
     name: Publish
-    needs: changelog
     if: needs.changelog.outputs.hasChangesets == 'false' && needs.changelog.outputs.releaseExists == 'false'
     runs-on: ubuntu-latest
+    needs: changelog
     environment: publish
     outputs:
       releaseExists: ${{ steps.check.outputs.exists }}
