@@ -3,13 +3,22 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "@slack/*"
     ignore:
       - dependency-name: "@types/node"
         versions:
           - "25.x"
           - "26.x"
+      - dependency-name: "undici" # https://undici.nodejs.org/#long-term-support
+        versions:
+          - "8.x"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+    cooldown:
+      default-days: 7
