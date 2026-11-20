@@ -84,7 +84,6 @@ The `payload-delimiter` option will flatten the input payload using the provided
 
 Reference to the flattening implementation is available for exploration from within the [`flat`](https://www.npmjs.com/package/flat) package.
 
-
 ## Expected outputs
 
 The technique, like all Slack Github Action techniques, [outputs values](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs) that can be used as inputs in following steps of a GitHub workflow.
@@ -96,7 +95,6 @@ The following outputs are returned with each of the techniques:
 | `time`     | `number`  | The Unix [epoch time](https://en.wikipedia.org/wiki/Unix_time) that the step completed. |
 | `ok`       | `boolean` | If the request completed with success.                                                  |
 | `response` | `string`  | The [response](/apis/web-api/#responses) from the request as stringified JSON.          |
-
 
 ## Example workflows
 
