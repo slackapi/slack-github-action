@@ -288,7 +288,7 @@ jobs:
 
       - name: "test(cli): run a slack cli version check"
         id: version
-        uses: $/cli
+        uses: ./cli # zizmor: ignore[self-repository]
         with:
           command: "version"
 
@@ -307,7 +307,7 @@ jobs:
       - name: "test(cli): run an unknown command"
         id: unknown
         continue-on-error: true
-        uses: $/cli
+        uses: ./cli # zizmor: ignore[self-repository]
         with:
           command: "off"
 
@@ -328,13 +328,13 @@ jobs:
         run: mv .github/resources/.slack .slack
 
       - name: "test(cli): validate the app manifest"
-        uses: $/cli
+        uses: ./cli # zizmor: ignore[self-repository]
         with:
           command: "manifest"
           token: ${{ secrets.SLACK_SERVICE_TOKEN }}
 
       - name: "test(cli): deploy the app"
-        uses: $/cli
+        uses: ./cli # zizmor: ignore[self-repository]
         with:
           command: "deploy --app ${{ vars.SLACK_APP_ID }} --hide-triggers --force"
           token: ${{ secrets.SLACK_SERVICE_TOKEN }}
