@@ -22,7 +22,7 @@ describe("proxies", () => {
       assert.strictEqual(typeof fetchFn, "function");
     });
 
-    it("dispatches requests through the proxy without a request handler mismatch", async () => {
+    it("dispatches requests through the proxy with correct request handler", async () => {
       mocks.inputs.set("method", "chat.postMessage");
       mocks.inputs.set("proxy", "http://127.0.0.1:1");
       mocks.inputs.set("token", "xoxb-example");

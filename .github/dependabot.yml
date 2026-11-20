@@ -9,7 +9,7 @@ updates:
         versions:
           - "25.x"
           - "26.x"
-      - dependency-name: "undici"
+      - dependency-name: "undici" # https://undici.nodejs.org/#long-term-support
         versions:
           - "8.x"
   - package-ecosystem: "github-actions"
