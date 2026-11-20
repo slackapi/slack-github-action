@@ -2,4 +2,4 @@
 "@slack/slack-github-action": patch
 ---
 
-fix: proxy input always fails due to an undici version mismatch
+fix: send requests through the configured proxy using the undici version that matches the node runtime
