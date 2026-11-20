@@ -1,22 +1,19 @@
-import { ProxyAgent, fetch as undiciFetch } from "undici";
+import { ProxyAgent } from "undici";
 import SlackError from "./errors.js";
 
 /**
  * Return a fetch function that routes requests through a configured proxy.
  *
- * Uses undici's own fetch, not the global fetch, since Node may bundle a
- * different (incompatible) undici version for the latter.
- *
  * @param {import("./config.js").default} config
  * @param {string?} [destination] - A provided request destination.
- * @returns {typeof undiciFetch | undefined}
+ * @returns {typeof globalThis.fetch | undefined}
  */
 export function fetch(config, destination) {
   const dispatcher = proxies(config, destination);
   if (!dispatcher) {
     return undefined;
   }
-  return (url, init) => undiciFetch(url, { ...init, dispatcher });
+  return (url, init) => globalThis.fetch(url, { ...init, dispatcher });
 }
 
 /**

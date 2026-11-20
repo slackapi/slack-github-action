@@ -9,6 +9,9 @@ updates:
         versions:
           - "25.x"
           - "26.x"
+      - dependency-name: "undici"
+        versions:
+          - "8.x"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
