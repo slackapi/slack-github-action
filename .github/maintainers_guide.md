@@ -113,9 +113,7 @@ Update the following places to the new version:
 - `.nvmrc`: the version each workflow sets up with `node-version-file`
 - `package.json`: `engines.node` to the new minimum and `engines.npm` to the npm it bundles, the `node:NN` image of the `dev` script, and `@types/node` to the matching major
 - `.github/dependabot.yml`: the `@types/node` majors ignored above the new version
-- `undici`: the major bundled with the new Node.js version, listed in the [long-term support](https://undici.nodejs.org/#long-term-support) table, and the majors ignored above it in `.github/dependabot.yml`
-
-The `proxy` input passes a dispatcher from the `undici` package to the global `fetch` of the runtime, and a mismatched major fails every request sent through the proxy. Confirm `npm test` passes on the new version with a test that sends a request through the proxy dispatcher, since tests that stub `fetch` won't catch this. Missing this check let `v4.0.0` ship with a broken `proxy` input ([#675](https://github.com/slackapi/slack-github-action/pull/675)).
+- `undici`: the major bundled with the new Node.js version, listed in the [long-term support](https://undici.nodejs.org/#long-term-support) table
 
 ## Workflow
 
